@@ -158,6 +158,7 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
     }// for
     Uart.Printf("MtrID=%X, CmdID=%X, Addr=%X, Value=%X\r", CmdValues.MtrID, CmdValues.CmdID, CmdValues.Addr, CmdValues.Value);
     Ack.MtrID = CmdValues.MtrID;
+    if(Ack.MtrID > NumberOfMotors) return FAILURE;
     Ack.CmdID = CmdValues.CmdID+1;
     Ack.Addr = CmdValues.Addr;
     Ack.Value = CmdValues.Value;
@@ -177,14 +178,20 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
 
         case GOTO:
             Uart.Printf("GOTO\r");
+            Motor[Ack.MtrID].GoTo(Ack.Value);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case GOTODIR:
             Uart.Printf("GOTODIR\r");
+            Motor[Ack.MtrID].GoTo_Dir(CmdValues.Addr, Ack.Value);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case GOUNTIL:
             Uart.Printf("GOUNTIL\r");
+//            Motor[Ack.MtrID].GoUntil(CmdValues.Addr, Ack.Value);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case RELEASE:
