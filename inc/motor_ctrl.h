@@ -18,6 +18,9 @@
 #define BUF_SZ          8
 #define BUF_ERR_SZ      3
 
+#define MAX_SRV_LEN     5
+#define MAX_CMD_LEN     17
+
 #define NEW_NUMBER      0x01
 
 enum MotorState_t {
@@ -90,11 +93,13 @@ struct CmdBuf_t {
                 uint8_t CmdID;
                 uint8_t SrvValue;
             };
-            uint8_t Err;
-            uint8_t Addr;
+            union {
+                uint8_t Err;
+                uint8_t Addr;
+            };
             uint32_t Value;
-        }__attribute__ ((__packed__));;
-    };
+        }__attribute__ ((__packed__));
+    }__attribute__ ((__packed__));
 }__attribute__ ((__packed__));
 
 struct AckBuf_t {
@@ -134,6 +139,7 @@ public:
     uint8_t ICmdExecute(uint8_t *Ptr, uint8_t ALen);
     void IPutToBuf(uint8_t AByte) { if(PCmdBuf >= (Cmd + CMD_BUF_SZ)) PCmdBuf = Cmd; *PCmdBuf++ = AByte; CmdLength++; }
     void IResetBuf()              { memset(Cmd, 0, CmdLength); PCmdBuf = Cmd; CmdLength = 0; }
+    void IResetCmdValues()        { memset((uint8_t*)&CmdValues, 0x00, BUF_SZ); }
     bool ISetNewMotorsNumber(uint8_t NewNumber);
 };
 

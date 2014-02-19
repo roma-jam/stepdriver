@@ -22,6 +22,7 @@ void __attribute__ ((weak)) _init(void)  {}
 
 // Return values
 #define OK              0
+#define NO_ERROR        0
 #define FAILURE         1
 #define TIMEOUT         2
 #define BUSY            3
