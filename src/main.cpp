@@ -27,11 +27,7 @@ int main(void) {
     Init();
     if(!ClkEnable) Uart.Printf("CF=%u\r", ClkEnable);
 
-
-    while(TRUE) {
-
-        chThdSleepMilliseconds(999);
-    }
+    while(TRUE) chThdSleepMilliseconds(999);
 }
 
 void Init() {
