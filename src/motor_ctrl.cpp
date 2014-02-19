@@ -90,8 +90,9 @@ void Driver_t::CmdHandle() {
 #if 1 // ==== UniCode ====
     if(CmdLength == 0) Uart.Printf("Wromg Cmd\r");
     else {
-        if(*Ptr++ != '#') Uart.Printf("Error # symbol\r");
+        if(*Ptr != '#') Uart.Printf("Error # symbol\r");
         else {
+            Ptr++;
             CmdLength--;
             if(!TryConvertToDigit(*Ptr++, &Ack.MtrID)) Uart.Printf("MotorID Error\r");
             else {
@@ -124,6 +125,40 @@ void Driver_t::CmdHandle() {
                 } // correct number of motors
             } // correct motorID
         } // correct start symbol
+        if(*Ptr != '$') Uart.Printf("Error $ symbol\r");
+        else {
+            uint8_t Value;
+            Uart.Printf("ServiceMsg\r");
+            Ptr++;
+            CmdLength--;
+            TryConvertToDigit(*Ptr, Ptr);
+            Ack.CmdID = *Ptr++;
+            CmdLength--;
+            if(CmdLength != 0) {
+                if(*Ptr != ',') {
+                    Ack.CmdID <<= 4;
+                    TryConvertToDigit(*Ptr, Ptr);
+                    Ack.CmdID |= *Ptr;
+                }
+                else {
+                    Ptr++;
+                    CmdLength--;
+                    TryConvertToDigit(*Ptr, &Value);
+                }
+            }
+            if(CmdLength != 0) {
+                if(*Ptr++ != ',') Uart.Printf("Wrong CmdID or delimeter\r");
+                CmdLength--;
+            }
+            switch (Ack.CmdID) {
+                case NEW_NUMBER:
+                    Uart.Printf("NewNumber=%u\r", Value);
+                    break;
+                default:
+                    Uart.Printf("Error Service number ID\r");
+                    break;
+            }
+        } // Service Msg
     } // cmd len != 0
 #endif
     if(CmdExecute) {
@@ -347,6 +382,17 @@ void Driver_t::CmdHandle() {
     CmdLength = 0;
     PCmdBuf = Cmd;
     memset(PCmdBuf, 0, ClearLen);
+}
+
+bool Driver_t::SetNewMotorsNumber(uint8_t NewNumber){
+    if(NewNumber == NumberOfMotors) return false;
+    else {
+        for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
+        NumberOfMotors = NewNumber;
+        Uart.Printf("NumberOfMotors=%u\r", NumberOfMotors);
+        for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msInit);
+    }
+    return true;
 }
 
 

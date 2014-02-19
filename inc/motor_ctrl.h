@@ -18,6 +18,8 @@
 #define ACK_BUF_SZ      7
 #define ACK_BUF_ERR_SZ  3
 
+#define NEW_NUMBER      0x01
+
 enum MotorState_t {
 	msIdle, msInit, msOff, msSleep
 };
@@ -115,6 +117,8 @@ public:
     void Init();
     void CmdHandle();
     void Task();
+
+    bool SetNewMotorsNumber(uint8_t NewNumber);
 };
 
 extern Driver_t Driver;
