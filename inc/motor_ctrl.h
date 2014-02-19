@@ -108,10 +108,10 @@ struct AckBuf_t {
             uint8_t MtrID;
             uint8_t CmdID;
             union{
-                uint8_t Len;
+                uint8_t Addr;
                 uint8_t Err;
             };
-            uint8_t Data[BUF_SZ-2];
+            uint32_t Value;
         };
         uint8_t Buf[BUF_SZ];
     };

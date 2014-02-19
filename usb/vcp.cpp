@@ -46,7 +46,7 @@ void Vcp_t::IOutTask() {
 	if(GetByte(&Byte, 20) == OK) {
 	    if(Byte == CMD_HANDLE) {
 	        Rslt = Driver.CmdHandle();
-	        if(Rslt == OK) Printf("&%X,%X,%X\r", Driver.PAckBuf->MtrID, Driver.PAckBuf->CmdID, Driver.PAckBuf->Err);
+	        if(Rslt == OK) Printf("&%X,%X,%X,%X\r", Driver.PAckBuf->MtrID, Driver.PAckBuf->CmdID, Driver.PAckBuf->Err, Driver.PAckBuf->Value);
 	        else Printf("@%X\r", Rslt);
 	    }
 	    else {

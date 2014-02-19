@@ -159,20 +159,20 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
     Uart.Printf("MtrID=%X, CmdID=%X, Addr=%X, Value=%X\r", CmdValues.MtrID, CmdValues.CmdID, CmdValues.Addr, CmdValues.Value);
     Ack.MtrID = CmdValues.MtrID;
     Ack.CmdID = CmdValues.CmdID+1;
-    Ack.Err = NO_ERROR;
+    Ack.Addr = CmdValues.Addr;
+    Ack.Value = CmdValues.Value;
 #if 1 //==== Cmd Execute ====
     switch (CmdValues.CmdID) {
         case SET_PARAM:
             Uart.Printf("SET_PARAM\r");
-//            Motor[Ack.MtrID].SetParam(CmdValues.Addr, CmdValues.Value);
+            Motor[Ack.MtrID].SetParam(CmdValues.Addr, CmdValues.Value);
 //            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case GET_PARAM:
             Uart.Printf("GET_PARAM\r");
-//            uint32_t Rep;
-//            Motor[Ack.MtrID].GetParams(CmdValues.Addr, &Rep);
-//            Uart.Printf("&%u,%X,%X,%X\r\n", Ack.MtrID, Ack.CmdID, CmdValues.Addr, Rep);
+            Motor[Ack.MtrID].GetParams(CmdValues.Addr, &Ack.Value);
+            Uart.Printf("&%u,%X,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Addr, Ack.Value);
             break;
 
         case GOTO:
@@ -188,50 +188,51 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
             break;
 
         case RELEASE:
-//            Motor[Ack.MtrID].ReleaseSW();
             Uart.Printf("RELEASE\r");
+            Motor[Ack.MtrID].ReleaseSW(CmdValues.Addr, (uint8_t)CmdValues.Value);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Value);
             break;
 
         case GO_HOME:
             Uart.Printf("GO_HOME\r");
-//            Motor[Ack.MtrID].GoHome();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].GoHome();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case GO_MARK:
             Uart.Printf("GO_MARK\r");
-//            Motor[Ack.MtrID].GoMark();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].GoMark();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case RESET_POS:
             Uart.Printf("RESET_POS\r");
-//            Motor[Ack.MtrID].ResetPos();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].ResetPos();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case SOFT_HiZ:
             Uart.Printf("SOFT_HiZ\r");
-//            Motor[Ack.MtrID].SoftHiZ();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].SoftHiZ();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case HARD_HiZ:
             Uart.Printf("HARD_HiZ\r");
-//            Motor[Ack.MtrID].HardHiZ();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].HardHiZ();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case RESET_DEVICE:
             Uart.Printf("RESET_DEVICE\r");
-//            Motor[Ack.MtrID].ResetDevice();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].ResetDevice();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case RUN:
             Uart.Printf("RUN\r");
-//            Motor[Ack.MtrID].Run(Dir, Speed);
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].Run(CmdValues.Addr, CmdValues.Value);
+            Uart.Printf("&%u,%X,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Addr, Ack.Value);
             break;
 
         case STEP_CLOCK:
@@ -240,26 +241,26 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
 
         case SOFT_STOP:
             Uart.Printf("SOFT_STOP\r");
-//            Motor[Ack.MtrID].SoftStop();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].SoftStop();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case MOVE:
             Uart.Printf("MOVE\r");
-//            Motor[Ack.MtrID].Move(Dir, Steps);
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].Move(Ack.Addr, Ack.Value);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case HARD_STOP:
             Uart.Printf("HARD_STOP\r");
-//            Motor[Ack.MtrID].HardStop();
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
+            Motor[Ack.MtrID].HardStop();
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Err);
             break;
 
         case GET_STATUS:
             Uart.Printf("GET_STATUS\r");
-//            Motor[Ack.MtrID].GetStatus(&Status);
-//            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Status);
+            Motor[Ack.MtrID].GetStatus(&Ack.Value);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Value);
             break;
 
         default:
