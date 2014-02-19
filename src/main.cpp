@@ -13,6 +13,8 @@
 #include "vcp.h"
 #include "motor_ctrl.h"
 
+#include "application.h"
+
 static inline void Init();
 
 int main(void) {
@@ -41,4 +43,6 @@ void Init() {
     Vcp.Init();
 
     Usb.Connect();
+
+//    App.Init();
 }

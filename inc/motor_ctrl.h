@@ -56,7 +56,6 @@ public:
     void UpdatePrm();
 
     uint8_t NOP();
-    void SetParamBuf(uint8_t Addr, uint8_t *PBuf, uint8_t ALength);
     void SetParam(uint8_t Addr, uint32_t Value);
     void GetParams(uint8_t Addr, uint32_t* PValue);
     void Run(uint8_t Dir, uint32_t Speed);

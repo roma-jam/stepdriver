@@ -10,9 +10,7 @@
 #include "motor_ctrl.h"
 #include "vcp.h"
 
-
-// Macros
-#define PRINT_MSG(S)       { Uart.Printf(S); }
+#define UPDATE_PRM_PRINT
 
 Driver_t Driver;
 
@@ -362,23 +360,25 @@ void Motor_t::Init(uint8_t AssignId) {
 
 void Motor_t::UpdatePrm() {
     GetParams(ADDR_ABS_POS, &Prm.curr_pos);
-//    Uart.Printf("%u, abs_pos = %X\r", id, Prm.curr_pos);
     GetParams(ADDR_EL_POS, &Prm.el_pos);
-//    Uart.Printf("%u, el_pos = %X\r", id, Prm.el_pos);
     GetParams(ADDR_MARK, &Prm.mark_pos);
-//    Uart.Printf("%u, mark_pos = %X\r", id, Prm.mark_pos);
     GetParams(ADDR_SPEED, &Prm.speed);
-//    Uart.Printf("%u, speed = %X\r", id, Prm.speed);
     GetParams(ADDR_ACC, &Prm.acc);
-//    Uart.Printf("%u, acc = %X\r", id, Prm.acc);
     GetParams(ADDR_DEC, &Prm.dec);
-//    Uart.Printf("%u, dec = %X\r", id, Prm.dec);
     GetParams(ADDR_MAX_SPEED, &Prm.max_speed);
-    Uart.Printf("%u, max_speed = %X\r", id, Prm.max_speed);
     GetParams(ADDR_MIN_SPEED, &Prm.min_speed);
-//    Uart.Printf("%u, min_speed = %X\r", id, Prm.min_speed);
     GetParams(ADDR_ADC_OUT, &Prm.adc);
+#ifdef UPDATE_PRM_PRINT
+//    Uart.Printf("%u, abs_pos = %X\r", id, Prm.curr_pos);
+//    Uart.Printf("%u, el_pos = %X\r", id, Prm.el_pos);
+//    Uart.Printf("%u, mark_pos = %X\r", id, Prm.mark_pos);
+//    Uart.Printf("%u, speed = %X\r", id, Prm.speed);
+//    Uart.Printf("%u, acc = %X\r", id, Prm.acc);
+//    Uart.Printf("%u, dec = %X\r", id, Prm.dec);
+//    Uart.Printf("%u, min_speed = %X\r", id, Prm.min_speed);
+    Uart.Printf("%u, max_speed = %X\r", id, Prm.max_speed);
 //    Uart.Printf("%u, adc = %X\r", id, Prm.adc);
+#endif
 }
 #endif
 
@@ -386,11 +386,6 @@ void Motor_t::UpdatePrm() {
 #if 1 // ==== CMDs ====
 uint8_t Motor_t::NOP() {
     return Spi.DaisyTxRxByte(id, 0x00);
-}
-
-void Motor_t::SetParamBuf(uint8_t Addr, uint8_t *PBuf, uint8_t ALength) {
-    Spi.DaisyTxRxData(id, PBuf, ALength, PRxBuf);
-    Uart.Printf("Tx: %A\r", PTxBuf, 4);
 }
 
 void Motor_t::SetParam(uint8_t Addr, uint32_t Value) {

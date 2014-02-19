@@ -43,22 +43,11 @@ static void VcpThread(void *arg) {
 void Vcp_t::IOutTask() {
 	uint8_t Byte;
 	if(GetByte(&Byte, 20) == OK) {
-//		Uart.Printf("%X", Byte);
-//	    if(Byte == '$') {
-//	        for(uint8_t i=0; i < SPI_SLAVE_CNT; i++) {
-//	            SendByte(i);
-//	            SendBuf(Driver.Motor[i].Prm.ParamsBuf, sizeof(Params_t));
-//	        }
-//	    }
 	    if(Byte == CMD_HANDLE) {
 	        Driver.CmdHandle();
 	    }
 	    else {
 	        Driver.PutToBuf(Byte);
-	        // Send byte to driver
-//	        Motor.Exchange(&Byte);
-//	        Byte = Motor.WriteReadByte(Byte);
-//	        SendByte(Byte); // ECHO
 	    }
 	}
 }
