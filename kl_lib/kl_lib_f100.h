@@ -232,7 +232,7 @@ public:
 #define DBG_UART_ENABLED
 
 #ifdef DBG_UART_ENABLED
-#define UART_TXBUF_SIZE     189
+#define UART_TXBUF_SIZE     512
 #define UART_TX_DMA         STM32_DMA1_STREAM4
 
 class DbgUart_t {

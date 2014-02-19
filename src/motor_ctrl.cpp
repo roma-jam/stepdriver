@@ -158,10 +158,10 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
     }// for
     Uart.Printf("MtrID=%X, CmdID=%X, Addr=%X, Value=%X\r", CmdValues.MtrID, CmdValues.CmdID, CmdValues.Addr, CmdValues.Value);
     Ack.MtrID = CmdValues.MtrID;
-    Ack.CmdID = CmdValues.SrvID+1;
+    Ack.CmdID = CmdValues.CmdID+1;
     Ack.Err = NO_ERROR;
 #if 1 //==== Cmd Execute ====
-    switch (CmdValues.SrvID) {
+    switch (CmdValues.CmdID) {
         case SET_PARAM:
             Uart.Printf("SET_PARAM\r");
 //            Motor[Ack.MtrID].SetParam(CmdValues.Addr, CmdValues.Value);
