@@ -8,45 +8,34 @@
 #include "kl_lib_f100.h"
 #include <stdarg.h>
 #include <string.h>
-#include "tiny_sprintf.h"
 
 // ============================== UART command =================================
 #ifdef DBG_UART_ENABLED
 DbgUart_t Uart;
-static char UartBuf[198];
+
+static inline void FPutChar(char c) { Uart.IPutChar(c); }
+
+void DbgUart_t::IPutChar(char c) {
+    *PWrite++ = c;
+    if(PWrite >= &TXBuf[UART_TXBUF_SIZE]) PWrite = TXBuf;   // Circulate buffer
+}
 
 void DbgUart_t::Printf(const char *format, ...) {
+    uint32_t MaxLength = (PWrite < PRead)? (PRead - PWrite) : ((UART_TXBUF_SIZE + PRead) - PWrite);
     va_list args;
     va_start(args, format);
-    uint32_t Cnt = tiny_vsprintf(UartBuf, format, args);
+    IFullSlotsCount += kl_vsprintf(FPutChar, MaxLength, format, args);
     va_end(args);
-    if(Cnt > UART_TXBUF_SIZE) Cnt = UART_TXBUF_SIZE;    // Shrink too long string
 
+    // Start transmission if Idle
     if(IDmaIsIdle) {
-        memcpy(TXBuf, UartBuf, Cnt);// Place string to buffer from beginning
-        PWrite = TXBuf + Cnt;       // Prepare pointer for next time
-        PRead = TXBuf + Cnt;        // Prepare pointer for next time
-        ICountToSendNext = 0;       // Reset next-time counter
-        // Start DMA
         IDmaIsIdle = false;
-        dmaStreamSetMemory0(STM32_DMA1_STREAM4, TXBuf);
-        dmaStreamSetTransactionSize(STM32_DMA1_STREAM4, Cnt);
-        dmaStreamEnable(STM32_DMA1_STREAM4);
+        dmaStreamSetMemory0(UART_TX_DMA, PRead);
+        uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PRead;    // Char count from PRead to buffer end
+        ITransSize = (IFullSlotsCount > PartSz)? PartSz : IFullSlotsCount;  // How many to transmit now
+        dmaStreamSetTransactionSize(UART_TX_DMA, ITransSize);
+        dmaStreamEnable(UART_TX_DMA);
     }
-    else {
-        ICountToSendNext += Cnt;
-        uint32_t BytesFree = UART_TXBUF_SIZE - (PWrite - TXBuf);
-        if(Cnt < BytesFree) {   // Message fits in buffer, no splitting needed
-            memcpy(PWrite, UartBuf, Cnt);
-            PWrite += Cnt;
-        }
-        else { // Cnt >= BytesFree
-            memcpy(PWrite, UartBuf, BytesFree);
-            uint32_t Remainder = Cnt - BytesFree;
-            if(Remainder) memcpy(TXBuf, &UartBuf[BytesFree], Remainder);
-            PWrite = TXBuf + Remainder;
-        }
-    } // if not idle
 }
 
 // ==== Init & DMA ====
@@ -57,7 +46,7 @@ void DbgUartIrq(void *p, uint32_t flags) { Uart.IRQDmaTxHandler(); }
 void DbgUart_t::Init(uint32_t ABaudrate) {
     PWrite = TXBuf;
     PRead = TXBuf;
-    ICountToSendNext = 0;
+    IFullSlotsCount = 0;
     IDmaIsIdle = true;
     PinSetupAlterFuncOutput(GPIOA, 9, omPushPull);      // TX1
 
@@ -70,9 +59,9 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
 
     // ==== DMA ====
     // Here only the unchanged parameters of the DMA are configured.
-    dmaStreamAllocate     (STM32_DMA1_STREAM4, 1, DbgUartIrq, NULL);
-    dmaStreamSetPeripheral(STM32_DMA1_STREAM4, &USART1->DR);
-    dmaStreamSetMode      (STM32_DMA1_STREAM4,
+    dmaStreamAllocate     (UART_TX_DMA, 1, DbgUartIrq, NULL);
+    dmaStreamSetPeripheral(UART_TX_DMA, &USART1->DR);
+    dmaStreamSetMode      (UART_TX_DMA,
             STM32_DMA_CR_PL(0b10) |     // Priority is high
             STM32_DMA_CR_MSIZE_BYTE |
             STM32_DMA_CR_PSIZE_BYTE |
@@ -86,23 +75,18 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
 
 // ==== IRQs ====
 void DbgUart_t::IRQDmaTxHandler() {
-    dmaStreamDisable(STM32_DMA1_STREAM4);    // Registers may be changed only when stream is disabled
-    if(ICountToSendNext == 0) IDmaIsIdle = true;
+    dmaStreamDisable(UART_TX_DMA);    // Registers may be changed only when stream is disabled
+    IFullSlotsCount -= ITransSize;
+    PRead += ITransSize;
+    if(PRead >= (TXBuf + UART_TXBUF_SIZE)) PRead = TXBuf; // Circulate pointer
+
+    if(IFullSlotsCount == 0) IDmaIsIdle = true; // Nothing left to send
     else {  // There is something to transmit more
-        dmaStreamSetMemory0(STM32_DMA1_STREAM4, PRead);
-        // Handle pointer
-        uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
-        if(ICountToSendNext < BytesLeft) {  // Data fits in buffer without split
-            dmaStreamSetTransactionSize(STM32_DMA1_STREAM4, ICountToSendNext);
-            PRead += ICountToSendNext;
-            ICountToSendNext = 0;
-        }
-        else {  // Some portion of data placed in the beginning
-            dmaStreamSetTransactionSize(STM32_DMA1_STREAM4, BytesLeft);
-            PRead = TXBuf;  // Set pointer to beginning
-            ICountToSendNext -= BytesLeft;
-        }
-        dmaStreamEnable(STM32_DMA1_STREAM4);    // Restart DMA
+        dmaStreamSetMemory0(UART_TX_DMA, PRead);
+        uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PRead;
+        ITransSize = (IFullSlotsCount > PartSz)? PartSz : IFullSlotsCount;
+        dmaStreamSetTransactionSize(UART_TX_DMA, ITransSize);
+        dmaStreamEnable(UART_TX_DMA);    // Restart DMA
     }
 }
 #endif

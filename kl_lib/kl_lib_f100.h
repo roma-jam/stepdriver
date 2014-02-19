@@ -12,6 +12,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "clocking_f100.h"
+#include "kl_sprintf.h"
 
 extern "C" {
 //void _init(void);   // Need to calm linker
@@ -230,18 +231,21 @@ public:
 
 #ifdef DBG_UART_ENABLED
 #define UART_TXBUF_SIZE     189
+#define UART_TX_DMA         STM32_DMA1_STREAM4
 
 class DbgUart_t {
 private:
     uint8_t TXBuf[UART_TXBUF_SIZE];
     uint8_t *PWrite, *PRead;
-    uint16_t ICountToSendNext;
+    uint32_t IFullSlotsCount, ITransSize;
     bool IDmaIsIdle;
 public:
     void Printf(const char *S, ...);
     void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
     void Init(uint32_t ABaudrate);
     void IRQDmaTxHandler();
+
+    void IPutChar(char c);
 };
 
 extern DbgUart_t Uart;
