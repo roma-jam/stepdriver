@@ -30,6 +30,7 @@ void __attribute__ ((weak)) _init(void)  {}
 #define LAST            6
 #define CMD_ERROR       7
 #define WRITE_PROTECT   8
+#define LENGTH_ERROR    9
 
 // IRQ priorities
 #define IRQ_PRIO_LOW            15  // Minimum

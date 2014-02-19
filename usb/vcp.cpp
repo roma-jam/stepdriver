@@ -41,13 +41,16 @@ static void VcpThread(void *arg) {
 
 
 void Vcp_t::IOutTask() {
+    uint8_t Rslt;
 	uint8_t Byte;
 	if(GetByte(&Byte, 20) == OK) {
 	    if(Byte == CMD_HANDLE) {
-	        Driver.CmdHandle();
+	        Rslt = Driver.CmdHandle();
+	        if(Rslt == OK) Printf("&%X,%X,%X\r", Driver.PAckBuf->MtrID, Driver.PAckBuf->CmdID, Driver.PAckBuf->Err);
+	        else Printf("@%X\r", Rslt);
 	    }
 	    else {
-	        Driver.PutToBuf(Byte);
+	        Driver.IPutToBuf(Byte);
 	    }
 	}
 }

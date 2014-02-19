@@ -12,6 +12,8 @@
 
 #define UPDATE_PRM_PRINT
 
+#define NEXT_BYTE(A,B)  {A++;B--;}
+
 Driver_t Driver;
 
 static WORKING_AREA(waDriverThread, 128);
@@ -33,12 +35,16 @@ static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
     else return false;
 }
 
+static inline bool IsDelimeter(uint8_t b) {
+    return (b == ',');
+}
+
 void Driver_t::Init() {
     Spi.Init();
     PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
     NumberOfMotors = SPI_SLAVE_CNT;
     PCmdBuf = Cmd;
-    PAckBuf = Ack.Buf;
+    PAckBuf = &Ack;
     CmdLength = 0;
     if(NumberOfMotors != 0) {
         for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
@@ -80,7 +86,56 @@ void Driver_t::Task() {
 }
 #endif
 
+uint8_t Driver_t::CmdHandle() {
+    uint8_t Rslt = FAILURE;
+    uint8_t *P = Cmd;
+    uint8_t Len = CmdLength;
+//    Uart.Printf("%A\r", P, Len, ' ');
+    switch(*P) {
+        case '#':
+            NEXT_BYTE(P,Len)
+            Uart.Printf("Cmd %A\r", P, Len, ' ');
+            Rslt = ICmdExecute(P, Len);
+            break;
+        case '$':
+            NEXT_BYTE(P,Len)
+            Uart.Printf("Srv %A\r", P, Len, ' ');
+            Rslt = ISrvExecute(P, Len);
+            break;
+        default:
+            Uart.Printf("Start symbol error\r");
+            break;
+    }
+    IResetBuf();
+    return Rslt;
+}
 
+uint8_t Driver_t::ISrvExecute(uint8_t *Ptr, uint8_t ALen) {
+    if(ALen > 5) return LENGTH_ERROR;
+    uint8_t *P = (uint8_t*)&CmdValues;
+    for(uint8_t i=0; i<ALen; i++, Ptr++) {
+        if(IsDelimeter(*Ptr)) P++;
+        else {
+            if(TryConvertToDigit(*Ptr, Ptr)) {
+                (uint8_t&)*P <<= 4;
+                (uint8_t&)*P = *Ptr;
+            }
+            else return CMD_ERROR;
+        }
+    }
+    Uart.Printf("SrvID=%X, Value=%u\r", CmdValues.SrvID, CmdValues.SrvValue);
+    Ack.MtrID = 0x0F;
+    Ack.CmdID = CmdValues.SrvID+1;
+    Ack.Err = OK;
+    return OK;
+}
+
+uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
+    return OK;
+
+}
+
+/*
 void Driver_t::CmdHandle() {
     uint8_t *Ptr = Cmd;
     bool CmdExecute = false;
@@ -384,7 +439,8 @@ void Driver_t::CmdHandle() {
     memset(PCmdBuf, 0, ClearLen);
 }
 
-bool Driver_t::SetNewMotorsNumber(uint8_t NewNumber){
+*/
+bool Driver_t::ISetNewMotorsNumber(uint8_t NewNumber){
     if(NewNumber == NumberOfMotors) return false;
     else {
         for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);

@@ -14,9 +14,9 @@
 #include "string.h"
 
 
-#define CMD_BUF_SZ      99
-#define ACK_BUF_SZ      7
-#define ACK_BUF_ERR_SZ  3
+#define CMD_BUF_SZ      35
+#define BUF_SZ          8
+#define BUF_ERR_SZ      3
 
 #define NEW_NUMBER      0x01
 
@@ -80,24 +80,35 @@ public:
 
 struct CmdBuf_t {
     union {
+        uint8_t Buf[BUF_SZ];
         struct {
-            uint8_t MtrID;
-            uint8_t ID;
-            uint8_t Data[CMD_BUF_SZ-2];
-        };
-        uint8_t Buf[CMD_BUF_SZ];
+            union {
+                uint8_t MtrID;
+                uint8_t SrvID;
+            };
+            union {
+                uint8_t CmdID;
+                uint8_t SrvValue;
+            };
+            uint8_t Err;
+            uint8_t Addr;
+            uint32_t Value;
+        }__attribute__ ((__packed__));;
     };
-};
+}__attribute__ ((__packed__));
 
 struct AckBuf_t {
     union {
         struct {
             uint8_t MtrID;
             uint8_t CmdID;
-            uint8_t Len;
-            uint8_t Data[ACK_BUF_SZ-2];
+            union{
+                uint8_t Len;
+                uint8_t Err;
+            };
+            uint8_t Data[BUF_SZ-2];
         };
-        uint8_t Buf[ACK_BUF_SZ];
+        uint8_t Buf[BUF_SZ];
     };
 };
 
@@ -105,20 +116,25 @@ struct AckBuf_t {
 class Driver_t {
 private:
     uint8_t Cmd[CMD_BUF_SZ];
-//    CmdBuf_t Cmd;
+    CmdBuf_t CmdValues;
     AckBuf_t Ack;
     Thread *PThread;
 public:
-    uint8_t *PCmdBuf, *PAckBuf;
+    uint8_t *PCmdBuf;
+    AckBuf_t *PAckBuf;
     uint8_t CmdLength;
     Motor_t Motor[SPI_SLAVE_CNT];
     uint8_t NumberOfMotors;
-    void PutToBuf(uint8_t AByte) { if(PCmdBuf >= (Cmd + CMD_BUF_SZ)) PCmdBuf = Cmd; *PCmdBuf++ = AByte; CmdLength++; }
     void Init();
-    void CmdHandle();
     void Task();
+    uint8_t CmdHandle();
 
-    bool SetNewMotorsNumber(uint8_t NewNumber);
+    // Inner
+    uint8_t ISrvExecute(uint8_t *Ptr, uint8_t ALen);
+    uint8_t ICmdExecute(uint8_t *Ptr, uint8_t ALen);
+    void IPutToBuf(uint8_t AByte) { if(PCmdBuf >= (Cmd + CMD_BUF_SZ)) PCmdBuf = Cmd; *PCmdBuf++ = AByte; CmdLength++; }
+    void IResetBuf()              { memset(Cmd, 0, CmdLength); PCmdBuf = Cmd; CmdLength = 0; }
+    bool ISetNewMotorsNumber(uint8_t NewNumber);
 };
 
 extern Driver_t Driver;
