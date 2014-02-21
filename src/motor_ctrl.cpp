@@ -40,9 +40,9 @@ static inline bool IsDelimeter(uint8_t b) {
 }
 
 void Driver_t::Init() {
-    Spi.Init();
     PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
     NumberOfMotors = SPI_SLAVE_CNT;
+    Spi.Init(NumberOfMotors);
     PCmdBuf = Cmd;
     PAckBuf = &Ack;
     CmdLength = 0;
@@ -76,6 +76,7 @@ void Driver_t::Task() {
 
             case msIdle:
 //                Motor[i].Move(1, 100);
+                Uart.Printf("Motor %u isIdle\r", i);
                 chThdSleepMilliseconds(999);
                 break;
             case msSleep:
@@ -129,6 +130,16 @@ uint8_t Driver_t::ISrvExecute(uint8_t *Ptr, uint8_t ALen) {
     Ack.MtrID = 0x0F;
     Ack.CmdID = CmdValues.SrvID+1;
     Ack.Err = OK;
+    switch (CmdValues.SrvID) {
+        case NEW_NUMBER:
+            Uart.Printf("NEW_NUMBRE\r");
+            if(!ISetNewMotorsNumber(CmdValues.SrvValue)) return FAILURE;
+            break;
+
+        default:
+            Uart.Printf("SrvID Error\r");
+            break;
+    }
     return OK;
 }
 
@@ -158,7 +169,7 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
     }// for
     Uart.Printf("MtrID=%X, CmdID=%X, Addr=%X, Value=%X\r", CmdValues.MtrID, CmdValues.CmdID, CmdValues.Addr, CmdValues.Value);
     Ack.MtrID = CmdValues.MtrID;
-    if(Ack.MtrID > NumberOfMotors) return FAILURE;
+    if(Ack.MtrID >= NumberOfMotors) return FAILURE;
     Ack.CmdID = CmdValues.CmdID+1;
     Ack.Addr = CmdValues.Addr;
     Ack.Value = CmdValues.Value;
@@ -283,6 +294,7 @@ bool Driver_t::ISetNewMotorsNumber(uint8_t NewNumber){
     else {
         for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
         NumberOfMotors = NewNumber;
+        Spi.NewSlaveCnt(NumberOfMotors);
         Uart.Printf("NumberOfMotors=%u\r", NumberOfMotors);
         for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msInit);
     }

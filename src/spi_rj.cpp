@@ -10,7 +10,7 @@
 
 Spi_t Spi;
 
-void Spi_t::Init() {
+void Spi_t::Init(uint8_t SpiSlaveCnt) {
     // GPIOs
     PinSetupOut(GPIO, NSS, omPushPull, ps50MHz); // CS
     PinSetupAlterFuncOutput(GPIO, SCK, omPushPull, ps50MHz);
@@ -27,6 +27,7 @@ void Spi_t::Init() {
     nvicEnableVector(SPI1_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
 
     State = spiIdle;
+    SlaveCnt = SpiSlaveCnt;
 }
 
 
@@ -45,11 +46,11 @@ void Spi_t::DaisyRxData(uint8_t id, uint8_t Length, uint8_t *ToPtr) {
 
 uint8_t Spi_t::DaisyTxRxByte(uint8_t id, uint8_t AByte) {
 //    if (State == spiBusy) return BUSY;
-    if (id>SPI_SLAVE_CNT) return CMD_ERROR;
+    if (id>SlaveCnt) return CMD_ERROR;
     uint8_t rpl;
 	uint8_t need_to_write, need_to_read;
 	need_to_write = id;
-	need_to_read = (SPI_SLAVE_CNT-1) - id;
+	need_to_read = (SlaveCnt-1) - id;
 	NssLo();
 	while(need_to_read-- > 0) ReadByte();
 	rpl = WriteReadByte(AByte);

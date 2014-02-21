@@ -243,7 +243,7 @@ private:
     bool IDmaIsIdle;
 public:
     void Printf(const char *S, ...);
-    void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
+//    void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
     void Init(uint32_t ABaudrate);
     void IRQDmaTxHandler();
 

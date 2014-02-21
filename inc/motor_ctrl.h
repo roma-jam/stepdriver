@@ -13,6 +13,7 @@
 #include "spi_rj.h"
 #include "string.h"
 
+#define MAX_MOTOR_NUMBER    9
 
 #define CMD_BUF_SZ      35
 #define BUF_SZ          8
@@ -128,7 +129,7 @@ public:
     uint8_t *PCmdBuf;
     AckBuf_t *PAckBuf;
     uint8_t CmdLength;
-    Motor_t Motor[SPI_SLAVE_CNT];
+    Motor_t Motor[MAX_MOTOR_NUMBER];
     uint8_t NumberOfMotors;
     void Init();
     void Task();

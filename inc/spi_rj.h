@@ -48,6 +48,7 @@ enum SpiState_t {
 
 class Spi_t {
 private:
+    uint8_t SlaveCnt;
     SpiState_t State;
 
     inline void Disable()               { SPI->CR1 &= ~SPI_CR1_SPE;      }
@@ -75,7 +76,8 @@ private:
     uint8_t ReadByte() { return WriteReadByte(0x00); }
 
 public:
-    void Init();
+    void Init(uint8_t SpiSlaveCnt);
+    void NewSlaveCnt(uint8_t NewSlaveCnt) { SlaveCnt = NewSlaveCnt; }
     uint8_t DaisyTxRxByte(uint8_t id, uint8_t AByte);
     void DaisyTxRxData(uint8_t id, uint8_t *Ptr, uint8_t Length, uint8_t *ToPtr);
     void DaisyRxData(uint8_t id, uint8_t Length, uint8_t *ToPtr);

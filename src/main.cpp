@@ -29,7 +29,9 @@ int main(void) {
     Init();
     if(!ClkEnable) Uart.Printf("CF=%u\r", ClkEnable);
 
-    while(TRUE) chThdSleepMilliseconds(999);
+    while(TRUE) {
+        chThdSleepMilliseconds(999);
+    }
 }
 
 void Init() {
@@ -37,12 +39,11 @@ void Init() {
     Uart.Init(256000);
     Led.Init();
     Uart.Printf("\rSincahonda  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-
     Driver.Init();
     Usb.Init();
     Vcp.Init();
 
     Usb.Connect();
 
-//    App.Init();
+    App.Init();
 }
