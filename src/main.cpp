@@ -15,6 +15,8 @@
 
 #include "application.h"
 
+Timer_t StepClk;
+
 static inline void Init();
 
 int main(void) {
@@ -29,8 +31,19 @@ int main(void) {
     Init();
     if(!ClkEnable) Uart.Printf("CF=%u\r", ClkEnable);
 
+    StepClk.Init(TIM2);
+    StepClk.Enable();
+    StepClk.InitPwm(GPIOA, 1, 2, invNotInverted);
+    StepClk.SetPrescaler(1000);
+    StepClk.SetTopValue(100);
+    StepClk.SetPwm(50);
+
+//    PinSetupOut(GPIOA, 1, omPushPull, ps50MHz);
+
+
     while(TRUE) {
-        chThdSleepMilliseconds(999);
+//        PinToggle(GPIOA, 1);
+        chThdSleepMilliseconds(249);
     }
 }
 

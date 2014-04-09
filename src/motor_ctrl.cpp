@@ -76,7 +76,6 @@ void Driver_t::Task() {
 
             case msIdle:
 //                Motor[i].Move(1, 100);
-                Uart.Printf("Motor %u isIdle\r", i);
                 chThdSleepMilliseconds(999);
                 break;
             case msSleep:
@@ -254,7 +253,9 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
             break;
 
         case STEP_CLOCK:
-            Uart.Printf("STEP_CLOCK\r");
+            Uart.Printf("STEP_CLOCK Dir %u\r", CmdValues.Value);
+            Motor[Ack.MtrID].StepClock(Ack.Addr);
+            Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Addr);
             break;
 
         case SOFT_STOP:
@@ -385,10 +386,37 @@ void Motor_t::GetParams(uint8_t Addr, uint32_t* PValue) {
     TxBuf[1] = TxBuf[2] = TxBuf[3] = 0;
     Spi.DaisyTxRxData(id, PTxBuf, 4, PRxBuf);
     *PValue = RxBuf[0];
-    if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; }
-    if(RxBuf[2] != 0) { *PValue <<= 8; *PValue |= RxBuf[2]; }
-    if(RxBuf[3] != 0) { *PValue <<= 8; *PValue |= RxBuf[3]; }
-//    Uart.Printf("rx: %A\r", PRxBuf, 4);
+    switch(Addr) {
+        // 3 bytes Value
+        case ADDR_ABS_POS:
+        case ADDR_MARK:
+        case ADDR_SPEED:
+            *PValue = RxBuf[1];
+            *PValue <<= 8;
+            *PValue |= RxBuf[2];
+            *PValue <<= 8;
+            *PValue |= RxBuf[3];
+            break;
+        // 2 bytes Value
+        case ADDR_EL_POS:
+        case ADDR_ACC:
+        case ADDR_DEC:
+        case ADDR_MAX_SPEED:
+        case ADDR_MIN_SPEED:
+        case ADDR_FS_SPD:
+        case ADDR_INT_SPEED:
+        case ADDR_CONFIG:
+        case ADDR_STATUS:
+            *PValue = RxBuf[1];
+            *PValue <<= 8;
+            *PValue |= RxBuf[2];
+            break;
+        // 1 bytes Value
+        default:
+            *PValue = RxBuf[1];
+    } // switch
+
+//    Uart.Printf("rx: %A\r", PRxBuf, 4, ' ');
 }
 
 void Motor_t::Run(uint8_t Dir, uint32_t Speed) {
@@ -397,11 +425,12 @@ void Motor_t::Run(uint8_t Dir, uint32_t Speed) {
     tmp = RUN | (0x01 & Dir);
     TxBuf[0] = tmp;
     TxBuf[1] = ((0x00FF0000 & Speed) >> 16);
-//    if(TxBuf[i] != 0) { SizeTx++, i++; }
+    Uart.Printf("1:%X,", TxBuf[1]);
     TxBuf[2] = ((0x0000FF00 & Speed) >> 8);
-//    if(TxBuf[i] != 0) { SizeTx++, i++; }
+    Uart.Printf("2:%X,", TxBuf[2]);
     TxBuf[3] = (0x000000FF & Speed);
-
+    Uart.Printf("3:%X\r", TxBuf[3]);
+    Uart.Printf("Run:%A\r", PTxBuf, 4, ' ');
     Spi.DaisyTxRxData(id, PTxBuf, 4, PRxBuf);
 }
 

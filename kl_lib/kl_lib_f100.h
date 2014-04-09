@@ -228,11 +228,72 @@ public:
 };
 
 
+#if 1 // ============================== Timers =================================
+enum TmrTrigInput_t {tiITR0=0x00, tiITR1=0x10, tiITR2=0x20, tiITR3=0x30, tiTIED=0x40, tiTI1FP1=0x50, tiTI2FP2=0x60, tiETRF=0x70};
+enum TmrMasterMode_t {mmReset=0x00, mmEnable=0x10, mmUpdate=0x20, mmComparePulse=0x30, mmCompare1=0x40, mmCompare2=0x50, mmCompare3=0x60, mmCompare4=0x70};
+enum TmrSlaveMode_t {smDisable=0, smEncoder1=1, smEncoder2=2, smEncoder3=3, smReset=4, smGated=5, smTrigger=6, smExternal=7};
+enum Inverted_t {invNotInverted, invInverted};
+enum ExtTrigPol_t {etpInverted=0x8000, etpNotInverted=0x0000};
+enum ExtTrigPsc_t {etpOff=0x0000, etpDiv2=0x1000, etpDiv4=0x2000, etpDiv8=0x30000};
+
+class Timer_t {
+private:
+    TIM_TypeDef* ITmr;
+    uint32_t *PClk;
+public:
+    volatile uint16_t *PCCR;    // Made public to allow DMA
+    // Common
+    void Init(TIM_TypeDef* Tmr);
+    void Deinit();
+    void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
+    void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
+    void SetTopValue(uint16_t Value) { ITmr->ARR = Value; }
+    void SetCounter(uint16_t Value) { ITmr->CNT = Value; }
+    uint16_t GetCounter() { return ITmr->CNT; }
+    uint16_t GetTopValue() { return ITmr->ARR; }
+    void SetPrescaler(uint16_t Value) { ITmr->PSC = Value; }
+    void SetUpdateFreq(uint32_t FreqHz) {
+        uint32_t ClkCnt = *PClk / (ITmr->PSC + 1);
+        SetTopValue((ClkCnt / FreqHz) - 1);
+    }
+    void SetCounterFreq(uint32_t CounterFreqHz) { ITmr->PSC = (*PClk / CounterFreqHz) - 1; }
+    // Master/Slave
+    void SetTriggerInput(TmrTrigInput_t TrgInput) {
+        uint16_t tmp = ITmr->SMCR;
+        tmp &= ~TIM_SMCR_TS;   // Clear bits
+        tmp |= (uint16_t)TrgInput;
+        ITmr->SMCR = tmp;
+    }
+    void SelectMasterMode(TmrMasterMode_t MasterMode) {
+        uint16_t tmp = ITmr->CR2;
+        tmp &= ~TIM_CR2_MMS;
+        tmp |= (uint16_t)MasterMode;
+        ITmr->CR2 = tmp;
+    }
+    void SelectSlaveMode(TmrSlaveMode_t SlaveMode) {
+        uint16_t tmp = ITmr->SMCR;
+        tmp &= ~TIM_SMCR_SMS;
+        tmp |= (uint16_t)SlaveMode;
+        ITmr->SMCR = tmp;
+    }
+    void EnableExternalClk(ExtTrigPol_t ExtTrigPol = etpNotInverted, ExtTrigPsc_t ExtTrigPsc = etpOff) { ITmr->SMCR = (uint16_t)ExtTrigPol | (uint16_t)ExtTrigPsc | TIM_SMCR_ECE; }
+    // DMA, Irq, Evt
+    void EnableDmaOnTrigger() { ITmr->DIER |= TIM_DIER_TDE; }
+    void GenerateUpdateEvt()  { ITmr->EGR = TIM_EGR_UG; }
+    void EnableIrqOnUpdate()  { ITmr->DIER |= TIM_DIER_UIE; }
+    void ClearIrqBits()       { ITmr->SR = 0; }
+    // PWM
+    void InitPwm(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted);
+    void SetPwm(uint16_t Value) { *PCCR = Value; }
+};
+#endif
+
+
 // ============================== UART command =================================
 #define DBG_UART_ENABLED
 
 #ifdef DBG_UART_ENABLED
-#define UART_TXBUF_SIZE     512
+#define UART_TXBUF_SIZE     1024
 #define UART_TX_DMA         STM32_DMA1_STREAM4
 
 class DbgUart_t {

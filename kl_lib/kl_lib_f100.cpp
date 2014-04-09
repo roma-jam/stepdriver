@@ -9,6 +9,57 @@
 #include <stdarg.h>
 #include <string.h>
 
+
+#if 1 // ============================= Timer ===================================
+void Timer_t::Init(TIM_TypeDef* Tmr) {
+    ITmr = Tmr;
+    if(ITmr == TIM1)  { rccEnableTIM1(FALSE); }
+    else if(ITmr == TIM2)  { rccEnableTIM2(FALSE); }
+    else if(ITmr == TIM3)  { rccEnableTIM3(FALSE); }
+    else if(ITmr == TIM4)  { rccEnableTIM4(FALSE); }
+    // Clock src
+    if(ANY_OF_3(ITmr, TIM2, TIM3, TIM4)) PClk = &Clk.APB1FreqHz;
+    else PClk = &Clk.APB2FreqHz;
+}
+
+void Timer_t::InitPwm(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted) {
+    // GPIO
+    PinSetupAlterFuncOutput(GPIO, N, omPushPull);
+
+    // Output
+    uint16_t tmp = (Inverted == invInverted)? 0b111 : 0b110; // PWM mode 1 or 2
+    switch(Chnl) {
+        case 1:
+            PCCR = &ITmr->CCR1;
+            ITmr->CCMR1 |= (tmp << 4);
+            ITmr->CCER  |= TIM_CCER_CC1E;
+            break;
+
+        case 2:
+            PCCR = &ITmr->CCR2;
+            ITmr->CCMR1 |= (tmp << 12);
+            ITmr->CCER  |= TIM_CCER_CC2E;
+            break;
+
+        case 3:
+            PCCR = &ITmr->CCR3;
+            ITmr->CCMR2 |= (tmp << 4);
+            ITmr->CCER  |= TIM_CCER_CC3E;
+            break;
+
+        case 4:
+            PCCR = &ITmr->CCR4;
+            ITmr->CCMR2 |= (tmp << 12);
+            ITmr->CCER  |= TIM_CCER_CC4E;
+            break;
+
+        default: break;
+    }
+}
+
+#endif
+
+
 // ============================== UART command =================================
 #ifdef DBG_UART_ENABLED
 DbgUart_t Uart;

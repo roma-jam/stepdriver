@@ -22,7 +22,7 @@ void Spi_t::Init(uint8_t SpiSlaveCnt) {
     Mode(SPI_MODE);
     ClearCR2();                 // Disable all interrupts
     ClearSR();                  // Clear Status Register
-    SetBaud(brDiv4);            // Set baudrate: Fpclk/16 = 48 MHz/16 = 3 Mhz NOTE: max freq 5MHz
+    SetBaud(brDiv16);            // Set baudrate: Fpclk/16 = 48 MHz/16 = 3 Mhz NOTE: max freq 5MHz
     Enable();
     nvicEnableVector(SPI1_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
 
