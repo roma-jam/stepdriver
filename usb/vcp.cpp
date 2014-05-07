@@ -10,8 +10,6 @@
 #include "vcp.h"
 #include "usb_f103.h"
 #include "led.h"
-#include "motor_ctrl.h"
-
 
 Vcp_t Vcp;
 // ==== Line Coding structure ====
@@ -41,27 +39,13 @@ static void VcpThread(void *arg) {
 
 
 void Vcp_t::IOutTask() {
-    uint8_t Rslt;
 	uint8_t Byte;
-	if(GetByte(&Byte, 20) == OK) {
-	    if(Byte == CMD_HANDLE) {
-	        Rslt = Driver.CmdHandle();
-	        if(Rslt == OK) Printf("&%X,%X,%X,%X\r\n", Driver.PAckBuf->MtrID, Driver.PAckBuf->CmdID, Driver.PAckBuf->Err, Driver.PAckBuf->Value);
-	        else Printf("@%X\r\n", Rslt);
-	    }
-	    else {
-	        Driver.IPutToBuf(Byte);
-	    }
-	}
+	if(GetByte(&Byte, 20) == OK) Printf("%c", Byte);
 }
 
 #if 1 // ================== USB events =================
 static void OnUsbReady() {
     Uart.Printf("Ready\r");
-    for(uint8_t i = 0; i < Driver.NumberOfMotors; i++){
-        Uart.Printf("wakeup motor %u\r", i);
-        Driver.Motor[i].SetState(msInit);
-    }
     Usb.PEpBulkOut->StartOutTransaction();
 }
 
