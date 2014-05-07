@@ -37,12 +37,21 @@
 #define CDC_OUTQ_SZ     256
 #define CDC_INQ_SZ      256
 
+// Cmd decode states
+enum RcvState_t {rsStart, rsCmdCode1, rsCmdCode2, rsData1, rsData2};
+
+#define VCP_CMDDATA_SZ     16 // payload bytes
+
 class Vcp_t {
 private:
     uint8_t OutQBuf[CDC_OUTQ_SZ], InQBuf[CDC_INQ_SZ];
     InputQueue UsbOutQueue; // From chibios' point of view, OUT data is input
     OutputQueue UsbInQueue; // From chibios' point of view, IN data is output
-
+    void IProcessByte(uint8_t b);
+    void IResetCmd() { RxState = rsStart; PCmdWrite = CmdData; }
+    RcvState_t RxState;
+    uint8_t CmdCode;
+    uint8_t CmdData[VCP_CMDDATA_SZ], *PCmdWrite;
 public:
     Thread *PThread;
     void Init();
@@ -64,6 +73,8 @@ public:
     }
     void IOutTask();
     void Printf(const char *format, ...);
+    void Cmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) { Printf("#%X,%A\r\n", CmdCode, PData, Length, ' '); }
+    void Ack(uint8_t Result) { Cmd(0x90, &Result, 1); }
 };
 
 extern Vcp_t Vcp;
