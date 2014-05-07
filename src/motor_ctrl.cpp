@@ -253,7 +253,7 @@ uint8_t Driver_t::ICmdExecute(uint8_t *Ptr, uint8_t ALen) {
             break;
 
         case STEP_CLOCK:
-            Uart.Printf("STEP_CLOCK Dir %u\r", CmdValues.Value);
+            Uart.Printf("STEP_CLOCK\r");
             Motor[Ack.MtrID].StepClock(Ack.Addr);
             Uart.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Addr);
             break;

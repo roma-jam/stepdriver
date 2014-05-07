@@ -34,7 +34,7 @@ int main(void) {
     StepClk.Init(TIM2);
     StepClk.Enable();
     StepClk.InitPwm(GPIOA, 1, 2, invNotInverted);
-    StepClk.SetPrescaler(1000);
+    StepClk.SetPrescaler(100);
     StepClk.SetTopValue(100);
     StepClk.SetPwm(50);
 
