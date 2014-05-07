@@ -288,6 +288,60 @@ public:
 };
 #endif
 
+#if 1 // ============================== I2C ====================================
+#define I2C_DMATX_MODE  DMA_PRIORITY_LOW | \
+                        STM32_DMA_CR_MSIZE_BYTE | \
+                        STM32_DMA_CR_PSIZE_BYTE | \
+                        STM32_DMA_CR_MINC |     /* Memory pointer increase */ \
+                        STM32_DMA_CR_DIR_M2P |  /* Direction is memory to peripheral */ \
+                        STM32_DMA_CR_TCIE       /* Enable Transmission Complete IRQ */
+
+#define I2C_DMARX_MODE  DMA_PRIORITY_LOW | \
+                        STM32_DMA_CR_MSIZE_BYTE | \
+                        STM32_DMA_CR_PSIZE_BYTE | \
+                        STM32_DMA_CR_MINC |         /* Memory pointer increase */ \
+                        STM32_DMA_CR_DIR_P2M |      /* Direction is peripheral to memory */ \
+                        STM32_DMA_CR_TCIE           /* Enable Transmission Complete IRQ */
+class i2c_t {
+private:
+    I2C_TypeDef *ii2c;
+    GPIO_TypeDef *IPGpio;
+    uint16_t ISclPin, ISdaPin;
+    uint32_t IBitrateHz;
+    void SendStart()     { ii2c->CR1 |= I2C_CR1_START; }
+    void SendStop()      { ii2c->CR1 |= I2C_CR1_STOP; }
+    void AckEnable()     { ii2c->CR1 |= I2C_CR1_ACK; }
+    void AckDisable()    { ii2c->CR1 &= ~I2C_CR1_ACK; }
+    bool RxIsNotEmpty()  { return (ii2c->SR1 & I2C_SR1_RXNE); }
+    void ClearAddrFlag() { (void)ii2c->SR1; (void)ii2c->SR2; }
+    void DmaLastTransferSet() { ii2c->CR2 |= I2C_CR2_LAST; }
+    // Address and data
+    void SendAddrWithWrite(uint8_t Addr) { ii2c->DR = (uint8_t)(Addr<<1); }
+    void SendAddrWithRead (uint8_t Addr) { ii2c->DR = ((uint8_t)(Addr<<1)) | 0x01; }
+    void SendData(uint8_t b) { ii2c->DR = b; }
+    uint8_t ReceiveData() { return ii2c->DR; }
+    // Flags operations
+    uint8_t IBusyWait();
+    uint8_t WaitEv5();
+    uint8_t WaitEv6();
+    uint8_t WaitEv8();
+    uint8_t WaitAck();
+    uint8_t WaitRx();
+    uint8_t WaitStop();
+    uint8_t WaitBTF();
+public:
+    bool Error;
+    Thread *PRequestingThread;
+    const stm32_dma_stream_t *PDmaTx, *PDmaRx;
+    void Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin, uint32_t BitrateHz,
+            const stm32_dma_stream_t *APDmaTx, const stm32_dma_stream_t *APDmaRx);
+    void Standby();
+    void Resume();
+    void Reset();
+    uint8_t CmdWriteRead(uint8_t Addr, uint8_t *WPtr, uint8_t WLength, uint8_t *RPtr, uint8_t RLength);
+    uint8_t CmdWriteWrite(uint8_t Addr, uint8_t *WPtr1, uint8_t WLength1, uint8_t *WPtr2, uint8_t WLength2);
+};
+#endif
 
 // ============================== UART command =================================
 #define DBG_UART_ENABLED
