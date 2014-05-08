@@ -13,6 +13,7 @@
 #include "hal.h"
 #include "clocking_f100.h"
 #include "kl_sprintf.h"
+#include <cstdlib>
 
 extern "C" {
 //void _init(void);   // Need to calm linker
@@ -367,5 +368,45 @@ public:
 
 extern DbgUart_t Uart;
 #endif
+
+// Big-Endian Writing in array
+class Convert {
+public:
+    static void U16ToArrAsBE(uint8_t *PArr, uint16_t N) {
+        uint8_t *p8 = (uint8_t*)&N;
+        *PArr++ = *(p8 + 1);
+        *PArr   = *p8;
+    }
+    static void U32ToArrAsBE(uint8_t *PArr, uint32_t N) {
+        uint8_t *p8 = (uint8_t*)&N;
+        *PArr++ = *(p8 + 3);
+        *PArr++ = *(p8 + 2);
+        *PArr++ = *(p8 + 1);
+        *PArr   = *p8;
+    }
+    static uint16_t ArrToU16AsBE(uint8_t *PArr) {
+        uint16_t N;
+        uint8_t *p8 = (uint8_t*)&N;
+        *p8++ = *(PArr + 1);
+        *p8 = *PArr;
+        return N;
+    }
+    static uint32_t ArrToU32AsBE(uint8_t *PArr) {
+        uint32_t N;
+        uint8_t *p8 = (uint8_t*)&N;
+        *p8++ = *(PArr + 3);
+        *p8++ = *(PArr + 2);
+        *p8++ = *(PArr + 1);
+        *p8 = *PArr;
+        return N;
+    }
+    static void U16ChangeEndianness(uint16_t *p) { *p = __REV16(*p); }
+    static void U32ChangeEndianness(uint32_t *p) { *p = __REV(*p); }
+    static uint8_t TryStrToNumber(char* S, int32_t *POutput) {
+        char *p;
+        *POutput = strtol(S, &p, 10);
+        return (*p == 0)? OK : FAILURE;
+    }
+};
 
 #endif /* KL_LIB_F100_H_ */

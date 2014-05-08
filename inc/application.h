@@ -11,6 +11,7 @@
 
 #include "kl_lib_f100.h"
 #include "pill_mgr.h"
+#include "vcp.h"
 
 # if 1 // Uart Command Codes. See https://docs.google.com/document/d/14pGuFv6KsG5tB4OmI0qc9f37cWdUVqZpTvvds2y46VY/edit
 #define CMD_PING            0x01
@@ -51,7 +52,7 @@ public:
 
     // Events
     void OnPillConnect();
-    void OnUartCmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length);
+    void OnUartCmd(Cmd_t *PCmd);
 };
 
 extern App_t App;

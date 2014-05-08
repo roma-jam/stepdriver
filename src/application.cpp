@@ -27,21 +27,55 @@ void AppTask() {
 }
 
 #if 1 // ======================= Command processing ============================
-void App_t::OnUartCmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
-    uint8_t b, b2;
-    uint32_t *p32 __attribute__((unused));  // May be unused in some cofigurations
+void App_t::OnUartCmd(Cmd_t *PCmd) {
+    Uart.Printf("%S\r", PCmd->S);
+    char *S;
+    int32_t d;
+    uint8_t b;
 
-    switch(CmdCode) {
-        case CMD_PING: Vcp.Ack(OK); break;
+    S = PCmd->GetNextToken();
+    if(S == NULL) return;
+//    Uart.Printf("%S\r", S);
+    if(strcasecmp(S, "#ping") == 0) Vcp.Ack();
 
-#if 1 // ==== ID ====
+    else if(strcasecmp(S, "#test") == 0) {
+        while((S = PCmd->GetNextToken()) != NULL) {        // Next token exists
+            if(Convert::TryStrToNumber(S, &d) == OK) {  // Next token is number
+                Vcp.Printf("%d ", d);
+            }
+        }
+        Vcp.Ack();
+    }
+
+
+#if 0 // ==== ID ====
+    else if(strcasecmp(S, "#SetID") == 0) {
+        if((S = PCmd->GetNextToken()) != NULL) {        // Next token exists
+            if(Convert::TryStrToNumber(S, &d) == OK) {  // Next token is number
+                b = ISetID(d);
+                Vcp.Ack(b);
+            }
+            else Vcp.Ack(CMD_ERROR);
+        }
+        else Vcp.Ack(CMD_ERROR);
+    }
+
+    else if(strcasecmp(S, "#GetID") == 0) Uart.Printf("#ID %u\r", ID);
+#endif
+//    uint8_t b, b2;
+//    uint32_t *p32 __attribute__((unused));  // May be unused in some cofigurations
+
+//    switch(CmdCode) {
+//        case CMD_PING: Vcp.Ack(OK); break;
+
+#if 0 // ==== ID ====
         case CMD_SET_ID:
             break;
         case CMD_GET_ID:
             break;
 #endif
 
-#if 1 // ==== Pills ====
+#if 0 // ==== Pills ====
         case CMD_PILL_STATE:
             b = PData[0];   // Pill address
             if(b <= 7) {
@@ -74,14 +108,14 @@ void App_t::OnUartCmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             break;
 #endif
 
-        case CMD_SET_TIME:
-            break;
-
-        case CMD_GET_MESH_INFO:
-            break;
-
-        default: Vcp.Ack(CMD_ERROR); break;
-    } // switch
+//        case CMD_SET_TIME:
+//            break;
+//
+//        case CMD_GET_MESH_INFO:
+//            break;
+//
+//        default: Vcp.Ack(CMD_ERROR); break;
+//    } // switch
 }
 #endif
 

@@ -38,73 +38,25 @@ static void VcpThread(void *arg) {
     }
 }
 
-
 void Vcp_t::IOutTask() {
-	uint8_t Byte;
-	if(GetByte(&Byte, 20) == OK) IProcessByte(Byte);
+      uint8_t Byte;
+      if(GetByte(&Byte, 20) == OK) {
+          if(Byte == '\b') PCmdWrite->Backspace();
+          else if((Byte == '\r') or (Byte == '\n')) CompleteCmd();
+          else PCmdWrite->PutChar(Byte);
+      }
 }
 
-static inline uint8_t TryConvertToDigit(uint8_t b, uint8_t *p) {
-    if((b >= '0') and (b <= '9')) {
-        *p = b - '0';
-        return OK;
-    }
-    else if((b >= 'A') and (b <= 'F')) {
-        *p = 0x0A + b - 'A';
-        return OK;
-    }
-    else return FAILURE;
+void Vcp_t::CompleteCmd() {
+    if(PCmdWrite->IsEmpty()) return;
+    chSysLock();
+    PCmdWrite->Finalize();
+    PCmdRead = PCmdWrite;
+    PCmdWrite = (PCmdWrite == &ICmd[0])? &ICmd[1] : &ICmd[0];
+    PCmdWrite->Cnt = 0;
+    chSysUnlock();
+    App.OnUartCmd(PCmdRead);
 }
-static inline bool IsDelimiter(uint8_t b) { return (b == ','); }
-static inline bool IsEnd(uint8_t b) { return (b == '\r') or (b == '\n'); }
-
-void Vcp_t::IProcessByte(uint8_t b) {
-    uint8_t digit=0;
-    if(b == '#') RxState = rsCmdCode1; // If # is received anywhere, start again
-    else switch(RxState) {
-        case rsCmdCode1:
-            if(TryConvertToDigit(b, &digit) == OK) {
-                CmdCode = digit << 4;
-                RxState = rsCmdCode2;
-            }
-            else IResetCmd();
-            break;
-
-        case rsCmdCode2:
-            if(TryConvertToDigit(b, &digit) == OK) {
-                CmdCode |= digit;
-                RxState = rsData1;
-            }
-            else IResetCmd();
-            break;
-
-        case rsData1:
-            if(TryConvertToDigit(b, &digit) == OK) {
-                *PCmdWrite = digit << 4;
-                RxState = rsData2;
-            }
-            else if(IsDelimiter(b)) return; // skip delimiters
-            else if(IsEnd(b)) {
-                App.OnUartCmd(CmdCode, CmdData, (PCmdWrite - CmdData));
-                IResetCmd();
-            }
-            else IResetCmd();
-            break;
-
-        case rsData2:
-            if(TryConvertToDigit(b, &digit) == OK) {
-                *PCmdWrite |= digit;
-                RxState = rsData1;  // Prepare to rx next byte
-                if(PCmdWrite < (CmdData + (VCP_CMDDATA_SZ-1))) PCmdWrite++;
-            }
-            else IResetCmd(); // Delimiters and End symbols are not allowed in the middle of byte
-            break;
-
-        default: break;
-    } // switch
-}
-
-
 
 #if 1 // ================== USB events =================
 static void OnUsbReady() {

@@ -125,7 +125,7 @@ void PrintToQueue(OutputQueue *PQ, const char *format, va_list args) {
             width += c-'0';
         }
 
-        if(c == 's') {
+        if((c == 's') || (c == 'S')) {
             char *s = va_arg(args, char*);
             while(*s != 0) {
                 chOQPut(PQ, *s++);
