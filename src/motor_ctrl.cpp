@@ -321,7 +321,7 @@ uint8_t Motor_t::NOP() {
 
 void Motor_t::SetParamBuf(uint8_t Addr, uint8_t *PBuf, uint8_t ALength) {
     Spi.DaisyTxRxData(id, PBuf, ALength, PRxBuf);
-    Uart.Printf("Tx: %A\r", PTxBuf, 4);
+    Uart.Printf("Tx: %A\r", PTxBuf, 4, ' ');
 }
 
 void Motor_t::SetParam(uint8_t Addr, uint32_t Value) {
@@ -365,13 +365,40 @@ void Motor_t::SetParam(uint8_t Addr, uint32_t Value) {
 }
 
 void Motor_t::GetParams(uint8_t Addr, uint32_t* PValue) {
+    bool FirstSymbol = false;
     TxBuf[0] = GET_PARAM | (0x1F & Addr);
     TxBuf[1] = TxBuf[2] = TxBuf[3] = 0;
     Spi.DaisyTxRxData(id, PTxBuf, 4, PRxBuf);
     *PValue = RxBuf[0];
-    if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; }
-    if(RxBuf[2] != 0) { *PValue <<= 8; *PValue |= RxBuf[2]; }
-    if(RxBuf[3] != 0) { *PValue <<= 8; *PValue |= RxBuf[3]; }
+    // TODO: Need to Fix answer by 1000 e.g.
+    switch(Addr) {
+        // 3 bytes Value
+        case ADDR_ABS_POS:
+        case ADDR_MARK:
+        case ADDR_SPEED:
+            if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; FirstSymbol = true; }
+            if((RxBuf[2] != 0) || FirstSymbol) { *PValue <<= 8; *PValue |= RxBuf[2]; FirstSymbol = true; }
+            if((RxBuf[3] != 0) || FirstSymbol) { *PValue <<= 8; *PValue |= RxBuf[3]; }
+            break;
+        // 2 bytes Value
+        case ADDR_EL_POS:
+        case ADDR_ACC:
+        case ADDR_DEC:
+        case ADDR_MAX_SPEED:
+        case ADDR_MIN_SPEED:
+        case ADDR_FS_SPD:
+        case ADDR_INT_SPEED:
+        case ADDR_CONFIG:
+        case ADDR_STATUS:
+            if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; FirstSymbol = true; }
+            if((RxBuf[2] != 0) || FirstSymbol) { *PValue <<= 8; *PValue |= RxBuf[2]; }
+            break;
+
+        // 1 bytes Value
+        default:
+            if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; }
+            break;
+    } // switch
 //    Uart.Printf("rx: %A\r", PRxBuf, 4);
 }
 
@@ -398,7 +425,7 @@ void Motor_t::Move(uint8_t Dir, uint32_t Step) {
 	TxBuf[1] = ((0x003F0000 & Step) >> 16);
 	TxBuf[2] = ((0x0000FF00 & Step) >> 8);
 	TxBuf[3] =  (0x000000FF & Step);
-
+	Uart.Printf("%A\r", TxBuf, 4, ' ');
 	Spi.DaisyTxRxData(id, PTxBuf, 4, PRxBuf);
 }
 
@@ -471,7 +498,7 @@ void Motor_t::GetStatus(uint32_t *PValue) {
     if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; }
     if(RxBuf[2] != 0) { *PValue <<= 8; *PValue |= RxBuf[2]; }
     if(RxBuf[3] != 0) { *PValue <<= 8; *PValue |= RxBuf[3]; }
-    Uart.Printf("status: %A\r", PRxBuf, 4);
+    Uart.Printf("status: %A\r", PRxBuf, 4, ' ');
 }
 #endif
 
