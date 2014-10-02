@@ -7,6 +7,7 @@
 
 #include "application.h"
 #include "vcp.h"
+#include "motor_ctrl.h"
 
 #if 1 // ==== Init's ====
 App_t App;
@@ -30,13 +31,17 @@ void AppTask() {
 void App_t::OnUartCmd(Cmd_t *PCmd) {
     Uart.Printf("%S\r", PCmd->S);
     char *S;
-    int32_t d;
-
+//    int32_t d;
     S = PCmd->GetNextToken();
     if(S == NULL) return;
-//    Uart.Printf("%S\r", S);
-    if(strcasecmp(S, "#ping") == 0) Vcp.Ack();
+    if(strcasecmp(S, PING) == 0) Vcp.Ack();
 
+    else if(strcasecmp(S, DRIVER_INIT) == 0) {
+        uint8_t Rslt = Driver.Init();
+        Vcp.Ack(Rslt);
+    }
+
+#if 0 // test
     else if(strcasecmp(S, "#test") == 0) {
         while((S = PCmd->GetNextToken()) != NULL) {        // Next token exists
             if(Convert::TryStrToNumber(S, &d) == OK) {  // Next token is number
@@ -45,6 +50,9 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
         }
         Vcp.Ack();
     }
+#endif
+
+    else Vcp.Ack(CMD_ERROR);
 }
 #endif
 

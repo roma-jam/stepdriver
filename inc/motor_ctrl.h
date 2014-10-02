@@ -13,6 +13,7 @@
 #include "spi_rj.h"
 #include "string.h"
 
+#define Rslt_t          uint8_t
 
 #define CMD_BUF_SZ      99
 #define ACK_BUF_SZ      7
@@ -113,7 +114,7 @@ public:
     Motor_t Motor[SPI_SLAVE_CNT];
     uint8_t NumberOfMotors;
     void PutToBuf(uint8_t AByte) { if(PCmdBuf >= (Cmd + CMD_BUF_SZ)) PCmdBuf = Cmd; *PCmdBuf++ = AByte; CmdLength++; }
-    void Init();
+    Rslt_t Init();
     void CmdHandle();
     void Task();
 };

@@ -35,7 +35,7 @@ static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
     else return false;
 }
 
-void Driver_t::Init() {
+Rslt_t Driver_t::Init() {
     Spi.Init();
     PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
     NumberOfMotors = SPI_SLAVE_CNT;
@@ -44,12 +44,11 @@ void Driver_t::Init() {
     CmdLength = 0;
     if(NumberOfMotors != 0) {
         for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
-        Uart.Printf("DriverInit\r");
+        Vcp.Printf("DriverInit\n\r");
+        return OK;
     }
-    else {
-        Uart.Printf("Wrong SPI_SLAVE_CNT value\rDriver Not Init\r");
-    }
-
+    Vcp.Printf("Wrong SPI_SLAVE_CNT value\n\rDriver Not Init\n\r");
+    return FAILURE;
 }
 
 #if 1 // ==== Task ====
@@ -58,16 +57,15 @@ void Driver_t::Task() {
         if(Motor[i].State != Motor[i].NewState) Motor[i].State = Motor[i].NewState;
         switch (Motor[i].State) {
             case msOff:
-//                Motor[i].SetState(msInit);
-//                Uart.Printf("msInit\r");
+                Motor[i].SetState(msInit);
+                Uart.Printf("msInit\r");
                 break;
 
             case msInit:
-                Uart.Printf("%u msInit\r", i);
+                Vcp.Printf("#%u DriverInit\n\r", i);
                 Motor[i].Init(i);
                 Motor[i].UpdatePrm();
                 Motor[i].SetState(msIdle);
-                Uart.Printf("%u msIdle\r", i);
                 break;
 
             case msIdle:
@@ -374,7 +372,7 @@ void Motor_t::UpdatePrm() {
     GetParams(ADDR_DEC, &Prm.dec);
 //    Uart.Printf("%u, dec = %X\r", id, Prm.dec);
     GetParams(ADDR_MAX_SPEED, &Prm.max_speed);
-    Uart.Printf("%u, max_speed = %X\r", id, Prm.max_speed);
+    Vcp.Printf("#%u, max_speed = %X\r", id, Prm.max_speed);
     GetParams(ADDR_MIN_SPEED, &Prm.min_speed);
 //    Uart.Printf("%u, min_speed = %X\r", id, Prm.min_speed);
     GetParams(ADDR_ADC_OUT, &Prm.adc);

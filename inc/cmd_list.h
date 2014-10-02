@@ -9,7 +9,8 @@
 #define CMD_LIST_H_
 
 
-#define PING    "#ping"
+#define PING            "#Ping"
+#define DRIVER_INIT     "#DriverInit"
 
 
 #endif /* CMD_LIST_H_ */

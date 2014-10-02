@@ -93,7 +93,7 @@ public:
     void CompleteCmd();
     void Ack(int Result = OK)  {
         if(Result == OK) Printf("#Ack\r\n");
-        else Printf("#NAck %d\r\n", Result);
+        else Printf("#Err %d\r\n", Result);
     }
 };
 

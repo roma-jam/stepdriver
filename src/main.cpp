@@ -29,7 +29,7 @@ int main(void) {
     if(!ClkEnable) Uart.Printf("CF=%u\r", ClkEnable);
 
     while(TRUE) {
-        chThdSleepMilliseconds(249);
+        chThdSleepMilliseconds(999);
     }
 }
 
@@ -37,7 +37,7 @@ void Init() {
     JtagDisable();
     Uart.Init(115200);
     Led.Init();
-    Uart.Printf("\rStepdriver AHB=%u MHz", Clk.AHBFreqHz/1000000);
+    Uart.Printf("\rStepdriver AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
     Usb.Init();
     Vcp.Init();
 
