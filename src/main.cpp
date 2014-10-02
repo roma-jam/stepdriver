@@ -35,9 +35,9 @@ int main(void) {
 
 void Init() {
     JtagDisable();
-    Uart.Init(256000);
+    Uart.Init(115200);
     Led.Init();
-    Uart.Printf("\rI2CSniff  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+    Uart.Printf("\rStepdriver AHB=%u MHz", Clk.AHBFreqHz/1000000);
     Usb.Init();
     Vcp.Init();
 
