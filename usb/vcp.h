@@ -92,7 +92,7 @@ public:
     Cmd_t ICmd[2], *PCmdWrite = &ICmd[0], *PCmdRead = &ICmd[1];
     void CompleteCmd();
     void Ack(int Result = OK)  {
-        if(Result == OK) Printf("#Ack\r\n");
+        if(Result == OK) Printf("#Ack %X\r\n", Result);
         else Printf("#Err %d\r\n", Result);
     }
     void Rpl(const char* Str, uint32_t Val) {

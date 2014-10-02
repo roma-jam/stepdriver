@@ -20,7 +20,7 @@
 #define VCP_GOTO                "#GoTo"
 #define VCP_GOTODIR             "#GoToDir"
 #define VCP_GOUNTIL             "#GoUntil"
-#define VCP_RELEASE             "#Release"
+#define VCP_RELEASE             "#ReleaseSW"
 #define VCP_GO_HOME             "#GoHome"
 #define VCP_GO_MARK             "#GoMark"
 #define VCP_RESET_POS           "#ResetPos"
