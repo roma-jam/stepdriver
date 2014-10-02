@@ -105,6 +105,7 @@ struct AckBuf_t {
 class Driver_t {
 private:
     uint8_t Cmd[CMD_BUF_SZ];
+    bool _IsInit;
 //    CmdBuf_t Cmd;
     AckBuf_t Ack;
     Thread *PThread;
@@ -115,6 +116,7 @@ public:
     uint8_t NumberOfMotors;
     void PutToBuf(uint8_t AByte) { if(PCmdBuf >= (Cmd + CMD_BUF_SZ)) PCmdBuf = Cmd; *PCmdBuf++ = AByte; CmdLength++; }
     Rslt_t Init();
+    bool IsInit() { return _IsInit; }
     void CmdHandle();
     void Task();
 };

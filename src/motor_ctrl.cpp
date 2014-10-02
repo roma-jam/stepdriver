@@ -23,18 +23,6 @@ static void DriverThread(void *arg) {
     while(1) Driver.Task();
 }
 
-static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
-    if((b >= '0') and (b <= '9')) {
-        *p = b - '0';
-        return true;
-    }
-    else if((b >= 'A') and (b <= 'F')) {
-        *p = 0x0A + b - 'A';
-        return true;
-    }
-    else return false;
-}
-
 Rslt_t Driver_t::Init() {
     Spi.Init();
     PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
@@ -44,11 +32,12 @@ Rslt_t Driver_t::Init() {
     CmdLength = 0;
     if(NumberOfMotors != 0) {
         for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
-        Vcp.Printf("DriverInit\n\r");
-        return OK;
+        Uart.Printf("DriverInit\n\r");
+        _IsInit = true;
+        return VCP_RPL_OK;
     }
     Vcp.Printf("Wrong SPI_SLAVE_CNT value\n\rDriver Not Init\n\r");
-    return FAILURE;
+    return VCP_RPL_FAILURE;
 }
 
 #if 1 // ==== Task ====
@@ -62,7 +51,7 @@ void Driver_t::Task() {
                 break;
 
             case msInit:
-                Vcp.Printf("#%u DriverInit\n\r", i);
+                Vcp.Printf("#DriverInit\n\r");
                 Motor[i].Init(i);
                 Motor[i].UpdatePrm();
                 Motor[i].SetState(msIdle);
@@ -80,56 +69,7 @@ void Driver_t::Task() {
 }
 #endif
 
-
-void Driver_t::CmdHandle() {
-    uint8_t *Ptr = Cmd;
-    bool CmdExecute = false;
-    uint32_t ClearLen = CmdLength;
-//    Uart.Printf("%A\r", Ptr, CmdLength);
-
-#if 1 // ==== UniCode ====
-    if(CmdLength == 0) Uart.Printf("Wromg Cmd\r");
-    else {
-        if(*Ptr++ != '#') Uart.Printf("Error # symbol\r");
-        else {
-            CmdLength--;
-            if(!TryConvertToDigit(*Ptr++, &Ack.MtrID)) Uart.Printf("MotorID Error\r");
-            else {
-                if(Ack.MtrID >= NumberOfMotors) Uart.Printf("MotorID=%u doesn't exist\r", Ack.MtrID);
-                else {
-                    CmdLength--;
-                    if(*Ptr++ != ',') Uart.Printf("Wrong delimeter\r");
-                    else {
-                        CmdLength--;
-                        TryConvertToDigit(*Ptr, Ptr);
-                        Ack.CmdID = *Ptr++;
-                        CmdLength--;
-                        if(*Ptr != ',') {
-                            Ack.CmdID <<= 4;
-                            TryConvertToDigit(*Ptr, Ptr);
-                            Ack.CmdID |= *Ptr++;
-                            CmdLength--;
-                        }
-                        if(CmdLength == 0x00) {
-                            CmdExecute = true;
-                        }
-                        else { // Next Symbols are present
-                            if(*Ptr++ != ',') Uart.Printf("Wrong CmdID or delimeter\r");
-                            else {
-                                CmdLength--;
-                                CmdExecute = true;
-                            }  // long cmd
-                        } // short cmd
-                    } // correct 2delimetr
-                } // correct number of motors
-            } // correct motorID
-        } // correct start symbol
-    } // cmd len != 0
-#endif
-    if(CmdExecute) {
-#if 1 //==== Cmd Execute ====
-        switch (Ack.CmdID) {
-
+#if 0 // old
             case SET_PARAM:
                 Ack.CmdID++;
                 if(CmdLength < 1) Ack.Len = 0xFF;
@@ -342,13 +282,6 @@ void Driver_t::CmdHandle() {
                 break;
         } // switch
 #endif
-    } // CmdExecute
-//    Uart.Printf("Cmd Handled\r");
-    CmdLength = 0;
-    PCmdBuf = Cmd;
-    memset(PCmdBuf, 0, ClearLen);
-}
-
 
 #if 1 // ==== Motors ====
 void Motor_t::Init(uint8_t AssignId) {
@@ -372,7 +305,7 @@ void Motor_t::UpdatePrm() {
     GetParams(ADDR_DEC, &Prm.dec);
 //    Uart.Printf("%u, dec = %X\r", id, Prm.dec);
     GetParams(ADDR_MAX_SPEED, &Prm.max_speed);
-    Vcp.Printf("#%u, max_speed = %X\r", id, Prm.max_speed);
+    Vcp.Printf("#Max_speed %X\r", Prm.max_speed);
     GetParams(ADDR_MIN_SPEED, &Prm.min_speed);
 //    Uart.Printf("%u, min_speed = %X\r", id, Prm.min_speed);
     GetParams(ADDR_ADC_OUT, &Prm.adc);

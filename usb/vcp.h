@@ -95,6 +95,9 @@ public:
         if(Result == OK) Printf("#Ack\r\n");
         else Printf("#Err %d\r\n", Result);
     }
+    void Rpl(const char* Str, uint32_t Val) {
+        Printf(Str, Val);
+    }
 };
 
 extern Vcp_t Vcp;
