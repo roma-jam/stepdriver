@@ -194,6 +194,7 @@ void Usb_t::ICtrHandlerOUT(uint16_t EpID, uint16_t Epr) {
         ep->StartOutTransaction();
         // WakeUp VcpThd
         if(Vcp.PThread != nullptr) {
+            Vcp.BytesToRead = Len;
             chSysLockFromIsr();
             chSchReadyI(Vcp.PThread);
             chSysUnlockFromIsr();

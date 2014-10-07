@@ -49,11 +49,9 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
             if((Param = strtoll(S, &S, 16)) != 0) {
                 Uart.Printf("Param: %X\r", Param);
                 S = PCmd->GetNextToken();
-                if((Value = strtoll(S, &S, 16)) != 0) {
-                    Uart.Printf("Value: %X\r", Value);
-                    Driver.Motor[DEFAULT_ID].SetParam(Param, Value);
-                } // if Value
-                else Rslt = VCP_RPL_CMD_ERROR;
+                Value = strtoll(S, &S, 16);
+                Uart.Printf("Value: %X\r", Value);
+                Driver.Motor[DEFAULT_ID].SetParam(Param, Value);
             } // if Param
             else Rslt = VCP_RPL_CMD_ERROR;
             Vcp.Ack(Rslt);
@@ -255,6 +253,13 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
             Vcp.Ack();
         }
     #endif
+
+#if 1 // Service
+        else if(strcasecmp(S, VCP_UPDATE_PARAM) == 0) {
+            Uart.Printf("VCP_UPDATE_PARAM\r");
+            Driver.Motor[DEFAULT_ID].UpdatePrm();
+        }
+#endif
 
         else Vcp.Ack(VCP_RPL_CMD_UNKNOWN);
     } // if Dirver init

@@ -69,6 +69,7 @@ private:
     OutputQueue UsbInQueue; // From chibios' point of view, IN data is output
 public:
     Thread *PThread;
+    uint8_t BytesToRead;
     void Init();
     void SendByte(uint8_t AByte) {
         chOQPutTimeout(&UsbInQueue, AByte, TIME_INFINITE);
@@ -86,14 +87,23 @@ public:
         }
         else return FAILURE;
     }
+    uint8_t ReadBytes(uint8_t *ToPtr, uint32_t *PSize) {
+        msg_t r = chIQReadTimeout(&UsbOutQueue, ToPtr, 20, TIME_INFINITE);
+        if(r > 0) {
+            Uart.Printf("Recieve %u\r", (uint8_t)r);
+            *PSize = (uint32_t)r;
+            return OK;
+        }
+        else return FAILURE;
+    }
     void IOutTask();
     void Printf(const char *format, ...);
 
     Cmd_t ICmd[2], *PCmdWrite = &ICmd[0], *PCmdRead = &ICmd[1];
     void CompleteCmd();
     void Ack(int Result = OK)  {
-        if(Result == OK) Printf("#Ack %X\r\n", Result);
-        else Printf("#Err %d\r\n", Result);
+        if(Result == OK) Printf("#Ack %X\n\r", Result);
+        else Printf("#Err %d\n\r", Result);
     }
     void Rpl(const char* Str, uint32_t Val) {
         Printf(Str, Val);

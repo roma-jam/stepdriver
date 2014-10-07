@@ -58,8 +58,10 @@ void Driver_t::Task() {
                 break;
 
             case msIdle:
-//                Motor[i].Move(1, 100);
-                chThdSleepMilliseconds(999);
+//                Motor[i].Run(1, 0x9508);
+//                chThdSleepMilliseconds(1999);
+//                Motor[i].Run(0, 0x9508);
+                chThdSleepMilliseconds(1999);
                 break;
             case msSleep:
                 chThdSleepMilliseconds(999);
@@ -67,220 +69,6 @@ void Driver_t::Task() {
         }
     }
 }
-#endif
-
-#if 0 // old
-            case SET_PARAM:
-                Ack.CmdID++;
-                if(CmdLength < 1) Ack.Len = 0xFF;
-                else {
-                    uint32_t NewValue=0;
-                    uint8_t Addr=0, tmp=0;
-                    Uart.Printf("SET_PARAM\r");
-                    do {
-                        if(!TryConvertToDigit(*Ptr, &tmp)) { Uart.Printf("Addr Error\r"); break; }
-                        Addr <<= 4;
-                        Addr |= tmp;
-                        Ptr++;
-                        CmdLength--;
-                    } while(*Ptr != ',');
-                    Ptr++;
-                    CmdLength--;
-                    do {
-                        if(!TryConvertToDigit(*Ptr++, &tmp)) { Uart.Printf("Value Error\r"); break; }
-                        NewValue <<= 4;
-                        NewValue |= tmp;
-                        CmdLength--;
-                    } while(CmdLength != 0);
-                    Uart.Printf("Addr=%X, Value=%X\r", Addr, NewValue);
-                    Motor[Ack.MtrID].SetParam(Addr, NewValue);
-                    Ack.Len = 0x00;
-                }
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case GET_PARAM:
-                Ack.CmdID++;
-                if(CmdLength < 1) {
-                    Ack.Len = 0xFF;
-                    Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                }
-                else {
-                    uint32_t Rep;
-                    uint8_t Addr=0, tmp=0;
-                    Uart.Printf("GET_PARAM\r");
-                    do {
-                        if(!TryConvertToDigit(*Ptr++, &tmp)) { Uart.Printf("Step Not Number\r"); break; }
-                        Addr <<= 4;
-                        Addr |= tmp;
-                        CmdLength--;
-                    } while(CmdLength > 0);
-                    Motor[Ack.MtrID].GetParams(Addr, &Rep);
-                    Vcp.Printf("&%u,%X,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Addr, Rep);
-                }
-                break;
-
-            case GOTO:
-                Ack.CmdID++;
-                if(CmdLength < 1) Ack.Len = 0xFF;
-                else {
-//                    Motor[Ack.MtrID].GoTo();
-                }
-                Uart.Printf("GOTO\r");
-                break;
-
-            case GOTODIR:
-                Uart.Printf("GOTODIR\r");
-                break;
-
-            case GOUNTIL:
-                Uart.Printf("GOUNTIL\r");
-                break;
-
-            case RELEASE:
-                Ack.CmdID++;
-                if(CmdLength < 1) Ack.Len = 0xFF;
-                else {
-//                    Motor[Ack.MtrID].ReleaseSW();
-                    Uart.Printf("RELEASE\r");
-                }
-
-                break;
-
-            case GO_HOME:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].GoHome();
-                Ack.Len = 0x00;
-                Uart.Printf("GO_HOME\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case GO_MARK:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].GoMark();
-                Ack.Len = 0x00;
-                Uart.Printf("GO_MARK\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case RESET_POS:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].ResetPos();
-                Ack.Len = 0x00;
-                Uart.Printf("RESET_POS\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case SOFT_HiZ:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].SoftHiZ();
-                Ack.Len = 0x00;
-                Uart.Printf("SOFT_HiZ\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case HARD_HiZ:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].HardHiZ();
-                Ack.Len = 0x00;
-                Uart.Printf("HARD_HiZ\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case RESET_DEVICE:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].ResetDevice();
-                Ack.Len = 0x00;
-                Uart.Printf("RESET_DEVICE\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case RUN:
-                Ack.CmdID++;
-                if(CmdLength < 1) Ack.Len = 0xFF;
-                else {
-                    uint32_t Speed=0;
-                    uint8_t Dir=0, tmp=0;
-                    Uart.Printf("RUN\r");
-                    TryConvertToDigit(*Ptr++, &Dir);
-                    CmdLength--;
-                    if(Dir > 1) { Uart.Printf("Error Dir\r"); break; }
-                    if(*Ptr++ != ',') { Uart.Printf("Wromg Dir delimeter\r"); break; }
-                    CmdLength--;
-                    do {
-                        if(!TryConvertToDigit(*Ptr++, &tmp)) { Uart.Printf("Speed Not Number\r"); break; }
-                        Speed <<= 4;
-                        Speed |= tmp;
-                        CmdLength--;
-                    } while(CmdLength > 0);
-                    Uart.Printf("dir=%u, speed=%X\r", Dir, Speed);
-                    Motor[Ack.MtrID].Run(Dir, Speed);
-                    Ack.Len = 0x00;
-                }
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case STEP_CLOCK:
-                Uart.Printf("STEP_CLOCK\r");
-                break;
-
-            case SOFT_STOP:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].SoftStop();
-                Ack.Len = 0x00;
-                Uart.Printf("SOFT_STOP\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case MOVE:
-                Ack.CmdID++;
-                if(CmdLength < 1) Ack.Len = 0xFF;
-                else {
-                    uint32_t Steps=0;
-                    uint8_t Step=0;
-                    uint8_t Dir;
-                    Uart.Printf("MOVE\r");
-
-                    TryConvertToDigit(*Ptr++, &Dir);
-                    CmdLength--;
-                    if(Dir > 1) { Uart.Printf("Error Dir\r"); break; }
-                    if(*Ptr++ != ',') { Uart.Printf("Wromg Dir delimeter\r"); break; }
-                    CmdLength--;
-                    do {
-                        if(!TryConvertToDigit(*Ptr++, &Step)) { Uart.Printf("Step Not Number\r"); break; }
-//                        Steps = (Steps*10) + Step;
-                        Steps <<= 4;
-                        Steps |= Step;
-                        CmdLength--;
-                    } while(CmdLength > 0);
-                    Uart.Printf("dir=%u, step=%X\r", Dir, Steps);
-                    Motor[Ack.MtrID].Move(Dir, Steps);
-                    Ack.Len = 0x00;
-                }
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case HARD_STOP:
-                Ack.CmdID++;
-                Motor[Ack.MtrID].HardStop();
-                Ack.Len = 0x00;
-                Uart.Printf("HARD_STOP\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Ack.Len);
-                break;
-
-            case GET_STATUS:
-                Ack.CmdID++;
-                uint32_t Status;
-                Motor[Ack.MtrID].GetStatus(&Status);
-                Ack.Len = 0x00;
-                Uart.Printf("GET_STATUS\r");
-                Vcp.Printf("&%u,%X,%X\r\n", Ack.MtrID, Ack.CmdID, Status);
-                break;
-
-            default:
-                Uart.Printf("CmdID Error\r");
-                break;
-        } // switch
 #endif
 
 #if 1 // ==== Motors ====
@@ -293,23 +81,23 @@ void Motor_t::Init(uint8_t AssignId) {
 
 void Motor_t::UpdatePrm() {
     GetParams(ADDR_ABS_POS, &Prm.curr_pos);
-//    Uart.Printf("%u, abs_pos = %X\r", id, Prm.curr_pos);
+//    Vcp.Printf("#AbsPos %X\n\r", Prm.curr_pos);
     GetParams(ADDR_EL_POS, &Prm.el_pos);
-//    Uart.Printf("%u, el_pos = %X\r", id, Prm.el_pos);
+//    Vcp.Printf("#ElPos %X\n\r", Prm.el_pos);
     GetParams(ADDR_MARK, &Prm.mark_pos);
-//    Uart.Printf("%u, mark_pos = %X\r", id, Prm.mark_pos);
+//    Vcp.Printf("#MarkPos %X\n\r", Prm.mark_pos);
     GetParams(ADDR_SPEED, &Prm.speed);
-//    Uart.Printf("%u, speed = %X\r", id, Prm.speed);
+//    Vcp.Printf("#Speed %X\n\r", Prm.speed);
     GetParams(ADDR_ACC, &Prm.acc);
-//    Uart.Printf("%u, acc = %X\r", id, Prm.acc);
+    Vcp.Printf("#Acc %X\n\r", Prm.acc);
     GetParams(ADDR_DEC, &Prm.dec);
-//    Uart.Printf("%u, dec = %X\r", id, Prm.dec);
+    Vcp.Printf("#Dec %X\n\r", Prm.dec);
     GetParams(ADDR_MAX_SPEED, &Prm.max_speed);
-    Vcp.Printf("#Max_speed %X\r", Prm.max_speed);
+    Vcp.Printf("#MaxSpeed %X\n\r", Prm.max_speed);
     GetParams(ADDR_MIN_SPEED, &Prm.min_speed);
-//    Uart.Printf("%u, min_speed = %X\r", id, Prm.min_speed);
+    Vcp.Printf("#MinSpeed %X\n\r", Prm.min_speed);
     GetParams(ADDR_ADC_OUT, &Prm.adc);
-//    Uart.Printf("%u, adc = %X\r", id, Prm.adc);
+//    Vcp.Printf("#Adc %X\n\r", Prm.adc);
 }
 #endif
 

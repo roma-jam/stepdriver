@@ -24,7 +24,7 @@
 #define VCP_GO_HOME             "#GoHome"
 #define VCP_GO_MARK             "#GoMark"
 #define VCP_RESET_POS           "#ResetPos"
-#define VCP_SOFT_HiZ            "#SofHiZ"
+#define VCP_SOFT_HiZ            "#SoftHiZ"
 #define VCP_HARD_HiZ            "#HardHiZ"
 #define VCP_RESET_DEVICE        "#ResetDevice"
 #define VCP_RUN                 "#Run"
@@ -33,6 +33,7 @@
 #define VCP_SOFT_STOP           "#SoftStop"
 #define VCP_HARD_STOP           "#HardStop"
 #define VCP_GET_STATUS          "#GetStatus"
+#define VCP_UPDATE_PARAM        "#UpdateParam"
 
 #define VCP_RPL_OK              0
 #define VCP_RPL_FAILURE         1

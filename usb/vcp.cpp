@@ -39,12 +39,13 @@ static void VcpThread(void *arg) {
 }
 
 void Vcp_t::IOutTask() {
-      uint8_t Byte;
-      if(GetByte(&Byte, 20) == OK) {
-          if(Byte == '\b') PCmdWrite->Backspace();
-          else if((Byte == '\r') or (Byte == '\n')) CompleteCmd();
-          else PCmdWrite->PutChar(Byte);
-      }
+    uint8_t Byte = 0;
+    do {
+        GetByte(&Byte);
+        if(Byte == '\b') PCmdWrite->Backspace();
+        else if((Byte == '\r') or (Byte == '\n')) CompleteCmd();
+        else PCmdWrite->PutChar(Byte);
+    } while(--BytesToRead != 0);
 }
 
 void Vcp_t::CompleteCmd() {
