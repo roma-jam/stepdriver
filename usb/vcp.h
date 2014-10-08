@@ -38,6 +38,7 @@
 #define CDC_INQ_SZ      256
 
 #define DELIMITERS      " ,"
+#define END_OF_COMMAND  "\n\r"
 
 #define VCP_CMDDATA_SZ     16 // payload bytes
 #define VCP_CMD_BUF_SZ     36 // payload bytes
@@ -101,13 +102,7 @@ public:
 
     Cmd_t ICmd[2], *PCmdWrite = &ICmd[0], *PCmdRead = &ICmd[1];
     void CompleteCmd();
-    void Ack(int Result = OK)  {
-        if(Result == OK) Printf("#Ack %X\n\r", Result);
-        else Printf("#Err %d\n\r", Result);
-    }
-    void Rpl(const char* Str, uint32_t Val) {
-        Printf(Str, Val);
-    }
+    void CmdRpl(uint8_t ErrCode, uint32_t Length = 0, ...);
 };
 
 extern Vcp_t Vcp;

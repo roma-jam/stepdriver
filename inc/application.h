@@ -45,13 +45,17 @@
 class App_t {
 private:
     uint8_t UartRplBuf[UART_RPL_BUF_SZ];
+
 public:
     Thread *PThd;
+    uint32_t GlideTrackMaxStep;
+    uint32_t StepSize, TimeDelay;
     void Init();
 
     // Events
     void OnPillConnect();
     void OnUartCmd(Cmd_t *PCmd);
+    void TimeLapseStart();
 };
 
 extern App_t App;

@@ -35,9 +35,17 @@
 #define VCP_GET_STATUS          "#GetStatus"
 #define VCP_UPDATE_PARAM        "#UpdateParam"
 
+// Logic command
+#define VCP_GLIDETRACK_SIZE_SET "#SetSize"
+#define VCP_TIMELAPSE_PARAM     "#TimelapseParam"
+#define VCP_TIMELAPSE_START     "#TimelapseStart"
+#define VCP_TIMELAPSE_STOP      "#TimelapseStop"
+
+
 #define VCP_RPL_OK              0
 #define VCP_RPL_FAILURE         1
 #define VCP_RPL_CMD_ERROR       2
 #define VCP_RPL_CMD_UNKNOWN     3
+#define VCP_RPL_INIT_TIMEOUT    4
 
 #endif /* CMD_LIST_H_ */

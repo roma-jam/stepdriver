@@ -24,20 +24,27 @@ static void DriverThread(void *arg) {
 }
 
 Rslt_t Driver_t::Init() {
+    if(_IsInit) return VCP_RPL_OK;
     Spi.Init();
-    PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
     NumberOfMotors = SPI_SLAVE_CNT;
+    if(NumberOfMotors == 0) { Uart.Printf("Wrong SPI_SLAVE_CNT value\n\rDriver Not Init\n\r"); return VCP_RPL_FAILURE; }
+    for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msSleep);
+    if(PThread == nullptr) PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
     PCmdBuf = Cmd;
     PAckBuf = Ack.Buf;
     CmdLength = 0;
-    if(NumberOfMotors != 0) {
-        for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
-        Uart.Printf("DriverInit\n\r");
-        _IsInit = true;
-        return VCP_RPL_OK;
-    }
-    Vcp.Printf("Wrong SPI_SLAVE_CNT value\n\rDriver Not Init\n\r");
-    return VCP_RPL_FAILURE;
+    for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
+    // wait until we powered on correctly
+    uint32_t Timeout = 0;
+    do {
+        chThdSleepMilliseconds(100);
+        Timeout++;
+        if (Motor[DEFAULT_ID].isPowered()) {
+            _IsInit = true;
+            return VCP_RPL_OK;
+        }
+    } while (Timeout < DRIVER_INIT_TIMEOUT);
+    return VCP_RPL_INIT_TIMEOUT;
 }
 
 #if 1 // ==== Task ====
@@ -51,10 +58,14 @@ void Driver_t::Task() {
                 break;
 
             case msInit:
-                Vcp.Printf("#DriverInit\n\r");
                 Motor[i].Init(i);
                 Motor[i].UpdatePrm();
                 Motor[i].SetState(msIdle);
+                if(Motor[i].Prm.max_speed != 0) {
+                    Motor[i].PoweredOn();
+                    Uart.Printf("#DriverInit\r");
+                }
+                else Uart.Printf("#PoweredOff\r");
                 break;
 
             case msIdle:
@@ -89,13 +100,13 @@ void Motor_t::UpdatePrm() {
     GetParams(ADDR_SPEED, &Prm.speed);
 //    Vcp.Printf("#Speed %X\n\r", Prm.speed);
     GetParams(ADDR_ACC, &Prm.acc);
-    Vcp.Printf("#Acc %X\n\r", Prm.acc);
+//    Vcp.Printf("#Acc %X\n\r", Prm.acc);
     GetParams(ADDR_DEC, &Prm.dec);
-    Vcp.Printf("#Dec %X\n\r", Prm.dec);
+//    Vcp.Printf("#Dec %X\n\r", Prm.dec);
     GetParams(ADDR_MAX_SPEED, &Prm.max_speed);
-    Vcp.Printf("#MaxSpeed %X\n\r", Prm.max_speed);
+//    Vcp.Printf("#MaxSpeed %X\n\r", Prm.max_speed);
     GetParams(ADDR_MIN_SPEED, &Prm.min_speed);
-    Vcp.Printf("#MinSpeed %X\n\r", Prm.min_speed);
+//    Vcp.Printf("#MinSpeed %X\n\r", Prm.min_speed);
     GetParams(ADDR_ADC_OUT, &Prm.adc);
 //    Vcp.Printf("#Adc %X\n\r", Prm.adc);
 }

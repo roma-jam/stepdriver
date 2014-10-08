@@ -13,11 +13,13 @@
 #include "spi_rj.h"
 #include "string.h"
 
-#define Rslt_t          uint8_t
+#define Rslt_t              uint8_t
+#define DRIVER_INIT_TIMEOUT 10
 
-#define CMD_BUF_SZ      99
-#define ACK_BUF_SZ      7
-#define ACK_BUF_ERR_SZ  3
+
+#define CMD_BUF_SZ          99
+#define ACK_BUF_SZ          7
+#define ACK_BUF_ERR_SZ      3
 
 enum MotorState_t {
 	msIdle, msInit, msOff, msSleep
@@ -48,9 +50,12 @@ private:
     uint8_t id;
     uint8_t TxBuf[4], RxBuf[4];
     uint8_t *PTxBuf, *PRxBuf;
+    bool isPoweredOn;
 public:
     MotorState_t State, NewState;
     Params_t Prm;
+    void PoweredOn() { isPoweredOn = true; }
+    bool isPowered() { return isPoweredOn; }
     void Init(uint8_t AssignId);
 
     void SetState(MotorState_t AState) { NewState = AState; }

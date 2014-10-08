@@ -59,6 +59,19 @@ void Vcp_t::CompleteCmd() {
     App.OnUartCmd(PCmdRead);
 }
 
+void Vcp_t::CmdRpl(uint8_t ErrCode, uint32_t Length, ...) {
+    uint32_t Buf[Length];
+    if(Length != 0) {
+        va_list Arg;
+        va_start(Arg, Length);
+        for (uint32_t i=0; i<Length; i++) Buf[i] = (uint32_t)va_arg(Arg, int);
+        va_end(Arg);
+    }
+    if(ErrCode == VCP_RPL_OK) Printf("#Ack %X %A" END_OF_COMMAND, ErrCode, Buf, Length, ' ');
+    else Printf("#Err %X" END_OF_COMMAND, ErrCode);
+}
+
+
 #if 1 // ================== USB events =================
 static void OnUsbReady() {
     Uart.Printf("Ready\r");

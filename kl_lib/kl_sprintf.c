@@ -90,7 +90,7 @@ uint32_t kl_vsprintf(ftVoidChar PPutChar, uint32_t MaxLength, const char *format
 }
 
 void PutUint2Q(OutputQueue *PQ, unsigned int n, unsigned int base, int width, bool zero_padded) {
-    char digits[10];
+    uint32_t digits[10];
     int len = 0;
     do {
         unsigned int digit = n%base;
@@ -100,7 +100,7 @@ void PutUint2Q(OutputQueue *PQ, unsigned int n, unsigned int base, int width, bo
 
     for(int i = len; i < width; i++)
         if (zero_padded) chOQPutTimeout(PQ, '0', TIME_IMMEDIATE);
-        else             chOQPutTimeout(PQ, ' ', TIME_IMMEDIATE);
+//        else             chOQPutTimeout(PQ, ' ', TIME_IMMEDIATE);
     while(len > 0) chOQPutTimeout(PQ, digits[--len], TIME_IMMEDIATE);
 }
 
@@ -150,14 +150,14 @@ void PrintToQueue(OutputQueue *PQ, const char *format, va_list args) {
             PutUint2Q(PQ, n, 10, 0, false);
         }
         else if (c == 'A') {
-            uint8_t *arr = va_arg(args, uint8_t*);
+            uint32_t *arr = va_arg(args, uint32_t*);
             int n = va_arg(args, int);
             unsigned int Delimiter = va_arg(args, unsigned int);
             for(int i = 0; i < n; i++) {
                 if(i > 0) {
                     if(Delimiter != 0) chOQPutTimeout(PQ, Delimiter, TIME_IMMEDIATE);
                 }
-                PutUint2Q(PQ, arr[i], 16, 2, true);
+                PutUint2Q(PQ, arr[i], 16, 8, false);
             }
         }
     } // while
