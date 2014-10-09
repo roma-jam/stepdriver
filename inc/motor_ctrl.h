@@ -14,7 +14,7 @@
 #include "string.h"
 
 #define Rslt_t              uint8_t
-#define DRIVER_INIT_TIMEOUT 10
+#define DRIVER_INIT_TIMEOUT 20
 
 
 #define CMD_BUF_SZ          99
@@ -22,7 +22,7 @@
 #define ACK_BUF_ERR_SZ      3
 
 enum MotorState_t {
-	msIdle, msInit, msOff, msSleep
+	msIdle, msInit, msOff, msReset, msSleep, msTimeLapse, msGoHome
 };
 
 struct Params_t {
@@ -59,8 +59,17 @@ public:
     void Init(uint8_t AssignId);
 
     void SetState(MotorState_t AState) { NewState = AState; }
+    void DoInit()   { SetState(msInit);  }
+    void DoSleep()  { SetState(msSleep); }
+    void DoIdle()   { SetState(msIdle);  }
+    void DoReset()  { SetState(msReset); }
+    void DoGoHome() { SetState(msGoHome);}
     void UpdatePrm();
-
+    uint32_t GetPosition() {
+        uint32_t Pos;
+        GetParams(ADDR_ABS_POS, &Pos);
+        return Pos;
+    }
     uint8_t NOP();
     void SetParamBuf(uint8_t Addr, uint8_t *PBuf, uint8_t ALength);
     void SetParam(uint8_t Addr, uint32_t Value);

@@ -37,9 +37,9 @@
 
 // Logic command
 #define VCP_GLIDETRACK_SIZE_SET "#SetSize"
-#define VCP_TIMELAPSE_PARAM     "#TimelapseParam"
-#define VCP_TIMELAPSE_START     "#TimelapseStart"
-#define VCP_TIMELAPSE_STOP      "#TimelapseStop"
+#define VCP_TIMELAPSE_PARAM     "#TLParam"
+#define VCP_TIMELAPSE_START     "#TLStart"
+#define VCP_TIMELAPSE_STOP      "#TLStop"
 
 
 #define VCP_RPL_OK              0
@@ -47,5 +47,6 @@
 #define VCP_RPL_CMD_ERROR       2
 #define VCP_RPL_CMD_UNKNOWN     3
 #define VCP_RPL_INIT_TIMEOUT    4
+#define VCP_RPL_NOT_INIT        5
 
 #endif /* CMD_LIST_H_ */

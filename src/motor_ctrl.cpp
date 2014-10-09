@@ -9,7 +9,7 @@
 
 #include "motor_ctrl.h"
 #include "vcp.h"
-
+#include "application.h"
 
 // Macros
 #define PRINT_MSG(S)       { Uart.Printf(S); }
@@ -28,12 +28,12 @@ Rslt_t Driver_t::Init() {
     Spi.Init();
     NumberOfMotors = SPI_SLAVE_CNT;
     if(NumberOfMotors == 0) { Uart.Printf("Wrong SPI_SLAVE_CNT value\n\rDriver Not Init\n\r"); return VCP_RPL_FAILURE; }
-    for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msSleep);
+    for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].DoSleep();
     if(PThread == nullptr) PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
     PCmdBuf = Cmd;
     PAckBuf = Ack.Buf;
     CmdLength = 0;
-    for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].SetState(msOff);
+    for(uint8_t i=0; i<NumberOfMotors; i++) Motor[i].DoReset();
     // wait until we powered on correctly
     uint32_t Timeout = 0;
     do {
@@ -53,29 +53,56 @@ void Driver_t::Task() {
         if(Motor[i].State != Motor[i].NewState) Motor[i].State = Motor[i].NewState;
         switch (Motor[i].State) {
             case msOff:
-                Motor[i].SetState(msInit);
+                chThdSleepMilliseconds(999);
+                break;
+
+            case msReset:
+                Motor[i].DoInit();
                 Uart.Printf("msInit\r");
                 break;
 
             case msInit:
                 Motor[i].Init(i);
                 Motor[i].UpdatePrm();
-                Motor[i].SetState(msIdle);
+                Motor[i].DoIdle();
                 if(Motor[i].Prm.max_speed != 0) {
                     Motor[i].PoweredOn();
-                    Uart.Printf("#DriverInit\r");
+                    Uart.Printf("DriverInit %u\r", i);
                 }
-                else Uart.Printf("#PoweredOff\r");
+                else Uart.Printf("PoweredOff %u\r", i);
                 break;
 
             case msIdle:
 //                Motor[i].Run(1, 0x9508);
 //                chThdSleepMilliseconds(1999);
 //                Motor[i].Run(0, 0x9508);
-                chThdSleepMilliseconds(1999);
+                chThdSleepMilliseconds(999);
                 break;
+
+            case msTimeLapse:
+                Motor[i].Move(1, App.StepSize);
+                chThdSleepMilliseconds(App.TimeDelay);
+                if(Motor[i].GetPosition() >= App.GlideTrackMaxStep) {
+                    Uart.Printf("TL end, msGoHome\r");
+                    Motor[i].Run(0,0);
+                    Motor[i].DoGoHome();
+                }
+                break;
+
             case msSleep:
                 chThdSleepMilliseconds(999);
+                break;
+
+            case msGoHome:
+                // GoHome
+                Uart.Printf("Do GoHome\r");
+                chThdSleepMilliseconds(99);
+                Motor[i].GoHome();
+                do { // Wait
+                    chThdSleepMilliseconds(501);
+                } while(Motor[i].GetPosition() != 0);
+                Uart.Printf("hp msSleep\r");
+                Motor[i].DoSleep(); // Go Sleep
                 break;
         }
     }
@@ -224,7 +251,6 @@ void Motor_t::Move(uint8_t Dir, uint32_t Step) {
 	TxBuf[1] = ((0x003F0000 & Step) >> 16);
 	TxBuf[2] = ((0x0000FF00 & Step) >> 8);
 	TxBuf[3] =  (0x000000FF & Step);
-	Uart.Printf("%A\r", TxBuf, 4, ' ');
 	Spi.DaisyTxRxData(id, PTxBuf, 4, PRxBuf);
 }
 
