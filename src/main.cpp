@@ -13,6 +13,7 @@
 #include "vcp.h"
 
 #include "application.h"
+#include "wifi_driver.h"
 
 static inline void Init();
 
@@ -42,4 +43,6 @@ void Init() {
     Vcp.Init();
 
     Usb.Connect();
+
+    WiFi.Init();
 }
