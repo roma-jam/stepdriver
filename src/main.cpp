@@ -39,10 +39,9 @@ void Init() {
     Uart.Init(115200);
     Led.Init();
     Uart.Printf("\rStepdriver AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
-    Usb.Init();
-    Vcp.Init();
-
-    Usb.Connect();
+//    Usb.Init();
+//    Vcp.Init();
+//    Usb.Connect();
 
     WiFi.Init();
 }
