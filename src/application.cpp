@@ -289,6 +289,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
             Uart.Printf("VCP_GLIDETRACK_SIZE_SET\r");
             Driver.Motor[DEFAULT_ID].GetParams(ADDR_ABS_POS, &GlideTrackMaxStep);
             Uart.Printf("Max size %X\r", GlideTrackMaxStep);
+            Vcp.CmdRpl(VCP_RPL_OK, 1, GlideTrackMaxStep);
         }
 
 #endif
