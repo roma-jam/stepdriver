@@ -59,8 +59,16 @@ void Timer_t::InitPwm(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t I
 
 #endif
 
+// ================================= DEBUG =====================================
+void chDbgPanic(const char *msg1) {
+    Uart.PrintNow("\r");
+    Uart.PrintNow(msg1);
+    Uart.PrintNow(" @");
+    Uart.PrintNow(chThdSelf()->p_name);
+}
 
 // ============================== UART command =================================
+
 #ifdef DBG_UART_ENABLED
 DbgUart_t Uart;
 

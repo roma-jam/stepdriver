@@ -364,6 +364,13 @@ public:
     void IRQDmaTxHandler();
 
     void IPutChar(char c);
+    void PrintNow(const char *S) {
+        while(*S != 0) {
+            while(!(USART1->SR & USART_SR_TXE));
+            USART1->DR = *S++;
+            while(!(USART1->SR & USART_SR_TXE));
+        }
+    }
 };
 
 extern DbgUart_t Uart;

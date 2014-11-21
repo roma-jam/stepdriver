@@ -11,6 +11,7 @@
 
 #include "kl_lib_f100.h"
 #include "vcp.h"
+#include <string.h>
 
 # if 1 // Uart Command Codes. See https://docs.google.com/document/d/14pGuFv6KsG5tB4OmI0qc9f37cWdUVqZpTvvds2y46VY/edit
 #define CMD_PING            0x01

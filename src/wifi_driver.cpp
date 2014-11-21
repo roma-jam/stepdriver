@@ -10,7 +10,6 @@
 wifi_driver_t WiFi;
 
 void wifi_driver_t::Init() {
-    chOQInit(&RplQueue, RxBuf, WIFI_RX_BUF_SZ, NULL, NULL);
 //    PinSetupAlterFuncOutput(WIFI_GPIO, WIFI_TX_PIN, omPushPull);
     PinSetupIn(WIFI_GPIO, WIFI_RX_PIN, pudNone);
     // ==== USART configuration ====
@@ -40,10 +39,10 @@ void wifi_driver_t::Init() {
 }
 
 void wifi_driver_t::IHandleByte() {
-    uint8_t Byte = WIFI_RX_BYTE;
-    Uart.Printf("%c", Byte);
-    if(Byte == WIFI_STR_LF) Uart.Printf(" Should read\r");
-    chIQPutI(&RplQueue, Byte);
+    RplBuf.Write((uint8_t *)&WIFI_RX_BYTE);
+
+//    Uart.Printf("%c", Byte);
+//    if(Byte == WIFI_STR_LF) Uart.Printf(" Should read\r");
 }
 
 void wifi_driver_t::IRQ_Handler() {

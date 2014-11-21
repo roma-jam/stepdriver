@@ -9,7 +9,7 @@
 #define WIFI_DRIVER_H_
 
 #include "kl_lib_f100.h"
-
+#include "round_buf.h"
 
 /* INFO
  * <cr><lf>+WIND:<number>:<descriptive string><cr><lf> asynchronius command
@@ -32,19 +32,17 @@
 #define WIFI_BAUDRATE       115200
 
 #define WIFI_CMD_BUF_SZ     127     // Maximum Command Length is 127 character (um p. 5)
-#define WIFI_RX_BUF_SZ      2048    // 4 kBytes of Reception Len
 #define WIFI_RX_BYTE        WIFI_UART->DR
 
 #define WIFI_STR_CR         0x0D // mean <cr>
 #define WIFI_STR_LF         0x0A // mean <lf>
 
+
 class wifi_driver_t {
 private:
-    uint8_t CmdBuf[WIFI_CMD_BUF_SZ];
-    uint8_t RxBuf[WIFI_RX_BUF_SZ];
     void IHandleByte();
-    InputQueue RplQueue;
 public:
+    round_buf_t RplBuf;
     void Init();
     void IRQ_Handler();
     void Event_CommandRdy() {}

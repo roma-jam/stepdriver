@@ -38,10 +38,12 @@ void Init() {
     JtagDisable();
     Uart.Init(115200);
     Led.Init();
-    Uart.Printf("\rStepdriver AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
+    Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
 //    Usb.Init();
 //    Vcp.Init();
 //    Usb.Connect();
 
     WiFi.Init();
+    chThdSleepMilliseconds(3999);
+    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
 }
