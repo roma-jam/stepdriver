@@ -10,26 +10,37 @@
 
 #include "kl_lib_f100.h"
 #include <cstring>
+#include "wind_cmd.h"
 
 #define HTTP_SERVER_THD_SZ          512
 #define HTTP_SERVER_MAX_LINE_SZ     401
 
-#define AT_COMMAND_DELIMETR         " :"
+#define AT_COMMAND_DELIMETR         ":\r\n"
 #define AT_WIND_CMD                 "+WIND"
 #define AT_OK                       "OK"
+#define AT_GET                      "GET"
 
 class server_t {
 private:
     Thread *PThd;
-    char Line[HTTP_SERVER_MAX_LINE_SZ];
     char* pInnerLine;
     uint32_t LineLength;
+    void GetWindID(uint8_t *P) {
+        char *S = strtok(NULL, AT_COMMAND_DELIMETR);
+        *P = strtoll(S, &S, 10);
+    }
 public:
+    char Line[HTTP_SERVER_MAX_LINE_SZ];
+    char *CurrData;
     void Init();
     void Task();
     void LineHandle();
     void WindCommand();
+    void HostCommand();
     void CommandSuccess();
+
+    void OpenSocket();
+    void CloseSocket();
 
     void Sleep() {
         chSysLock();

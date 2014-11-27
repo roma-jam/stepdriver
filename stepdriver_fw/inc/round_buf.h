@@ -17,8 +17,6 @@
 #define WIFI_STR_CR         0x0D // mean <cr>
 #define WIFI_STR_LF         0x0A // mean <lf>
 
-#define Rslt_t              uint8_t
-
 class round_buf_t {
 private:
 	uint8_t CircBuf[WIFI_RX_BUF_SZ];

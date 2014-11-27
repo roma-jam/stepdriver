@@ -19,7 +19,6 @@
 
 static inline void Init();
 
-char OpenSocket[] = "at+s.sockd=80,t\n\r";
 
 int main(void) {
     // ==== Init clock system ====
@@ -50,13 +49,4 @@ void Init() {
     App.Init();
     HttpServer.Init();
     WiFi.Init();
-
-
-    chThdSleepMilliseconds(999);
-    Uart.Printf("%s", OpenSocket);
-    WiFi.CmdSend((uint8_t *)OpenSocket, sizeof(OpenSocket)-1);
-
-    chThdSleepMilliseconds(999);
-    Uart.Printf("%s", OpenSocket);
-    WiFi.CmdSend((uint8_t *)OpenSocket, sizeof(OpenSocket)-1);
 }

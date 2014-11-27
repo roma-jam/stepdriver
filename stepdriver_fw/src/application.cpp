@@ -8,6 +8,7 @@
 #include "application.h"
 #include "vcp.h"
 #include "motor_ctrl.h"
+#include "http_server.h"
 
 #if 1 // ==== Init's ====
 App_t App;
@@ -18,17 +19,20 @@ static WORKING_AREA(waAppThread, 128);
 __attribute__ ((__noreturn__))
 static void AppThread(void *arg) {
     chRegSetThreadName("Motor");
-    AppTask();
+    while(1) AppTask();
 }
 #endif
 
 void AppTask() {
     uint32_t EvtMsk;
-    while(1) {
-        EvtMsk = chEvtWaitAny(ALL_EVENTS);
-        if(EvtMsk & EVTMSK_WIFI_READY) {
-            Uart.Printf("WiFiModuleRdy\r");
-        } // WiFi Module Ready
+    EvtMsk = chEvtWaitAny(ALL_EVENTS);
+    if(EvtMsk & EVTMSK_WIFI_READY) {
+        Uart.Printf("WiFiModuleRdy\r");
+        HttpServer.OpenSocket();
+    } // WiFi Module Ready
+
+    else if(EvtMsk & EVTMSK_WIFI_HTTP_GET_REQUEST) {
+        Uart.Printf("Http request: %s\r", HttpServer.Line);
     }
 }
 

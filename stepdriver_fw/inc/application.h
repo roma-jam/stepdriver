@@ -58,6 +58,7 @@ public:
     void OnPillConnect();
     void OnUartCmd(Cmd_t *PCmd);
     void TimeLapseStart();
+    void SendEvent(eventmask_t mask)  { chEvtSignal(PThd, mask); }
 };
 
 extern App_t App;

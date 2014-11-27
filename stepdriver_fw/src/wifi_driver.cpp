@@ -47,7 +47,6 @@ void wifi_driver_t::CmdSend(uint8_t *PBuf, uint8_t Length) {
     dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
     dmaStreamEnable(WIFI_TX_DMA);
     IWaitTxEnd();
-    Uart.Printf("End");
 }
 
 //void wifi_driver_t::CmdSendDma() {
