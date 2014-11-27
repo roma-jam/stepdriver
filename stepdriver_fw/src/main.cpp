@@ -15,6 +15,7 @@
 #include "application.h"
 #include "wifi_driver.h"
 #include "html_page.h"
+#include "server.h"
 
 static inline void Init();
 
@@ -29,8 +30,6 @@ int main(void) {
     // ==== Init Hard & Soft ====
     Init();
     if(!ClkEnable) Uart.Printf("CF=%u\r", ClkEnable);
-
-    Uart.Printf("Page sz=%u\r", sizeof(&glidertrack_html[0]));
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
@@ -47,6 +46,7 @@ void Init() {
 //    Usb.Connect();
 
     WiFi.Init();
-    chThdSleepMilliseconds(3999);
-    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
+    HttpServer.Init();
+//    chThdSleepMilliseconds(3999);
+//    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
 }

@@ -25,8 +25,8 @@ public:
 	    pToWrite(CircBuf),
 		pToRead(CircBuf)
 	{}
-	void Write(uint8_t *Byte) {
-		*pToWrite++ = *Byte;
+	void Write(uint8_t Byte) {
+		*pToWrite++ = Byte;
 		if(pToWrite >= (CircBuf + WIFI_RX_BUF_SZ))
 			pToWrite = CircBuf;
 		FilledCount++;

@@ -6,7 +6,7 @@
  */
 
 #include "wifi_driver.h"
-
+#include "server.h"
 wifi_driver_t WiFi;
 
 void wifi_driver_t::Init() {
@@ -39,10 +39,9 @@ void wifi_driver_t::Init() {
 }
 
 void wifi_driver_t::IHandleByte() {
-    RplBuf.Write((uint8_t *)&WIFI_RX_BYTE);
-
-//    Uart.Printf("%c", Byte);
-//    if(Byte == WIFI_STR_LF) Uart.Printf(" Should read\r");
+	uint8_t Byte = WIFI_RX_BYTE;
+    RplBuf.Write(Byte);
+    if(Byte == WIFI_STR_LF) HttpServer.WakeUpI();
 }
 
 void wifi_driver_t::IRQ_Handler() {
@@ -53,7 +52,9 @@ void wifi_driver_t::IRQ_Handler() {
 extern "C" {
 CH_IRQ_HANDLER(WIFI_IRQ_Handler) {
     CH_IRQ_PROLOGUE();
+    chSysLockFromIsr();
     WiFi.IRQ_Handler();
+    chSysUnlockFromIsr();
     CH_IRQ_EPILOGUE();
 }
 }
