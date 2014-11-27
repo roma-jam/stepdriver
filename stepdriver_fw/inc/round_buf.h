@@ -10,8 +10,14 @@
 
 #include "stm32f10x.h"
 #include <stddef.h> // for NULL
+#include "kl_lib_f100.h"
 
 #define WIFI_RX_BUF_SZ      512    // 4 kBytes of Reception Len
+
+#define WIFI_STR_CR         0x0D // mean <cr>
+#define WIFI_STR_LF         0x0A // mean <lf>
+
+#define Rslt_t              uint8_t
 
 class round_buf_t {
 private:
@@ -25,13 +31,20 @@ public:
 	    pToWrite(CircBuf),
 		pToRead(CircBuf)
 	{}
-	void Write(uint8_t *Byte) {
-		*pToWrite++ = *Byte;
+	void Write(uint8_t Byte) {
+		*pToWrite++ = Byte;
 		if(pToWrite >= (CircBuf + WIFI_RX_BUF_SZ))
 			pToWrite = CircBuf;
 		FilledCount++;
 	}
-	char* GetNextLine();
+	char ReadByte() {
+	    char ret = *pToRead++;
+	    if(pToRead >= (CircBuf + WIFI_RX_BUF_SZ))
+	        pToRead = CircBuf;
+	    FilledCount--;
+	    return ret;
+	}
+	Rslt_t GetNextLine(char *Ptr, uint32_t *PLength);
 	uint32_t GetFilledCount()  { return FilledCount; }
 };
 

@@ -34,10 +34,6 @@
 #define WIFI_CMD_BUF_SZ     127     // Maximum Command Length is 127 character (um p. 5)
 #define WIFI_RX_BYTE        WIFI_UART->DR
 
-#define WIFI_STR_CR         0x0D // mean <cr>
-#define WIFI_STR_LF         0x0A // mean <lf>
-
-
 class wifi_driver_t {
 private:
     void IHandleByte();

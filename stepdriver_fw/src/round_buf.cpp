@@ -9,7 +9,16 @@
 #include "round_buf.h"
 
 
-char* round_buf_t::GetNextLine() {
-	char *StrPtr = NULL;
-	return StrPtr;
+Rslt_t round_buf_t::GetNextLine(char *Ptr, uint32_t *PLength) {
+	uint32_t LineLength = 0;
+	uint8_t C = 0;
+	while(C != WIFI_STR_LF) {
+	    C = ReadByte();
+	    *Ptr++ = C;
+	    LineLength++;
+	}
+	*Ptr = '\0';
+	*PLength = LineLength;
+	if(LineLength > 2) return OK;
+	return FAILURE;
 }

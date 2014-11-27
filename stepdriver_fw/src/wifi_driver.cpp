@@ -6,6 +6,7 @@
  */
 
 #include "wifi_driver.h"
+#include "http_server.h"
 
 wifi_driver_t WiFi;
 
@@ -27,11 +28,11 @@ void wifi_driver_t::Init() {
     dmaStreamAllocate     (WIFI_TX_DMA, 1, NULL, NULL);
     dmaStreamSetPeripheral(WIFI_TX_DMA, &WIFI_UART->DR);
     dmaStreamSetMode      (WIFI_TX_DMA,
-            STM32_DMA_CR_PL(0b10) |     // Priority is high
+            STM32_DMA_CR_PL(0b10)   |     // Priority is high
             STM32_DMA_CR_MSIZE_BYTE |
             STM32_DMA_CR_PSIZE_BYTE |
-            STM32_DMA_CR_MINC |         // Memory pointer increase
-            STM32_DMA_CR_DIR_M2P |      // Direction is memory to peripheral
+            STM32_DMA_CR_MINC       |         // Memory pointer increase
+            STM32_DMA_CR_DIR_M2P    |      // Direction is memory to peripheral
             STM32_DMA_CR_TCIE           // Enable Transmission Complete IRQ
              );
     WIFI_UART->CR1 |= USART_CR1_UE;        // Enable USART
@@ -39,10 +40,10 @@ void wifi_driver_t::Init() {
 }
 
 void wifi_driver_t::IHandleByte() {
-    RplBuf.Write((uint8_t *)&WIFI_RX_BYTE);
-
+    uint8_t Byte = WIFI_RX_BYTE;
+    RplBuf.Write(Byte);
 //    Uart.Printf("%c", Byte);
-//    if(Byte == WIFI_STR_LF) Uart.Printf(" Should read\r");
+    if(Byte == WIFI_STR_LF) HttpServer.Wakeup();
 }
 
 void wifi_driver_t::IRQ_Handler() {
@@ -53,7 +54,9 @@ void wifi_driver_t::IRQ_Handler() {
 extern "C" {
 CH_IRQ_HANDLER(WIFI_IRQ_Handler) {
     CH_IRQ_PROLOGUE();
+    chSysLockFromIsr();
     WiFi.IRQ_Handler();
+    chSysUnlockFromIsr();
     CH_IRQ_EPILOGUE();
 }
 }
