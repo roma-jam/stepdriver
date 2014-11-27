@@ -15,9 +15,10 @@
 #include "application.h"
 #include "wifi_driver.h"
 #include "html_page.h"
-#include "server.h"
+#include "http_server.h"
 
 static inline void Init();
+
 
 int main(void) {
     // ==== Init clock system ====
@@ -44,9 +45,9 @@ void Init() {
 //    Usb.Init();
 //    Vcp.Init();
 //    Usb.Connect();
-
-    WiFi.Init();
+    App.Init();
     HttpServer.Init();
+    WiFi.Init();
 //    chThdSleepMilliseconds(3999);
 //    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
 }

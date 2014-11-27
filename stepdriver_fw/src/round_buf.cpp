@@ -10,17 +10,15 @@
 #include "wifi_driver.h"
 
 
-char* round_buf_t::GetNextLine() {
-	char *StrPtr = NULL;
-	StrPtr = (char*)pToRead;
-	uint32_t LineLength=0;
-	while(*pToRead++ != WIFI_STR_CR) {
-		LineLength++;
-		Uart.Printf("%c", *pToRead);
-		if(pToRead >= (CircBuf + WIFI_RX_BUF_SZ)) pToRead = CircBuf;
+Rslt_t round_buf_t::GetNextLine(char *Ptr, uint32_t *PLength) {
+	uint32_t LineLength = 0; uint8_t C = 0;
+	while(C != WIFI_STR_LF) {
+	    C = ReadByte();
+	    *Ptr++ = C;
+	    LineLength++;
 	}
-	*pToRead = '\0';
-	pToRead += LineLength;
-	FilledCount -= LineLength;
-	return StrPtr;
+	*Ptr = '\0';
+	*PLength = LineLength;
+	if(LineLength > 2) return OK;
+	return FAILURE;
 }

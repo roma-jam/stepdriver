@@ -21,6 +21,8 @@ void __attribute__ ((weak)) _init(void)  {}
 
 }
 
+#define Rslt_t              uint8_t
+
 // Return values
 #define OK              0
 #define NO_ERROR        0
