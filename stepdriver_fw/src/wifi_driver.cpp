@@ -33,7 +33,7 @@ void wifi_driver_t::Init() {
     nvicEnableVector(WIFI_IRQ, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
     // ==== DMA ====
     // Here only the unchanged parameters of the DMA are configured.
-    dmaStreamAllocate     (WIFI_TX_DMA, 1, WiFiTxIrq, NULL);
+    dmaStreamAllocate     (WIFI_TX_DMA, IRQ_PRIO_HIGH, WiFiTxIrq, NULL);
     dmaStreamSetPeripheral(WIFI_TX_DMA, &WIFI_UART->DR);
     dmaStreamSetMode      (WIFI_TX_DMA,  WIFI_DMA_MODE);
     WIFI_UART->CR1 |= USART_CR1_UE;        // Enable USART
@@ -47,6 +47,7 @@ void wifi_driver_t::CmdSend(uint8_t *PBuf, uint8_t Length) {
     dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
     dmaStreamEnable(WIFI_TX_DMA);
     IWaitTxEnd();
+    Uart.Printf("End");
 }
 
 //void wifi_driver_t::CmdSendDma() {
@@ -63,7 +64,7 @@ void wifi_driver_t::CmdSend(uint8_t *PBuf, uint8_t Length) {
 
 void wifi_driver_t::IRQ_TxHandler() {
     ITxEnd();
-//    dmaStreamDisable(WIFI_TX_DMA);    // Registers may be changed only when stream is disabled
+    dmaStreamDisable(WIFI_TX_DMA);    // Registers may be changed only when stream is disabled
 //    SlotsFilled -= ITransmitSize;
 //    pRead += ITransmitSize;
 //    if(pRead >= (HostBuf + UART_TXBUF_SIZE)) pRead = HostBuf; // Circulate pointer
