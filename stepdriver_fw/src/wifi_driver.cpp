@@ -10,8 +10,16 @@
 
 wifi_driver_t WiFi;
 
+// Wrapper for IRQ
+extern "C" {
+void WiFiTxIrq(void *p, uint32_t flags) { WiFi.IRQ_TxHandler(); }
+}
+
 void wifi_driver_t::Init() {
-//    PinSetupAlterFuncOutput(WIFI_GPIO, WIFI_TX_PIN, omPushPull);
+    WiFiDmaIsIdle = true;
+    SlotsFilled = 0;
+
+    PinSetupAlterFuncOutput(WIFI_GPIO, WIFI_TX_PIN, omPushPull);
     PinSetupIn(WIFI_GPIO, WIFI_RX_PIN, pudNone);
     // ==== USART configuration ====
     WIFI_Clock_EN();
@@ -25,28 +33,55 @@ void wifi_driver_t::Init() {
     nvicEnableVector(WIFI_IRQ, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
     // ==== DMA ====
     // Here only the unchanged parameters of the DMA are configured.
-    dmaStreamAllocate     (WIFI_TX_DMA, 1, NULL, NULL);
+    dmaStreamAllocate     (WIFI_TX_DMA, 1, WiFiTxIrq, NULL);
     dmaStreamSetPeripheral(WIFI_TX_DMA, &WIFI_UART->DR);
-    dmaStreamSetMode      (WIFI_TX_DMA,
-            STM32_DMA_CR_PL(0b10)   |     // Priority is high
-            STM32_DMA_CR_MSIZE_BYTE |
-            STM32_DMA_CR_PSIZE_BYTE |
-            STM32_DMA_CR_MINC       |         // Memory pointer increase
-            STM32_DMA_CR_DIR_M2P    |      // Direction is memory to peripheral
-            STM32_DMA_CR_TCIE           // Enable Transmission Complete IRQ
-             );
+    dmaStreamSetMode      (WIFI_TX_DMA,  WIFI_DMA_MODE);
     WIFI_UART->CR1 |= USART_CR1_UE;        // Enable USART
     Uart.Printf("WiFi Init\r");
 }
 
+#if 1 // ======================= TX Part ======================================
+void wifi_driver_t::CmdSend(uint8_t *PBuf, uint8_t Length) {
+    dmaStreamSetMemory0(WIFI_TX_DMA, PBuf);
+    dmaStreamSetTransactionSize(WIFI_TX_DMA, Length);
+    dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
+    dmaStreamEnable(WIFI_TX_DMA);
+    IWaitTxEnd();
+}
+
+//void wifi_driver_t::CmdSendDma() {
+//    uint32_t PartSz = (HostBuf + UART_TXBUF_SIZE) - pRead; // Cnt from PRead to end of buf
+//    ITransmitSize = MIN(SlotsFilled, PartSz);
+//    if(ITransmitSize != 0) {
+//        WiFiDmaIsIdle = false;
+//        dmaStreamSetMemory0(WIFI_TX_DMA, pRead);
+//        dmaStreamSetTransactionSize(WIFI_TX_DMA, ITransmitSize);
+//        dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
+//        dmaStreamEnable(WIFI_TX_DMA);
+//    }
+//}
+
+void wifi_driver_t::IRQ_TxHandler() {
+    ITxEnd();
+//    dmaStreamDisable(WIFI_TX_DMA);    // Registers may be changed only when stream is disabled
+//    SlotsFilled -= ITransmitSize;
+//    pRead += ITransmitSize;
+//    if(pRead >= (HostBuf + UART_TXBUF_SIZE)) pRead = HostBuf; // Circulate pointer
+//
+//    if(SlotsFilled == 0) WiFiDmaIsIdle = true; // Nothing left to send
+//    else CmdSendDma();
+}
+#endif // =====================================================================
+
+
+#if 1 // =========================== RX Part ==================================
 void wifi_driver_t::IHandleByte() {
     uint8_t Byte = WIFI_RX_BYTE;
     RplBuf.Write(Byte);
-//    Uart.Printf("%c", Byte);
     if(Byte == WIFI_STR_LF) HttpServer.Wakeup();
 }
 
-void wifi_driver_t::IRQ_Handler() {
+void wifi_driver_t::IRQ_RxHandler() {
     IHandleByte();
     WIFI_UART->SR &= ~USART_SR_RXNE;
 }
@@ -55,8 +90,9 @@ extern "C" {
 CH_IRQ_HANDLER(WIFI_IRQ_Handler) {
     CH_IRQ_PROLOGUE();
     chSysLockFromIsr();
-    WiFi.IRQ_Handler();
+    WiFi.IRQ_RxHandler();
     chSysUnlockFromIsr();
     CH_IRQ_EPILOGUE();
 }
 }
+#endif // ======================================================================

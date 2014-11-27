@@ -22,24 +22,23 @@
 class round_buf_t {
 private:
 	uint8_t CircBuf[WIFI_RX_BUF_SZ];
-	uint32_t FilledCount, EmptyCount;
+	uint32_t FilledCount;
 public:
 	uint8_t *pToWrite, *pToRead;
 	round_buf_t():
 		FilledCount(0),
-		EmptyCount(WIFI_RX_BUF_SZ),
 	    pToWrite(CircBuf),
 		pToRead(CircBuf)
 	{}
 	void Write(uint8_t Byte) {
 		*pToWrite++ = Byte;
-		if(pToWrite >= (CircBuf + WIFI_RX_BUF_SZ))
+		if(pToWrite > (CircBuf + WIFI_RX_BUF_SZ))
 			pToWrite = CircBuf;
 		FilledCount++;
 	}
 	char ReadByte() {
 	    char ret = *pToRead++;
-	    if(pToRead >= (CircBuf + WIFI_RX_BUF_SZ))
+	    if(pToRead > (CircBuf + WIFI_RX_BUF_SZ))
 	        pToRead = CircBuf;
 	    FilledCount--;
 	    return ret;

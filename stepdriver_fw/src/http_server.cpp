@@ -24,11 +24,27 @@ void server_t::Task() {
     if(WiFi.RplBuf.GetNextLine(Line, &LineLength) == OK) {
         LineHandle();
     }
-    else {Uart.Printf("\rErr (HttpSerever.Task)\r"); }
 }
 
 void server_t::LineHandle() {
-    Uart.Printf("%s", Line);
+//    Uart.Printf("(%u)%s", LineLength, Line);
+    pInnerLine = Line;
+    char *S = strtok(pInnerLine, AT_COMMAND_DELIMETR);
+    if(S != nullptr) {
+        if(strcasecmp(S, AT_WIND_CMD) == 0) WindCommand();
+        else if(strcasecmp(S, AT_OK) == 0) CommandSuccess();
+    }
+}
+
+void server_t::WindCommand() {
+    char *S = strtok(NULL, AT_COMMAND_DELIMETR);
+    Uart.Printf("Wind ID: %s ", S);
+    S = strtok(NULL, AT_COMMAND_DELIMETR);
+    Uart.Printf("{ %s }\r", S);
+}
+
+void server_t::CommandSuccess() {
+    Uart.Printf("Command Ok\r");
 }
 
 void server_t::Init() {

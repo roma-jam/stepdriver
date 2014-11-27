@@ -19,6 +19,8 @@
 
 static inline void Init();
 
+char OpenSocket[] = "at+s.sockd=80,t\r";
+
 int main(void) {
     // ==== Init clock system ====
     uint8_t ClkEnable = 1;
@@ -30,6 +32,7 @@ int main(void) {
     // ==== Init Hard & Soft ====
     Init();
     if(!ClkEnable) Uart.Printf("CF=%u\r", ClkEnable);
+
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
@@ -44,7 +47,12 @@ void Init() {
 //    Usb.Init();
 //    Vcp.Init();
 //    Usb.Connect();
-
-    WiFi.Init();
+    App.Init();
     HttpServer.Init();
+    WiFi.Init();
+
+
+    chThdSleepMilliseconds(9999);
+    Uart.Printf("%s", OpenSocket);
+    WiFi.CmdSend((uint8_t *)OpenSocket, sizeof(OpenSocket));
 }

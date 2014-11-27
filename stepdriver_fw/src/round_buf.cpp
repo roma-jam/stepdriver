@@ -10,8 +10,7 @@
 
 
 Rslt_t round_buf_t::GetNextLine(char *Ptr, uint32_t *PLength) {
-	uint32_t LineLength = 0;
-	uint8_t C = 0;
+	uint32_t LineLength = 0; uint8_t C = 0;
 	while(C != WIFI_STR_LF) {
 	    C = ReadByte();
 	    *Ptr++ = C;

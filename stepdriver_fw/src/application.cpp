@@ -18,13 +18,18 @@ static WORKING_AREA(waAppThread, 128);
 __attribute__ ((__noreturn__))
 static void AppThread(void *arg) {
     chRegSetThreadName("Motor");
-    while(1) AppTask();
+    AppTask();
 }
 #endif
 
-
 void AppTask() {
-    chThdSleepMilliseconds(999);
+    uint32_t EvtMsk;
+    while(1) {
+        EvtMsk = chEvtWaitAny(ALL_EVENTS);
+        if(EvtMsk & EVTMSK_WIFI_READY) {
+            Uart.Printf("WiFiModuleRdy\r");
+        } // WiFi Module Ready
+    }
 }
 
 #if 1 // ======================= Command processing ============================
