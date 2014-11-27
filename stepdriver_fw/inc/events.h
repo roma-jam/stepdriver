@@ -11,7 +11,7 @@
 
 #define EVTMSK_WIFI_READY                       EVENT_MASK(0)
 #define EVTMSK_WIFI_HTTP_GET_REQUEST            EVENT_MASK(1)
-#define EVTMSK_KEYS                             EVENT_MASK(2)
+#define EVTMSK_WIFI_HTTP_ACTION                 EVENT_MASK(2)
 #define EVTMSK_IR_RX                            EVENT_MASK(3)
 #define EVTMSK_TIMER                            EVENT_MASK(4)
 #define EVTMSK_NEWSECOND                        EVENT_MASK(5)

@@ -60,9 +60,21 @@ void server_t::WindCommand() {
 
 void server_t::HostCommand() {
 //    Uart.Printf("(%u)%s\r", LineLength, Line);
-    Uart.Printf("Request:%s\r", CurrData);
-    char *S = strtok(CurrData, " ");
-    if(strcasecmp(S, AT_GET) == 0) App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
+//    Uart.Printf("Request:%s\r", CurrData);
+    CurrData = strtok(Line, " ");
+    if(strcasecmp(CurrData, AT_GET) == 0) {
+        CurrData = strtok(NULL, " ?");
+        char *S = strtok(NULL, " ?");
+        if(S != 0) {
+            if( (strncmp (S,"button",6) == 0) || ((strncmp (S,"speed",5) == 0)) || ((strncmp (S,"time",4) == 0)) ) {
+                CurrData = S;
+                App.SendEvent(EVTMSK_WIFI_HTTP_ACTION);
+            }
+            else App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
+        }
+    }
+//    Uart.Printf("Request:%s\r", CurrData);
+//    if(strcasecmp(S, AT_GET) == 0) App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
 }
 
 void server_t::CommandSuccess() {

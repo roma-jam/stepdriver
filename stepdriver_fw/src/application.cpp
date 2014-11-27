@@ -32,7 +32,13 @@ void AppTask() {
     } // WiFi Module Ready
 
     else if(EvtMsk & EVTMSK_WIFI_HTTP_GET_REQUEST) {
-        Uart.Printf("Http request: %s\r", HttpServer.Line);
+        Uart.Printf("Http request: %s ", HttpServer.CurrData);
+        Uart.Printf("Len: %u\r", strlen(HttpServer.CurrData));
+    }
+
+    else if(EvtMsk & EVTMSK_WIFI_HTTP_ACTION) {
+        Uart.Printf("Action: %s ", HttpServer.CurrData);
+        Uart.Printf("Len: %u\r", strlen(HttpServer.CurrData));
     }
 }
 
