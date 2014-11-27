@@ -65,7 +65,7 @@ private:
 public:
     round_buf_t RplBuf;
     void Init();
-    void CmdSend(uint8_t *PBuf, uint8_t Length);
+    void CmdSend(uint8_t *PBuf, uint32_t Length);
     void CmdSendDma();
     void IRQ_RxHandler();
     void IRQ_TxHandler();

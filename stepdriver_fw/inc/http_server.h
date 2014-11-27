@@ -14,12 +14,13 @@
 
 #define HTTP_SERVER_THD_SZ          512
 #define HTTP_SERVER_MAX_LINE_SZ     401
+#define HTTP_REQUEST_SIZE			800 // 1kbyte bye one transaction
 
 #define AT_COMMAND_DELIMETR         ":\r\n"
 #define AT_WIND_CMD                 "+WIND"
 #define AT_OK                       "OK"
 #define AT_GET                      "GET"
-
+#define AT_EMPTYLINE				"\r\n"
 class server_t {
 private:
     Thread *PThd;
@@ -41,6 +42,7 @@ public:
 
     void OpenSocket();
     void CloseSocket();
+    void SendHttpHeader(uint32_t ContentLength);
 
     void Sleep() {
         chSysLock();

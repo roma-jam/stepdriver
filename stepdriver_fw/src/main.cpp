@@ -14,7 +14,6 @@
 
 #include "application.h"
 #include "wifi_driver.h"
-#include "html_page.h"
 #include "http_server.h"
 
 static inline void Init();
@@ -48,6 +47,7 @@ void Init() {
     App.Init();
     HttpServer.Init();
     WiFi.Init();
+
 //    chThdSleepMilliseconds(3999);
 //    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
 }

@@ -1,0 +1,71 @@
+ HTTP/1.1 200 OK
+ Content-type: text/html
+ Content-length: 2330
+
+ <html>
+ <body bgcolor="#333" text="white" style="text-shadow: 0px 6px 6px rgba(0,0,0,.5);">
+ <style>
+ .big_text {
+ 	font-size: 450%;
+ }
+ .button_size {
+ 	width: 23%;
+ 	height: 9%;
+ 	color: grey; 
+ 	font-size: 230%; 
+ 	text-shadow: 1px 1px 4px rgba(0,0,0,.5); 
+ } 
+ .input { 
+ 	width: 47%; 
+ 	height: 9%; 
+ 	text-align: center; 
+ 	font-size: 330%; 
+ } 
+ .bord { 
+ 	border-color: white; 
+ 	border-radius: 20px; 
+ } 
+ </style> 
+ <fieldset class=bord> 
+ 	<legend align="center"> 
+ 		<h4 class=big_text>Manual</h4> 
+ 	</legend> 
+ 		<form align = "center"> 
+ 			<input class=input type="text" name="speed" size="10" maxlength="10" value="" placeholder="Input speed...">&nbsp; 
+ 			<input class=button_size type="submit" value="Slide"> 
+ 		</form> 
+ 		<form align = "center"> 
+ 			<button class=button_size name="button" type="text" value="SetHome">Set Home</button>&nbsp 
+ 			<button class=button_size name="button" type="text" value="Calibrate">Calibrate</button>&nbsp 
+ 			<button class=button_size name="button" type="text" value="GoHome">Go Home</button>&nbsp
+ 		</form> 
+ 		<form align = "center"> 
+ 			<button class=button_size name="button" type="text" value="Left">Left</button>&nbsp 
+ 			<button class=button_size name="button" type="text" value="Stop">Stop</button>&nbsp 
+ 			<button class=button_size name="button" type="text" value="Rigth">Right</button>&nbsp
+ 		</form> 
+ </fieldset> 
+ <fieldset class=bord> 
+ 	<legend align="center"> 
+ 		<h4 class=big_text>Timelapse</h4> 
+ 	</legend> 
+ 		<form align = "center"> 
+ 			<input class=input type="text" name="time" size="10" maxlength="10" value="" placeholder="Input time...">&nbsp; 
+ 			<input class=button_size type="submit" value="Minutes"> 
+ 		</form> 
+ 		<form align="center"> 
+ 			<button class=button_size name="button" type="text" value="StartTL">Start</button>&nbsp
+ 		</form> 
+ </fieldset> 
+ <fieldset class=bord> 
+ 	<legend align="center"> 
+ 		<h4 class=big_text>Response</h4> 
+ 	</legend> 
+ 	<p align = "center" style="font-size: 300%"> 
+ 		OK, FAILURE, SETUP 
+ 	</p></fieldset> 
+ <p style = "position: fixed; bottom: 0; font-size: 35px;">More information:
+ 	<a style = "text-decoration: underline; color: #fff; " href="www.Handycam.pro/" >http://www.handycam.pro/</a>. 
+ </p> 
+ </body> 
+ </html>

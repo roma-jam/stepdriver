@@ -8,6 +8,7 @@
 #include "http_server.h"
 #include "wifi_driver.h"
 #include "application.h"
+#include "html_page.cpp"
 
 server_t HttpServer;
 
@@ -91,4 +92,23 @@ void server_t::OpenSocket() {
 
 void server_t::CloseSocket() {
     WiFi.CmdSend((uint8_t*)CloseSocketCmd, sizeof(CloseSocketCmd)-1);
+}
+
+void server_t::SendHttpHeader(uint32_t ContentLength) {
+    char tmp[4], Output[8];
+    char *P = Output;
+    int32_t len = 0;
+    // Place digits to buffer
+    do {
+        int32_t digit = ContentLength % 10;
+        ContentLength /= 10;
+        tmp[len++] = (digit < 10)? '0'+digit : 'A'+digit-10;
+    } while(ContentLength > 0);
+    while(len > 0) {
+    	*P++ = tmp[--len];
+    }
+    *P++ = '\r'; *P++ = '\n'; // FIXME: need to end number by \r\n!
+    *P++ = '\r'; *P++ = '\n'; // FIXME: need to end number by \r\n!
+    WiFi.CmdSend((uint8_t*)post_header, sizeof(post_header)-1);
+    WiFi.CmdSend((uint8_t*)Output, sizeof(Output)-1);
 }
