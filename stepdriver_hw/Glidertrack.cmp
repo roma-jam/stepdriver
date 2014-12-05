@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-05-31 BZR 4019)-stable date = 27/11/2014 00:01:47
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 05/12/2014 21:08:13
 
 BeginCmp
 TimeStamp = /54762B97;
@@ -99,6 +99,55 @@ IdModule  = CAP_0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /5481EC5C;
+Reference = C15;
+ValeurCmp = C;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EF35;
+Reference = C16;
+ValeurCmp = C;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481E3DB;
+Reference = C17;
+ValeurCmp = C;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481F2B2;
+Reference = D1;
+ValeurCmp = DIODE;
+IdModule  = DIODE_SOD323;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EAFF;
+Reference = D2;
+ValeurCmp = LED;
+IdModule  = LED_ANGLE;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EB60;
+Reference = D3;
+ValeurCmp = LED;
+IdModule  = LED_ANGLE;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EB7E;
+Reference = D4;
+ValeurCmp = LED;
+IdModule  = LED_ANGLE;
+EndCmp
+
+BeginCmp
 TimeStamp = /54761EFA;
 Reference = DA1;
 ValeurCmp = TPS71533;
@@ -113,10 +162,24 @@ IdModule  = SOT23-5;
 EndCmp
 
 BeginCmp
+TimeStamp = /5481EBBD;
+Reference = DA3;
+ValeurCmp = LD1117;
+IdModule  = SOT223;
+EndCmp
+
+BeginCmp
 TimeStamp = /547610DE;
 Reference = DD1;
 ValeurCmp = STM32F10X-48;
 IdModule  = LQFP48;
+EndCmp
+
+BeginCmp
+TimeStamp = /548204A9;
+Reference = F1;
+ValeurCmp = FUSE0R;
+IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
@@ -162,6 +225,27 @@ IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /5481EB0E;
+Reference = R6;
+ValeurCmp = R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EB1D;
+Reference = R7;
+ValeurCmp = R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EB2C;
+Reference = R8;
+ValeurCmp = R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
 TimeStamp = /5476152F;
 Reference = XL1;
 ValeurCmp = USB_MINI_B;
@@ -176,10 +260,66 @@ IdModule  = CONN_PLS-4;
 EndCmp
 
 BeginCmp
+TimeStamp = /5481ECD1;
+Reference = XL3;
+ValeurCmp = CONN_3;
+IdModule  = CONN_PLS-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EB8D;
+Reference = XL4;
+ValeurCmp = CONN_2;
+IdModule  = CONN_PLS-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EF95;
+Reference = XL5;
+ValeurCmp = CONN_3;
+IdModule  = CONN_PLS-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481F52C;
+Reference = XL6;
+ValeurCmp = CONN_10;
+IdModule  = CONN_IDC_2X5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EF86;
+Reference = XL7;
+ValeurCmp = CONN_3;
+IdModule  = CONN_PLS-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /5482111E;
+Reference = XL8;
+ValeurCmp = BARREL_SOCKET;
+IdModule  = CONN_BARREL;
+EndCmp
+
+BeginCmp
+TimeStamp = /54823092;
+Reference = XL9;
+ValeurCmp = CONN_8;
+IdModule  = CONN_PLS-8;
+EndCmp
+
+BeginCmp
+TimeStamp = /548230A1;
+Reference = XL10;
+ValeurCmp = CONN_8;
+IdModule  = CONN_PLS-8;
+EndCmp
+
+BeginCmp
 TimeStamp = /5476134E;
 Reference = XTAL1;
 ValeurCmp = CRYSTAL;
-IdModule  = CRYSTAL;
+IdModule  = CRYSTAL_HC49;
 EndCmp
 
 EndListe
