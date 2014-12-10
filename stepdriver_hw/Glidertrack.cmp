@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 05/12/2014 21:08:13
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 10/12/2014 20:56:32
 
 BeginCmp
 TimeStamp = /54762B97;
@@ -59,14 +59,14 @@ EndCmp
 BeginCmp
 TimeStamp = /54761441;
 Reference = C9;
-ValeurCmp = C;
+ValeurCmp = 15p;
 IdModule  = CAP_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /54761450;
 Reference = C10;
-ValeurCmp = C;
+ValeurCmp = 15p;
 IdModule  = CAP_0603;
 EndCmp
 
@@ -101,14 +101,14 @@ EndCmp
 BeginCmp
 TimeStamp = /5481EC5C;
 Reference = C15;
-ValeurCmp = C;
+ValeurCmp = 0.1u;
 IdModule  = CAP_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5481EF35;
 Reference = C16;
-ValeurCmp = C;
+ValeurCmp = 10u;
 IdModule  = CAP_0603;
 EndCmp
 
@@ -120,31 +120,17 @@ IdModule  = CAP_0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /54888E04;
+Reference = C18;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
 TimeStamp = /5481F2B2;
 Reference = D1;
 ValeurCmp = DIODE;
 IdModule  = DIODE_SOD323;
-EndCmp
-
-BeginCmp
-TimeStamp = /5481EAFF;
-Reference = D2;
-ValeurCmp = LED;
-IdModule  = LED_ANGLE;
-EndCmp
-
-BeginCmp
-TimeStamp = /5481EB60;
-Reference = D3;
-ValeurCmp = LED;
-IdModule  = LED_ANGLE;
-EndCmp
-
-BeginCmp
-TimeStamp = /5481EB7E;
-Reference = D4;
-ValeurCmp = LED;
-IdModule  = LED_ANGLE;
 EndCmp
 
 BeginCmp
@@ -169,6 +155,13 @@ IdModule  = SOT223;
 EndCmp
 
 BeginCmp
+TimeStamp = /54888782;
+Reference = DA4;
+ValeurCmp = EEPROM_SPI;
+IdModule  = SO8E;
+EndCmp
+
+BeginCmp
 TimeStamp = /547610DE;
 Reference = DD1;
 ValeurCmp = STM32F10X-48;
@@ -183,10 +176,24 @@ IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /5481EB60;
+Reference = LINK_UP1;
+ValeurCmp = LED;
+IdModule  = LED_ANGLE;
+EndCmp
+
+BeginCmp
 TimeStamp = /54764987;
 Reference = MDL1;
 ValeurCmp = SPWF01SX;
 IdModule  = SPWF01SX_FOOT;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EAFF;
+Reference = POWER_UP1;
+ValeurCmp = LED;
+IdModule  = LED_ANGLE;
 EndCmp
 
 BeginCmp
@@ -220,29 +227,50 @@ EndCmp
 BeginCmp
 TimeStamp = /5476133F;
 Reference = R5;
-ValeurCmp = R;
+ValeurCmp = 1K2;
 IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5481EB0E;
 Reference = R6;
-ValeurCmp = R;
+ValeurCmp = 22R;
 IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5481EB1D;
 Reference = R7;
-ValeurCmp = R;
+ValeurCmp = 22R;
 IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5481EB2C;
 Reference = R8;
-ValeurCmp = R;
+ValeurCmp = 22R;
 IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54885714;
+Reference = R9;
+ValeurCmp = 22K;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54885723;
+Reference = R10;
+ValeurCmp = 22K;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5481EB7E;
+Reference = RUN1;
+ValeurCmp = LED;
+IdModule  = LED_ANGLE;
 EndCmp
 
 BeginCmp
@@ -309,16 +337,9 @@ IdModule  = CONN_PLS-8;
 EndCmp
 
 BeginCmp
-TimeStamp = /548230A1;
-Reference = XL10;
-ValeurCmp = CONN_8;
-IdModule  = CONN_PLS-8;
-EndCmp
-
-BeginCmp
 TimeStamp = /5476134E;
 Reference = XTAL1;
-ValeurCmp = CRYSTAL;
+ValeurCmp = 8/16 MHz;
 IdModule  = CRYSTAL_HC49;
 EndCmp
 

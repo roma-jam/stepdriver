@@ -1,6 +1,6 @@
-update=27/11/2014 00:00:24
+update=10/12/2014 20:31:55
 version=1
-last_client=pcbnew
+last_client=eeschema
 [cvpcb]
 version=1
 NetIExt=net
@@ -8,24 +8,6 @@ NetIExt=net
 EquName1=devcms
 [general]
 version=1
-[eeschema]
-version=1
-LibDir=
-NetFmtName=PcbnewAdvanced
-RptD_X=0
-RptD_Y=100
-RptLab=1
-LabSize=60
-[eeschema/libraries]
-LibName1=D:/Libs/Kicad/Connectors_kl
-LibName2=D:/Libs/Kicad/modules
-LibName3=D:/Libs/Kicad/pcb_details
-LibName4=D:/Libs/Kicad/power
-LibName5=D:/Libs/Kicad/Power_kl
-LibName6=D:/Libs/Kicad/st_kl
-LibName7=D:/Libs/Kicad/Tittar_kl
-LibName8=D:/Libs/Kicad/Transistors_kl
-LibName9=D:/Libs/Kicad/RF ICs
 [pcbnew]
 version=1
 LastNetListRead=Glidertrack.net
@@ -53,3 +35,22 @@ LibName3=D:/Libs/Kicad/pcb_details
 LibName4=D:/Libs/Kicad/Power_kl
 LibName5=D:/Libs/Kicad/Tittar_kl
 LibName6=D:/Libs/Kicad/Connectors_kl
+[eeschema]
+version=1
+LibDir=
+NetFmtName=PcbnewAdvanced
+RptD_X=0
+RptD_Y=100
+RptLab=1
+LabSize=60
+[eeschema/libraries]
+LibName1=D:/Libs/Kicad/Connectors_kl
+LibName2=D:/Libs/Kicad/modules
+LibName3=D:/Libs/Kicad/pcb_details
+LibName4=D:/Libs/Kicad/power
+LibName5=D:/Libs/Kicad/Power_kl
+LibName6=D:/Libs/Kicad/st_kl
+LibName7=D:/Libs/Kicad/Tittar_kl
+LibName8=D:/Libs/Kicad/Transistors_kl
+LibName9=D:/Libs/Kicad/RF ICs
+LibName10=D:/Libs/Kicad/memory
