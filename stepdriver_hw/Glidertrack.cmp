@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 10/12/2014 20:56:32
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 18/12/2014 17:47:57
 
 BeginCmp
 TimeStamp = /54762B97;
@@ -176,6 +176,20 @@ IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /5492EBC9;
+Reference = HOLE1;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /5492EBD8;
+Reference = HOLE2;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
 TimeStamp = /5481EB60;
 Reference = LINK_UP1;
 ValeurCmp = LED;
@@ -194,6 +208,13 @@ TimeStamp = /5481EAFF;
 Reference = POWER_UP1;
 ValeurCmp = LED;
 IdModule  = LED_ANGLE;
+EndCmp
+
+BeginCmp
+TimeStamp = /5489849E;
+Reference = Q1;
+ValeurCmp = IRLML6302;
+IdModule  = SOT23;
 EndCmp
 
 BeginCmp
@@ -263,6 +284,13 @@ BeginCmp
 TimeStamp = /54885723;
 Reference = R10;
 ValeurCmp = 22K;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5489895C;
+Reference = R11;
+ValeurCmp = 10K;
 IdModule  = RES_0603;
 EndCmp
 

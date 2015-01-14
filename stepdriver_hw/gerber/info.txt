@@ -1,0 +1,6 @@
+Glidertrack.drl 			- файл сверловки;
+Glidertrack-B-Cu.gbl 		- нижний слой;
+Glidertrack-Edge_Cuts.gbr	- контур печатной платы;
+Glidertrack-F-Cu.gtl		- верхний слой;
+Glidertrack-F_Mask.gts 		- маска верхнего слоя;
+Glidertrack-F-SilkS.gto		- маркировка верхнего слоя.
