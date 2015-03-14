@@ -57,7 +57,7 @@ void wifi_driver_t::CmdSend(uint8_t *PBuf, uint32_t Length) {
 			IWaitTxEnd();
 			LenToSend -= HTTP_REQUEST_SIZE;
 			Ptr += HTTP_REQUEST_SIZE;
-			chThdSleepMilliseconds(1999);
+			chThdSleepMilliseconds(351);
 		} while(LenToSend > HTTP_REQUEST_SIZE);
 	}
 	Uart.Printf("Send %u\r", LenToSend);

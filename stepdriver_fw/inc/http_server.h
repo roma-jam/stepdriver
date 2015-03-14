@@ -14,7 +14,7 @@
 
 #define HTTP_SERVER_THD_SZ          512
 #define HTTP_SERVER_MAX_LINE_SZ     401
-#define HTTP_REQUEST_SIZE			800 // 1kbyte bye one transaction
+#define HTTP_REQUEST_SIZE			1000 // 1kbyte bye one transaction
 
 #define AT_COMMAND_DELIMETR         ":\r\n"
 #define AT_WIND_CMD                 "+WIND"

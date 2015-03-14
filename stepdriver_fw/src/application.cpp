@@ -36,15 +36,14 @@ void AppTask() {
     else if(EvtMsk & EVTMSK_WIFI_HTTP_GET_REQUEST) {
         Uart.Printf("Http request: %s ", HttpServer.CurrData);
         Uart.Printf("Len: %u\r", strlen(HttpServer.CurrData));
-        chThdSleepMilliseconds(1999);
 //        HttpServer.SendHttpHeader(sizeof(glidertrack)-1);
-        chThdSleepMilliseconds(3999);
         WiFi.CmdSend((uint8_t *)glidertrack, sizeof(glidertrack)-1);
     }
 
     else if(EvtMsk & EVTMSK_WIFI_HTTP_ACTION) {
         Uart.Printf("Action: %s ", HttpServer.CurrData);
         Uart.Printf("Len: %u\r", strlen(HttpServer.CurrData));
+//        WiFi.CmdSend((uint8_t *)glidertrack, sizeof(glidertrack)-1);
     }
 }
 
