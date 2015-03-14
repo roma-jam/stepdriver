@@ -86,7 +86,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
             if((Param = strtoll(S, &S, 16)) != 0) {
                 Driver.Motor[DEFAULT_ID].GetParams(Param, &Rpl);
                 Uart.Printf("%X\n\r", Rpl);
-                Vcp.CmdRpl(VCP_RPL_OK, 1, Rpl);
+                Vcp.CmdRpl(VCP_RPL_OK, 1, &Rpl);
             } // if Param
             else Vcp.CmdRpl(VCP_RPL_CMD_ERROR);
 
@@ -263,7 +263,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
             uint32_t Status;
             Driver.Motor[DEFAULT_ID].GetStatus(&Status);
             Uart.Printf("%X\r", Status);
-            Vcp.CmdRpl(VCP_RPL_OK, 1, Status);
+            Vcp.CmdRpl(VCP_RPL_OK, 1, &Status);
         }
 #endif
 
@@ -310,7 +310,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd) {
             Uart.Printf("VCP_GLIDETRACK_SIZE_SET\r");
             Driver.Motor[DEFAULT_ID].GetParams(ADDR_ABS_POS, &GlideTrackMaxStep);
             Uart.Printf("Max size %X\r", GlideTrackMaxStep);
-            Vcp.CmdRpl(VCP_RPL_OK, 1, GlideTrackMaxStep);
+            Vcp.CmdRpl(VCP_RPL_OK, 1, &GlideTrackMaxStep);
         }
 
 #endif

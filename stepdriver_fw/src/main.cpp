@@ -41,14 +41,15 @@ void Init() {
     Uart.Init(115200);
 //    Led.Init();
     Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
-//    Usb.Init();
-//    Vcp.Init();
-//    Usb.Connect();
 
-    App.Init();
-    HttpServer.Init();
-    WiFi.Init();
-    WiFi.PowerOn();
+    Usb.Init();
+    Vcp.Init();
+    Usb.Connect();
+
+//    App.Init();
+//    HttpServer.Init();
+//    WiFi.Init();
+//    WiFi.PowerOn();
 //    chThdSleepMilliseconds(3999);
 //    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
 }

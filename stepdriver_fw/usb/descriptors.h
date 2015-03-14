@@ -139,6 +139,16 @@ typedef struct {
     uint16_t bcdCDC;            // Version number of the CDC specification implemented by the device, encoded in BCD format.
 } __attribute__ ((__packed__)) CDCFuncHeader_t;
 
+// Call Management Functional Descriptor
+typedef struct {
+    uint8_t bFunctionLength;    // Size of the descriptor, in bytes.
+    uint8_t bDescriptorType;    // Type of the descriptor, either a value in USB_DescriptorTypes_t or a value given by the specific class.
+    uint8_t bDescriptorSubType; // Sub type value used to distinguish between CDC class-specific descriptors, must be CDC_DSUBTYPE_CSInterface_ACM.
+    uint8_t bmCapabilities;     // Capabilities of the ACM interface, given as a bit mask. For most devices, this should be set to a fixed value of 0x06 - for other capabilities, refer to the CDC ACM specification.
+    uint8_t bDataInterface;
+} __attribute__ ((__packed__)) CDCFuncCallMgmt_t;
+
+
 typedef struct {
     uint8_t bFunctionLength;    // Size of the descriptor, in bytes.
     uint8_t bDescriptorType;    // Type of the descriptor, either a value in USB_DescriptorTypes_t or a value given by the specific class.
@@ -159,6 +169,7 @@ typedef struct {
     // CDC Control Interface
     InterfaceDescriptor_t   CCI_Interface;      // Standard interface descriptor
     CDCFuncHeader_t         FuncHeader;
+    CDCFuncCallMgmt_t       FuncCallMgmt;       // Call management functional
     CDCFuncACM_t            FuncAcm;
     CDCFuncUnion_t          FuncUnion;
     EndpointDescriptor_t    NotificationEndpoint;

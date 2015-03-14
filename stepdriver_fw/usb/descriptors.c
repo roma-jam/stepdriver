@@ -60,12 +60,12 @@ static const DeviceDescriptor_t DeviceDescriptor = {
         bDeviceSubClass:    0x00,            // bDeviceSubClass
         bDeviceProtocol:    0x00,            // bDeviceProtocol
         bMaxPacketSize0:    EP0_SZ,          // bMaxPacketSize0
-        idVendor:           0x21BB,          // idVendor (WWPass)
-        idProduct:          9,               // idProduct; #9 means virtual COM
-        bcdDevice:          0x02,               // bcdDevice
+        idVendor:           0x0483,          // idVendor = 0x0483
+        idProduct:          0x5740,          // idProduct = 0x5740
+        bcdDevice:          2,               // bcdDevice
         iManufacturer:      1,               // iManufacturer
         iProduct:           2,               // iProduct
-        iSerialNumber:      0,               // iSerialNumber
+        iSerialNumber:      3,               // iSerialNumber
         bNumConfigurations: 1                // bNumConfigurations
 };
 
@@ -78,7 +78,7 @@ static const ConfigDescriptor_t ConfigDescriptor = {
             bNumInterfaces:     2,
             bConfigurationValue:1,
             iConfiguration:     0,
-            bmAttributes:       0x80,   // USB_CONFIG_ATTR_RESERVED
+            bmAttributes:       0xC0,   // USB_CONFIG_ATTR_RESERVED
             bMaxPower:          USB_CONFIG_POWER_MA(100)
         },
 
@@ -99,8 +99,17 @@ static const ConfigDescriptor_t ConfigDescriptor = {
             bFunctionLength:    sizeof(CDCFuncHeader_t),
             bDescriptorType:    dtCSInterface,
             bDescriptorSubType: 0x00, // CDC class-specific Header functional descriptor
-            bcdCDC:             0x1001
+            bcdCDC:             0x0110
         },
+
+        FuncCallMgmt: {
+            bFunctionLength:    sizeof(CDCFuncCallMgmt_t),
+            bDescriptorType:    dtCSInterface,
+            bDescriptorSubType: 0x01,
+            bmCapabilities:     0x00,   // D0+D1
+            bDataInterface:     0x01
+        },
+
 
         FuncAcm: {
             bFunctionLength:    sizeof(CDCFuncACM_t),
@@ -145,7 +154,7 @@ static const ConfigDescriptor_t ConfigDescriptor = {
             bEndpointAddress:   (EP_DIR_OUT | EP_BULK_OUT_ADDR),
             bmAttributes:       (EP_TYPE_BULK | EP_ATTR_NO_SYNC | EP_USAGE_DATA),
             wMaxPacketSize:     EP_BULK_SZ,
-            bInterval:          0x05
+            bInterval:          0x00
         },
 
         DataInEndpoint: {
@@ -154,7 +163,7 @@ static const ConfigDescriptor_t ConfigDescriptor = {
             bEndpointAddress:   (EP_DIR_IN | EP_BULK_IN_ADDR),
             bmAttributes:       (EP_TYPE_BULK | EP_ATTR_NO_SYNC | EP_USAGE_DATA),
             wMaxPacketSize:     EP_BULK_SZ,
-            bInterval:          0x05
+            bInterval:          0x00
         }
 };
 #endif
@@ -169,16 +178,27 @@ static const StringDescriptor_t LanguageString = {
 
 // Vendor string
 static const StringDescriptor_t ManufacturerString = {
-        bLength: USB_STRING_LEN(6),
+        bLength: USB_STRING_LEN(8),
         bDescriptorType: dtString,
-        bString: {'W', 'W', 'P', 'a', 's', 's'}
+        bString: {'O','s','t','r','a','n','n','a'}
+//        bString: {'S','T','M','i','c','r','o','e','l','e','c','t','r','o','n','i','c','s'}
 };
 
 // Device Description string
 static const StringDescriptor_t ProductString = {
-        bLength: USB_STRING_LEN(15),
+        bLength: USB_STRING_LEN(25),
         bDescriptorType: dtString,
-        bString: {'U','S','B',' ','S','e','r','i','a','l',' ','P','o','r','t'}
+        bString: {'O','s','t','r','a','n','n','a',' ','V',
+                  'i','r','t','u','a','l',' ','C','O','M',
+                  ' ','P', 'o','r','t'}
+//        bString: {'S','T','M','3','2',' ','V','i','r','t','u','a','l',' ','C','O','M',' ','P','o','r','t',' ',' ' }
+};
+
+static const StringDescriptor_t DeviceSerial = {
+        bLength: USB_STRING_LEN(3),
+        bDescriptorType: dtString,
+        bString: {'1','2','3'}
+//        bString: {'S','T','M','3','2',' '}
 };
 #endif
 
@@ -207,6 +227,10 @@ void GetDescriptor(uint8_t Type, uint8_t Indx, uint8_t **PPtr, uint32_t *PLen) {
                     *PPtr = (uint8_t*)&ProductString;
                     *PLen = ProductString.bLength;
                     break;
+                case 3:
+                	*PPtr = (uint8_t*)&DeviceSerial;
+                	*PLen = DeviceSerial.bLength;
+                	break;
                 default: break;
             }
             break;

@@ -102,7 +102,7 @@ public:
 
     Cmd_t ICmd[2], *PCmdWrite = &ICmd[0], *PCmdRead = &ICmd[1];
     void CompleteCmd();
-    void CmdRpl(uint8_t ErrCode, uint32_t Length = 0, ...);
+    void CmdRpl(uint8_t ErrCode, uint32_t Length = 0, uint32_t *Ptr = nullptr);
 };
 
 extern Vcp_t Vcp;
