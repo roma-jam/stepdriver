@@ -41,6 +41,9 @@
 #define WIFI_CMD_BUF_SZ     128     // Maximum Command Length is 127 character (um p. 5)
 #define WIFI_RX_BYTE        WIFI_UART->DR
 
+#define WIFI_PWR_GPIO       GPIOB
+#define WIFI_PWR_PIN        3
+
 class wifi_driver_t {
 private:
     uint8_t HostBuf[WIFI_CMD_BUF_SZ];
@@ -67,6 +70,8 @@ public:
     void Init();
     void CmdSend(uint8_t *PBuf, uint32_t Length);
     void CmdSendDma();
+    void PowerOn()  { PinClear(WIFI_PWR_GPIO, WIFI_PWR_PIN); }
+    void PowerOff() { PinSet  (WIFI_PWR_GPIO, WIFI_PWR_PIN); }
     void IRQ_RxHandler();
     void IRQ_TxHandler();
 };

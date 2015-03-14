@@ -16,11 +16,14 @@ void WiFiTxIrq(void *p, uint32_t flags) { WiFi.IRQ_TxHandler(); }
 }
 
 void wifi_driver_t::Init() {
+    PinSetupOut(WIFI_PWR_GPIO, WIFI_PWR_PIN, omPushPull, ps50MHz);
+    PowerOff();
+
     WiFiDmaIsIdle = true;
     SlotsFilled = 0;
-
     PinSetupAlterFuncOutput(WIFI_GPIO, WIFI_TX_PIN, omPushPull);
     PinSetupIn(WIFI_GPIO, WIFI_RX_PIN, pudNone);
+
     // ==== USART configuration ====
     WIFI_Clock_EN();
     WIFI_UART->BRR = Clk.APB2FreqHz / WIFI_BAUDRATE;

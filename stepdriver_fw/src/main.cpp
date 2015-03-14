@@ -22,7 +22,7 @@ static inline void Init();
 int main(void) {
     // ==== Init clock system ====
     uint8_t ClkEnable = 1;
-    ClkEnable = Clk.ClockConfigure(ciHSE, pllMul6, ahbDiv1, apbDiv1, apbDiv1, psPLLOn);
+    ClkEnable = Clk.ClockConfigure(ciHSE, pllMul3, ahbDiv1, apbDiv1, apbDiv1, psPLLOn);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -39,15 +39,16 @@ int main(void) {
 void Init() {
     JtagDisable();
     Uart.Init(115200);
-    Led.Init();
+//    Led.Init();
     Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
 //    Usb.Init();
 //    Vcp.Init();
 //    Usb.Connect();
+
     App.Init();
     HttpServer.Init();
     WiFi.Init();
-
+    WiFi.PowerOn();
 //    chThdSleepMilliseconds(3999);
 //    Uart.Printf("Lengh: %u\r", WiFi.RplBuf.GetFilledCount());
 }
