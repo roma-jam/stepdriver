@@ -15,9 +15,10 @@
 #include "application.h"
 #include "wifi_driver.h"
 #include "http_server.h"
+#include "eeprom.h"
+#include "beeper.h"
 
 static inline void Init();
-
 
 int main(void) {
     // ==== Init clock system ====
@@ -40,6 +41,7 @@ void Init() {
     JtagDisable();
     Uart.Init(115200);
 //    Led.Init();
+//    EE.Init();
     Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
 
 //    Usb.Init();
@@ -47,8 +49,11 @@ void Init() {
 //    Usb.Connect();
 
     App.Init();
-    HttpServer.Init();
-    WiFi.Init();
-    WiFi.PowerOn();
+    Beeper.Init();
+    Beeper.Sequence(2);
+
+//    HttpServer.Init()
+//    WiFi.Init();
+//    WiFi.PowerOn();
 
 }

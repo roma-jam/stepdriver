@@ -109,6 +109,8 @@ void server_t::SendHttpHeader(uint32_t ContentLength) {
     }
     *P++ = '\r'; *P++ = '\n'; // FIXME: need to end number by \r\n!
     *P++ = '\r'; *P++ = '\n'; // FIXME: need to end number by \r\n!
-    WiFi.CmdSend((uint8_t*)post_header, sizeof(post_header)-1);
-    WiFi.CmdSend((uint8_t*)Output, sizeof(Output)-1);
+    char TmpBuf[sizeof(get_response_header) + sizeof(Output)];
+    memcpy(TmpBuf, get_response_header, sizeof(get_response_header)-1);
+    memcpy(&TmpBuf[sizeof(get_response_header)-1], Output, sizeof(Output));
+    WiFi.CmdSend((uint8_t*)TmpBuf, sizeof(TmpBuf)-1);
 }

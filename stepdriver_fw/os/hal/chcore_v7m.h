@@ -56,7 +56,7 @@
  *          reduce this value to zero when compiling with optimizations.
  */
 #if !defined(PORT_IDLE_THREAD_STACK_SIZE)
-#define PORT_IDLE_THREAD_STACK_SIZE     16
+#define PORT_IDLE_THREAD_STACK_SIZE     2048
 #endif
 
 /**

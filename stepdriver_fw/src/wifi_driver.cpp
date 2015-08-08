@@ -45,11 +45,11 @@ void wifi_driver_t::Init() {
 
 #if 1 // ======================= TX Part ======================================
 void wifi_driver_t::CmdSend(uint8_t *PBuf, uint32_t Length) {
+    Uart.Printf("s:%u\r", Length);
 	uint32_t LenToSend = Length;
 	uint8_t *Ptr = PBuf;
 	if(LenToSend > HTTP_REQUEST_SIZE) {
 		do {
-			Uart.Printf("Send %u\r", HTTP_REQUEST_SIZE);
 			dmaStreamSetMemory0(WIFI_TX_DMA, Ptr);
 			dmaStreamSetTransactionSize(WIFI_TX_DMA, HTTP_REQUEST_SIZE);
 			dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
@@ -60,7 +60,6 @@ void wifi_driver_t::CmdSend(uint8_t *PBuf, uint32_t Length) {
 			chThdSleepMilliseconds(351);
 		} while(LenToSend > HTTP_REQUEST_SIZE);
 	}
-	Uart.Printf("Send %u\r", LenToSend);
 	dmaStreamSetMemory0(WIFI_TX_DMA, Ptr);
 	dmaStreamSetTransactionSize(WIFI_TX_DMA, LenToSend);
 	dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
