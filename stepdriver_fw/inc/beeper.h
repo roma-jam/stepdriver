@@ -8,7 +8,6 @@
 #ifndef INC_BEEPER_H_
 #define INC_BEEPER_H_
 
-#include "ch.h"
 #include "kl_lib_f100.h"
 
 #define BEEPER_DURATION_MS  51
@@ -16,6 +15,9 @@
 
 #define BEEPER_GPIO         GPIOB
 #define BEEPER_PIN          7
+
+#define BEEPER_START_SEQ    2
+#define BEEPER_ERR_SEQ      3
 
 struct BeeperSequence_t {
 //    uint8_t Delay;

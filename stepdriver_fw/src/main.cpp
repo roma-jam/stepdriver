@@ -17,6 +17,7 @@
 #include "http_server.h"
 #include "eeprom.h"
 #include "beeper.h"
+#include "endstop.h"
 
 static inline void Init();
 
@@ -42,6 +43,9 @@ void Init() {
     Uart.Init(115200);
 //    Led.Init();
 //    EE.Init();
+    Beeper.Init();
+    EndStops.Init();
+
     Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
 
 //    Usb.Init();
@@ -49,8 +53,7 @@ void Init() {
 //    Usb.Connect();
 
     App.Init();
-    Beeper.Init();
-    Beeper.Sequence(2);
+    Beeper.Sequence(BEEPER_START_SEQ);
 
 //    HttpServer.Init()
 //    WiFi.Init();
