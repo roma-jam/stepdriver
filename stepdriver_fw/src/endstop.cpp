@@ -18,15 +18,26 @@ void endstop_t::Init() {
     EXTI->RTSR = EXTI_RTSR_TR0 | EXTI_RTSR_TR1; // rising 0 and 1 init
     EXTI->FTSR = EXTI_FTSR_TR0 | EXTI_FTSR_TR1; // falling 0 and 1 init
 
+    for(uint8_t i = 0; i < endstop_max; i++)
+        State[i] = ess_Idle;
 
     NVIC_EnableIRQ(EXTI0_IRQn);
     NVIC_EnableIRQ(EXTI1_IRQn);
 }
 
-void endstop_t::IrqHandler(endstop_ch Ch) {
-    EXTI->PR |= Ch; // clear pending bit
-    Uart.Printf("EndStopHit ch=%u\r", Ch);
+void endstop_t::IrqHandler(endstop_ch esChannel) {
+    EXTI->PR |= esChannel; // clear pending bit
+    switch (State[esChannel]) {
+        case ess_Hit:
+            Uart.Printf("EndStopRelease ch=%u\r", esChannel);
+            State[esChannel] = ess_Idle;
+            break;
 
+        case ess_Idle:
+            Uart.Printf("EndStopHit ch=%u\r", esChannel);
+            State[esChannel] = ess_Hit;
+            break;
+    }
 }
 
 extern "C" {
