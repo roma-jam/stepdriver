@@ -31,6 +31,8 @@ private:
 public:
     void Init();
     void IrqHandler(endstop_ch esChannel);
+    void Hit(endstop_ch esChannel);
+    void Release(endstop_ch esChannel);
 };
 
 extern endstop_t EndStops;

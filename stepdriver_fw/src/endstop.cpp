@@ -7,6 +7,7 @@
 
 
 #include "endstop.h"
+#include "beeper.h"
 
 endstop_t EndStops;
 
@@ -25,19 +26,27 @@ void endstop_t::Init() {
     NVIC_EnableIRQ(EXTI1_IRQn);
 }
 
+void endstop_t::Hit(endstop_ch esChannel) {
+    Uart.Printf("EndStopHit ch=%u\r", esChannel);
+}
+
+void endstop_t::Release(endstop_ch esChannel) {
+    Uart.Printf("EndStopRelease ch=%u\r", esChannel);
+}
+
 void endstop_t::IrqHandler(endstop_ch esChannel) {
     EXTI->PR |= esChannel; // clear pending bit
     switch (State[esChannel]) {
         case ess_Hit:
-            Uart.Printf("EndStopRelease ch=%u\r", esChannel);
             State[esChannel] = ess_Idle;
+            Release(esChannel);
             break;
 
         case ess_Idle:
-            Uart.Printf("EndStopHit ch=%u\r", esChannel);
             State[esChannel] = ess_Hit;
+            Hit(esChannel);
             break;
-    }
+    } // switch
 }
 
 extern "C" {
