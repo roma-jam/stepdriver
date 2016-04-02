@@ -16,11 +16,39 @@
 
 Driver_t Driver;
 
-static WORKING_AREA(waDriverThread, 128);
+static WORKING_AREA(waDriverThread, 512);
 __attribute__ ((__noreturn__))
 static void DriverThread(void *arg) {
     chRegSetThreadName("Motor");
     while(1) Driver.Task();
+}
+
+cmdType Driver_t::get_cmd_type(char *S) {
+    if(strcasecmp(S, VCP_SET_PARAM_STRING) == 0)              return cmdType::SetParam;
+    if(strcasecmp(S, VCP_GET_PARAM_STRING) == 0)              return cmdType::GetParam;
+    if(strcasecmp(S, VCP_MOVE_STRING) == 0)                   return cmdType::Move;
+    if(strcasecmp(S, VCP_GOTO_STRING) == 0)                   return cmdType::cmdGoTo;
+    if(strcasecmp(S, VCP_GOTODIR_STRING) == 0)                return cmdType::cmdGoToDir;
+    if(strcasecmp(S, VCP_GOUNTIL_STRING) == 0)                return cmdType::GoUntil;
+    if(strcasecmp(S, VCP_RELEASE_STRING) == 0)                return cmdType::ReleaseSW;
+    if(strcasecmp(S, VCP_GO_HOME_STRING) == 0)                return cmdType::GoHome;
+    if(strcasecmp(S, VCP_GO_MARK_STRING) == 0)                return cmdType::GoMark;
+    if(strcasecmp(S, VCP_RESET_POS_STRING) == 0)              return cmdType::ResetPos;
+    if(strcasecmp(S, VCP_SOFT_HiZ_STRING) == 0)               return cmdType::SoftHiZ;
+    if(strcasecmp(S, VCP_HARD_HiZ_STRING) == 0)               return cmdType::HardHiZ;
+    if(strcasecmp(S, VCP_RESET_DEVICE_STRING) == 0)           return cmdType::ResetDevice;
+    if(strcasecmp(S, VCP_RUN_STRING) == 0)                    return cmdType::Run;
+    if(strcasecmp(S, VCP_STOP_STRING) == 0)                   return cmdType::Stop;
+    if(strcasecmp(S, VCP_STEP_CLOCK_STRING) == 0)             return cmdType::StepClock;
+    if(strcasecmp(S, VCP_SOFT_STOP_STRING) == 0)              return cmdType::SoftStop;
+    if(strcasecmp(S, VCP_HARD_STOP_STRING) == 0)              return cmdType::HardStop;
+    if(strcasecmp(S, VCP_GET_STATUS_STRING) == 0)             return cmdType::GetStaus;
+    if(strcasecmp(S, VCP_UPDATE_PARAM_STRING) == 0)           return cmdType::UpdateParam;
+    if(strcasecmp(S, VCP_TIMELAPSE_PARAM_STRING) == 0)        return cmdType::TLParam;
+    if(strcasecmp(S, VCP_TIMELAPSE_START_STRING) == 0)        return cmdType::TLStart;
+    if(strcasecmp(S, VCP_TIMELAPSE_STOP_STRING) == 0)         return cmdType::TLStop;
+    if(strcasecmp(S, VCP_GLIDETRACK_SIZE_SET_STRING) == 0)    return cmdType::SetSize;
+    return cmdType::Err;
 }
 
 Rslt_t Driver_t::Init() {

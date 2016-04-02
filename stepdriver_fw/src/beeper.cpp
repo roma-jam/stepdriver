@@ -32,6 +32,7 @@ void beeper_t::Timeout() {
 
 void beeper_t::Init() {
     PinSetupOut(BEEPER_GPIO, BEEPER_PIN, omPushPull, ps50MHz);
+
     BeeperOff();
 }
 

@@ -28,10 +28,12 @@ void endstop_t::Init() {
 
 void endstop_t::Hit(endstop_ch esChannel) {
     Uart.Printf("EndStopHit ch=%u\r", esChannel);
+    Beeper.Sequence(1);
 }
 
 void endstop_t::Release(endstop_ch esChannel) {
     Uart.Printf("EndStopRelease ch=%u\r", esChannel);
+    Beeper.Sequence(2);
 }
 
 void endstop_t::IrqHandler(endstop_ch esChannel) {

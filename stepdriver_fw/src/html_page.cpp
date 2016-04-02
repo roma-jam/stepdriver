@@ -7,15 +7,53 @@
 
 #include "html_page.h"
 
-const char get_response_header[] = "\
-HTTP/1.1 200 OK\r\n\
-Content-type: text/html\r\n\
-Content-length: ";
+char index_html[] = "\
+<html>\
+<head><title>Handycam Glidertrack</title></head>\
+<body bgcolor=\"#333\" text=\"white\" style=\"text-shadow: 0px 6px 6px rgba(0,0,0,.5);\">\
+<style>\
+.bt {\
+    font-size: 450%;\
+}\
+.bs {\
+    width: 23%;\
+    height: 9%;\
+    color: grey;\
+    font-size: 230%;\
+    text-shadow: 1px 1px 4px rgba(0,0,0,.5);\
+}\
+\
+.bord {\
+    border-color: white;\
+    border-radius: 20px;\
+}\
+</style>\
+\
+<fieldset class=bord>\
+    <legend align=\"center\">\
+        <h4 class=bt>Manual</h4>\
+    </legend>\
+        </form>\
+        <form align = \"center\">\
+            <button class=bs name=\"button\" type=\"text\" value=\"Start\">Start</button>&nbsp\
+            <button class=bs name=\"button\" type=\"text\" value=\"Stop\">Stop</button>&nbsp\
+            <button class=bs name=\"button\" type=\"text\" value=\"Calibrate\">Calibrate</button>&nbsp\
+        </form>\
+</fieldset>\
+\
+<fieldset class=bord>\
+    <legend align=\"center\">\
+        <h4 class=bt>Response</h4>\
+    </legend>\
+    <p align = \"center\" style=\"font-size: 300%\">\
+        XXX\
+    </p>\
+</fieldset>\
+</body>\
+</html>";
 
-const char get_response_ok[] = "\
-HTTP/1.1 204 OK\r\n\
-";
 
+/*
 const char glidertrack[] = "\
 <html>\r\n\
 <body bgcolor=\"#333\" text=\"white\" style=\"text-shadow: 0px 6px 6px rgba(0,0,0,.5);\">\r\n\
@@ -84,3 +122,4 @@ const char glidertrack[] = "\
 </p>\r\n\
 </body>\r\n\
 </html>\r\n";
+*/

@@ -14,32 +14,62 @@
 #define VCP_PING                "#Ping"
 #define VCP_DRIVER_INIT         "#DriverInit"
 
-#define VCP_SET_PARAM           "#SetParam"
-#define VCP_GET_PARAM           "#GetParam"
-#define VCP_MOVE                "#Move"
-#define VCP_GOTO                "#GoTo"
-#define VCP_GOTODIR             "#GoToDir"
-#define VCP_GOUNTIL             "#GoUntil"
-#define VCP_RELEASE             "#ReleaseSW"
-#define VCP_GO_HOME             "#GoHome"
-#define VCP_GO_MARK             "#GoMark"
-#define VCP_RESET_POS           "#ResetPos"
-#define VCP_SOFT_HiZ            "#SoftHiZ"
-#define VCP_HARD_HiZ            "#HardHiZ"
-#define VCP_RESET_DEVICE        "#ResetDevice"
-#define VCP_RUN                 "#Run"
-#define VCP_STOP                "#Stop"
-#define VCP_STEP_CLOCK          "#StepClock"
-#define VCP_SOFT_STOP           "#SoftStop"
-#define VCP_HARD_STOP           "#HardStop"
-#define VCP_GET_STATUS          "#GetStatus"
-#define VCP_UPDATE_PARAM        "#UpdateParam"
+#define VCP_SET_PARAM_STRING    "#SetParam"
+#define VCP_GET_PARAM_STRING           "#GetParam"
+#define VCP_MOVE_STRING                "#Move"
+#define VCP_GOTO_STRING                "#GoTo"
+#define VCP_GOTODIR_STRING             "#GoToDir"
+#define VCP_GOUNTIL_STRING             "#GoUntil"
+#define VCP_RELEASE_STRING             "#ReleaseSW"
+#define VCP_GO_HOME_STRING             "#GoHome"
+#define VCP_GO_MARK_STRING             "#GoMark"
+#define VCP_RESET_POS_STRING           "#ResetPos"
+#define VCP_SOFT_HiZ_STRING            "#SoftHiZ"
+#define VCP_HARD_HiZ_STRING            "#HardHiZ"
+#define VCP_RESET_DEVICE_STRING        "#ResetDevice"
+#define VCP_RUN_STRING                 "#Run"
+#define VCP_STOP_STRING                "#Stop"
+#define VCP_STEP_CLOCK_STRING          "#StepClock"
+#define VCP_SOFT_STOP_STRING           "#SoftStop"
+#define VCP_HARD_STOP_STRING           "#HardStop"
+#define VCP_GET_STATUS_STRING          "#GetStatus"
+#define VCP_UPDATE_PARAM_STRING        "#UpdateParam"
 
 // Logic command
-#define VCP_GLIDETRACK_SIZE_SET "#SetSize"
-#define VCP_TIMELAPSE_PARAM     "#TLParam"
-#define VCP_TIMELAPSE_START     "#TLStart"
-#define VCP_TIMELAPSE_STOP      "#TLStop"
+#define VCP_GLIDETRACK_SIZE_SET_STRING "#SetSize"
+#define VCP_TIMELAPSE_PARAM_STRING     "#TLParam"
+#define VCP_TIMELAPSE_START_STRING     "#TLStart"
+#define VCP_TIMELAPSE_STOP_STRING      "#TLStop"
+
+enum cmdType {
+    Err = 0,
+    Ping,
+    DriverInit,
+    SetParam,
+    GetParam,
+    Move,
+    cmdGoTo,
+    cmdGoToDir,
+    GoUntil,
+    ReleaseSW,
+    GoHome,
+    GoMark,
+    ResetPos,
+    SoftHiZ,
+    HardHiZ,
+    ResetDevice,
+    Run,
+    Stop,
+    StepClock,
+    SoftStop,
+    HardStop,
+    GetStaus,
+    UpdateParam,
+    SetSize,
+    TLParam,
+    TLStart,
+    TLStop
+};
 
 
 #define VCP_RPL_OK              0

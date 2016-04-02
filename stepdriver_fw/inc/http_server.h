@@ -12,7 +12,7 @@
 #include <cstring>
 #include "wind_cmd.h"
 
-#define HTTP_SERVER_THD_SZ          512
+#define HTTP_SERVER_THD_SZ          1024
 #define HTTP_SERVER_MAX_LINE_SZ     401
 #define HTTP_REQUEST_SIZE			1000 // 1kbyte bye one transaction
 
@@ -40,6 +40,8 @@ public:
     void HostCommand();
     void CommandSuccess();
 
+    void Action();
+    void GetRequest();
     void OpenSocket();
     void CloseSocket();
     void SendHttpHeader(uint32_t ContentLength);

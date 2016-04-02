@@ -8,7 +8,7 @@
 #include "http_server.h"
 #include "wifi_driver.h"
 #include "application.h"
-#include "html_page.cpp"
+#include "html_page.h"
 
 server_t HttpServer;
 
@@ -17,25 +17,31 @@ char CloseSocketCmd[] = "at+s.sockd=0\n\r";
 
 static WORKING_AREA(waHttpThread, HTTP_SERVER_THD_SZ);
 __attribute__ ((__noreturn__))
-static void HttpThread(void *arg) {
+static void HttpThread(void *arg)
+{
     chRegSetThreadName("Http");
-    while(1) {
+    while(1)
+    {
         HttpServer.Sleep();
         HttpServer.Task();
     }
 }
 
-void server_t::Task() {
-    if(WiFi.RplBuf.GetNextLine(Line, &LineLength) == OK) {
+void server_t::Task()
+{
+    if(WiFi.RplBuf.GetNextLine(Line, &LineLength) == OK)
+    {
         LineHandle();
     }
 }
 
-void server_t::LineHandle() {
+void server_t::LineHandle()
+{
 //    Uart.Printf("(%u)%s", LineLength, Line);
     pInnerLine = Line;
     CurrData = strtok(pInnerLine, AT_COMMAND_DELIMETR);
-    if(CurrData != nullptr) {
+    if(CurrData != nullptr)
+    {
         if(strcasecmp(CurrData, AT_WIND_CMD) == 0) WindCommand();
         else if(strcasecmp(CurrData, AT_OK) == 0) CommandSuccess();
         else HostCommand();
@@ -71,7 +77,8 @@ void server_t::HostCommand() {
                 CurrData = S;
                 App.SendEvent(EVTMSK_WIFI_HTTP_ACTION);
             }
-            else App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
+            else
+                App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
         }
     }
 //    Uart.Printf("Request:%s\r", CurrData);
@@ -84,6 +91,21 @@ void server_t::CommandSuccess() {
 
 void server_t::Init() {
     PThd = chThdCreateStatic(waHttpThread, sizeof(waHttpThread), NORMALPRIO, (tfunc_t)HttpThread, NULL);
+}
+
+void server_t::GetRequest() {
+    index_html[936] = 'R';
+    index_html[937] = 'D';
+    index_html[938] = 'Y';
+    index_html[939] = '0';
+   SendHttpHeader(973);
+   WiFi.CmdSend((uint8_t *)index_html, 973);
+}
+
+void server_t::Action() {
+   Uart.Printf("Action: %s \r", CurrData);
+   SendHttpHeader(973);
+   WiFi.CmdSend((uint8_t *)index_html, 973);
 }
 
 void server_t::OpenSocket() {

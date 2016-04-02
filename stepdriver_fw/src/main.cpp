@@ -55,7 +55,7 @@ void Init() {
     App.Init();
     Beeper.Sequence(BEEPER_START_SEQ);
 
-//    HttpServer.Init()
+//    HttpServer.Init();
 //    WiFi.Init();
 //    WiFi.PowerOn();
 

@@ -16,7 +16,7 @@
 #define ENDSTOP2        1
 
 enum endstop_ch {
-    endstop_ch_1 = ENDSTOP1,
+    endstop_ch_1 = (uint8_t)(ENDSTOP1 + 1), // for channel 1 is 1
     endstop_ch_2,
     endstop_max
 };
