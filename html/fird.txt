@@ -1,0 +1,23 @@
+<form align = "center">
+			<input class=input type="text" name="time" size="10" maxlength="10" value="" placeholder="Input time...">&nbsp;        
+			<input class=button_size type="submit" value="Minutes">	 
+		</form>
+		<form align="center">
+			<button class=button_size name="button" type="text" value="StartTL">Start</button>&nbsp
+		</form>
+</fieldset>
+
+<fieldset class=bord>
+	<legend align="center">
+		<h4 class=big_text>Response</h4>
+	</legend>
+	<p align = "center" style="font-size: 300%">
+		OK, FAILURE, SETUP
+	</p>
+</fieldset>
+
+<p style = "position: fixed; bottom: 0; font-size: 35px;">More information:
+	<a style = "text-decoration: underline; color: #fff; " href="http://www.Handycam.pro/" >http://www.handycam.pro/</a>.
+</p>
+</body>
+</html>

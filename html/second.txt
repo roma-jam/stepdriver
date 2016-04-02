@@ -1,0 +1,17 @@
+<form align = "center">
+			<button class=button_size name="button" type="text" value="SetHome">Set Home</button>&nbsp
+			<button class=button_size name="button" type="text" value="Calibrate">Calibrate</button>&nbsp
+			<button class=button_size name="button" type="text" value="GoHome">Go Home</button>&nbsp
+		</form>	
+		<form align = "center">
+			<button class=button_size name="button" type="text" value="Left">Left</button>&nbsp
+			<button class=button_size name="button" type="text" value="Stop">Stop</button>&nbsp
+			<button class=button_size name="button" type="text" value="Rigth">Right</button>&nbsp
+		</form>	
+</fieldset>
+
+<fieldset class=bord>
+	<legend align="center">
+		<h4 class=big_text>Timelapse</h4>
+	</legend>	
+		

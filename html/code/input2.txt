@@ -1,0 +1,33 @@
+ <html>
+ <body bgcolor="#333" text="white" style="text-shadow: 0px 6px 6px rgba(0,0,0,.5);">
+ <style>
+ .big_text {
+ 	font-size: 450%;
+ }
+ .button_size {
+ 	width: 23%;
+ 	height: 9%;
+ 	color: grey; 
+ 	font-size: 230%; 
+ 	text-shadow: 1px 1px 4px rgba(0,0,0,.5); 
+ } 
+ .input { 
+ 	width: 47%; 
+ 	height: 9%; 
+ 	text-align: center; 
+ 	font-size: 330%; 
+ } 
+ .bord { 
+ 	border-color: white; 
+ 	border-radius: 20px; 
+ } 
+ </style> 
+ <fieldset class=bord> 
+ 	<legend align="center"> 
+ 		<h4 class=big_text>Manual</h4> 
+ 	</legend> 
+ 		<form align = "center"> 
+ 			<input class=input type="text" name="speed" size="10" maxlength="10" value="" placeholder="Input speed...">&nbsp; 
+ 			<input class=button_size type="submit" value="Slide"> 
+ 		</form> 
+ 		<form align = "center"> 
