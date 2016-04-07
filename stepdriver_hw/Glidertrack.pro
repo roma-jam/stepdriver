@@ -1,6 +1,6 @@
-update=10/12/2014 20:31:55
+update=02.04.2016 13:27:13
 version=1
-last_client=eeschema
+last_client=kicad
 [cvpcb]
 version=1
 NetIExt=net
@@ -38,19 +38,15 @@ LibName6=D:/Libs/Kicad/Connectors_kl
 [eeschema]
 version=1
 LibDir=
-NetFmtName=PcbnewAdvanced
-RptD_X=0
-RptD_Y=100
-RptLab=1
-LabSize=60
 [eeschema/libraries]
-LibName1=D:/Libs/Kicad/Connectors_kl
-LibName2=D:/Libs/Kicad/modules
-LibName3=D:/Libs/Kicad/pcb_details
-LibName4=D:/Libs/Kicad/power
-LibName5=D:/Libs/Kicad/Power_kl
-LibName6=D:/Libs/Kicad/st_kl
-LibName7=D:/Libs/Kicad/Tittar_kl
-LibName8=D:/Libs/Kicad/Transistors_kl
-LibName9=D:/Libs/Kicad/RF ICs
-LibName10=D:/Libs/Kicad/memory
+LibName1=Glidertrack-rescue
+LibName2=D:/Libs/Kicad/Connectors_kl
+LibName3=D:/Libs/Kicad/modules
+LibName4=D:/Libs/Kicad/pcb_details
+LibName5=D:/Libs/Kicad/power
+LibName6=D:/Libs/Kicad/Power_kl
+LibName7=D:/Libs/Kicad/st_kl
+LibName8=D:/Libs/Kicad/Tittar_kl
+LibName9=D:/Libs/Kicad/Transistors_kl
+LibName10=D:/Libs/Kicad/RF ICs
+LibName11=D:/Libs/Kicad/memory

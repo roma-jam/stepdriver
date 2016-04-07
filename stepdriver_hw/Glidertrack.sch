@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:Glidertrack-rescue
 LIBS:Connectors_kl
 LIBS:modules
 LIBS:pcb_details
@@ -10,7 +11,7 @@ LIBS:Transistors_kl
 LIBS:RF ICs
 LIBS:memory
 LIBS:Glidertrack-cache
-EELAYER 27 0
+EELAYER 25 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
@@ -183,7 +184,7 @@ F 3 "~" H 10250 4750 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L USB_MINI_B XL1
+L USB_MINI_B-RESCUE-Glidertrack XL1
 U 1 1 5476152F
 P 1400 2000
 F 0 "XL1" H 1200 2450 60  0000 C CNN
@@ -335,7 +336,7 @@ SWDIO
 Text Label 1900 3800 0    60   ~ 0
 SWCLK
 $Comp
-L TLV700XX DA2
+L TLV700xx DA2
 U 1 1 54761A87
 P 7000 9950
 F 0 "DA2" H 6850 10250 60  0000 C CNN
@@ -864,7 +865,7 @@ NoConn ~ 9200 3600
 NoConn ~ 9200 3700
 NoConn ~ 9200 3800
 $Comp
-L LD1117 DA3
+L LD1117-RESCUE-Glidertrack DA3
 U 1 1 5481EBBD
 P 4500 9950
 F 0 "DA3" H 4400 10250 60  0000 C CNN
@@ -877,7 +878,7 @@ $EndComp
 Wire Wire Line
 	3650 9900 4200 9900
 $Comp
-L +VS #PWR027
+L +Vs #PWR027
 U 1 1 5481EC4D
 P 3650 9900
 F 0 "#PWR027" H 3650 9860 30  0001 C CNN
@@ -1383,7 +1384,7 @@ Wire Wire Line
 Text Label 6550 1900 2    60   ~ 0
 MOTOR_FLAG
 $Comp
-L FUSE0R F1
+L Fuse0R F1
 U 1 1 548204A9
 P 2100 8850
 F 0 "F1" V 2030 8850 50  0000 C CNN
@@ -1447,7 +1448,7 @@ Wire Wire Line
 Wire Wire Line
 	1650 9750 1650 9550
 $Comp
-L +VS #PWR046
+L +Vs #PWR046
 U 1 1 54820F54
 P 1650 9550
 F 0 "#PWR046" H 1650 9510 30  0001 C CNN
@@ -1633,7 +1634,7 @@ EE_MISO
 Text Label 6550 3000 2    60   ~ 0
 EE_SCK
 Text Label 6550 2900 2    60   ~ 0
-EE_CK
+EE_CS
 Wire Wire Line
 	5050 2150 5250 2150
 Wire Wire Line
