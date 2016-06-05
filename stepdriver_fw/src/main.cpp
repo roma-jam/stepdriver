@@ -41,22 +41,25 @@ int main(void) {
 void Init() {
     JtagDisable();
     Uart.Init(115200);
+    Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
+
 //    Led.Init();
-//    EE.Init();
+    EE.Init();
     Beeper.Init();
     EndStops.Init();
 
-    Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
+    App.Init();
+
+    Beeper.Sequence(BEEPER_START_SEQ);
+
+    HttpServer.Init();
+    WiFi.Init();
+    WiFi.PowerOn();
 
 //    Usb.Init();
 //    Vcp.Init();
 //    Usb.Connect();
 
-    App.Init();
-    Beeper.Sequence(BEEPER_START_SEQ);
 
-//    HttpServer.Init();
-//    WiFi.Init();
-//    WiFi.PowerOn();
 
 }

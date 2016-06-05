@@ -9,7 +9,7 @@
 #define INC_ENDSTOP_H_
 
 #include "kl_lib_f100.h"
-
+#include "config.h"
 
 #define ENDSTOPS_GPIO   GPIOA
 #define ENDSTOP1        0

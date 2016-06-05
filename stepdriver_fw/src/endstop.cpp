@@ -26,19 +26,29 @@ void endstop_t::Init() {
     NVIC_EnableIRQ(EXTI1_IRQn);
 }
 
-void endstop_t::Hit(endstop_ch esChannel) {
+void endstop_t::Hit(endstop_ch esChannel)
+{
+#if (APP_ENDSTOPS_DEBUG)
     Uart.Printf("EndStopHit ch=%u\r", esChannel);
+#endif
+
     Beeper.Sequence(1);
 }
 
-void endstop_t::Release(endstop_ch esChannel) {
+void endstop_t::Release(endstop_ch esChannel)
+{
+#if (APP_ENDSTOPS_DEBUG)
     Uart.Printf("EndStopRelease ch=%u\r", esChannel);
+#endif
+
     Beeper.Sequence(2);
 }
 
-void endstop_t::IrqHandler(endstop_ch esChannel) {
+void endstop_t::IrqHandler(endstop_ch esChannel)
+{
     EXTI->PR |= esChannel; // clear pending bit
-    switch (State[esChannel]) {
+    switch (State[esChannel])
+    {
         case ess_Hit:
             State[esChannel] = ess_Idle;
             Release(esChannel);
@@ -52,10 +62,12 @@ void endstop_t::IrqHandler(endstop_ch esChannel) {
 }
 
 extern "C" {
-void EXTI0_IRQHandler() {
+void EXTI0_IRQHandler()
+{
     EndStops.IrqHandler(endstop_ch_1);
 }
-void EXTI1_IRQHandler() {
+void EXTI1_IRQHandler()
+{
     EndStops.IrqHandler(endstop_ch_2);
 }
 }

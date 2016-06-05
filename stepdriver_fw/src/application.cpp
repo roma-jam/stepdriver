@@ -23,9 +23,7 @@ static void AppThread(void *arg)
 {
     chRegSetThreadName("Motor");
     while(1)
-    {
         AppTask();
-    }
 }
 #endif
 
