@@ -20,6 +20,15 @@
 #define APP_EEPROM_CONFIG_ADDR              0
 
 
+// ================================= USB =======================================
+#define APP_USB_DEBUG_IO                    0
+#define APP_USB_DEBUG_REQUEST               1
+
+
+// ================================ MOTOR DRIVER ===============================
+#define APP_MOTOR_DEBUG_IO                  1
+#define APP_MOTOR_DEBUG_INFO                1
+
 // ================================ DEBUG  =====================================
 
 #define APP_EEPROM_DEBUG                    0
@@ -27,5 +36,7 @@
 #define APP_WIFI_DEBUG                      0
 #define APP_WIFI_LINE_DEBUG                 0
 #define APP_HTTP_SERVER_DEBUG               1
+#define APP_MOTOR_DRIVER_DEBUG              1
+#define APP_MOTOR_DEBUG                     1
 
 #endif /* INC_CONFIG_H_ */

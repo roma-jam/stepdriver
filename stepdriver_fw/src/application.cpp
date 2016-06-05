@@ -17,7 +17,7 @@ App_t App;
 
 void AppTask();
 
-static WORKING_AREA(waAppThread, 1028);
+static WORKING_AREA(waAppThread, 1024);
 __attribute__ ((__noreturn__))
 static void AppThread(void *arg)
 {
@@ -31,6 +31,7 @@ void AppTask()
 {
     uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
 
+#if 1 // =========================== WIFI =====================================
     if(EvtMsk & EVTMSK_WIFI_READY)
     {
         HttpServer.OpenSocket();
@@ -54,6 +55,15 @@ void AppTask()
         App.OnWiFiCmd(HttpServer.CurrData);
         HttpServer.ActionReply();
     }
+#endif
+
+#if 1 // =========================== MOTOR DRIVER =============================
+    if(EvtMsk & EVTMSK_WIFI_STARTED)
+    {
+        Driver.EndStop();
+    }
+#endif
+
 }
 
 #if 1 // ======================= Command processing ============================

@@ -19,9 +19,9 @@
 #define BEEPER_TIM          TIM4
 #define BEEPER_CH           CCR2
 
-#define BEEPER_START_SEQ        1
+#define BEEPER_ENDPOINT_SEQ     1
 #define BEEPER_WIFI_RDY_SEQ     2
-#define BEEPER_ENDPOINT_SEQ     3
+#define BEEPER_START_SEQ        3
 
 struct BeeperSequence_t {
 //    uint8_t Delay;

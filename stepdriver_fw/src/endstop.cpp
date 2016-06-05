@@ -8,6 +8,7 @@
 
 #include "endstop.h"
 #include "beeper.h"
+#include "application.h"
 
 endstop_t EndStops;
 
@@ -32,7 +33,8 @@ void endstop_t::Hit(endstop_ch esChannel)
     Uart.Printf("EndStopHit ch=%u\r", esChannel);
 #endif
 
-    Beeper.Sequence(1);
+    Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
+    App.SendEvent(EVTMSK_MOTOR_ENDSTOP);
 }
 
 void endstop_t::Release(endstop_ch esChannel)
@@ -41,7 +43,8 @@ void endstop_t::Release(endstop_ch esChannel)
     Uart.Printf("EndStopRelease ch=%u\r", esChannel);
 #endif
 
-    Beeper.Sequence(2);
+    Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
+//    App.SendEvent(EVTMSK_MOTOR_ENDSTOP);
 }
 
 void endstop_t::IrqHandler(endstop_ch esChannel)

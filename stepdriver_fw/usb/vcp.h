@@ -9,12 +9,13 @@
 #define VCP_H_
 
 
+#include <cstring>
 #include "kl_lib_f100.h"
 #include "usb_f103.h"
 #include "stdarg.h"
 #include "kl_sprintf.h"
-#include <cstring>
 #include "cmd_list.h"
+#include "config.h"
 
 /* ==== CDC Class-Specific Control Requests ====
  * Page 30

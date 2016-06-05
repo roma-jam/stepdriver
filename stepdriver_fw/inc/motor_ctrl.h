@@ -13,6 +13,7 @@
 #include "spi_rj.h"
 #include "string.h"
 #include "cmd_list.h"
+#include "config.h"
 
 #define Rslt_t              uint8_t
 #define DRIVER_INIT_TIMEOUT 20
@@ -60,11 +61,11 @@ public:
     void Init(uint8_t AssignId);
 
     void SetState(MotorState_t AState) { NewState = AState; }
-    void DoInit()   { SetState(msInit);  }
-    void DoSleep()  { SetState(msSleep); }
-    void DoIdle()   { SetState(msIdle);  }
-    void DoReset()  { SetState(msReset); }
-    void DoGoHome() { SetState(msGoHome);}
+    void SetInit()   { SetState(msInit);  }
+    void SetSleep()  { SetState(msSleep); }
+    void SetIdle()   { SetState(msIdle);  }
+    void SetReset()  { SetState(msReset); }
+    void SetGoHome() { SetState(msGoHome);}
     void UpdatePrm();
     uint32_t GetPosition() {
         uint32_t Pos;
@@ -76,6 +77,7 @@ public:
     void SetParam(uint8_t Addr, uint32_t Value);
     void GetParams(uint8_t Addr, uint32_t* PValue);
     void Run(uint8_t Dir, uint32_t Speed);
+    void Stop()  { Run(0,0); }
     void StepClock(uint8_t Dir);
     void Move(uint8_t Dir, uint32_t Step);
     void GoTo(uint32_t Position);
@@ -129,14 +131,24 @@ public:
     uint8_t CmdLength;
     Motor_t Motor[SPI_SLAVE_CNT];
     uint8_t NumberOfMotors;
-    void PutToBuf(uint8_t AByte) { if(PCmdBuf >= (Cmd + CMD_BUF_SZ)) PCmdBuf = Cmd; *PCmdBuf++ = AByte; CmdLength++; }
+    void PutToBuf(uint8_t AByte)
+    {
+        if(PCmdBuf >= (Cmd + CMD_BUF_SZ))
+            PCmdBuf = Cmd;
+        *PCmdBuf++ = AByte;
+        CmdLength++;
+    }
 
-    bool isInit() { return _IsInit; }
+    bool isInit()
+    {
+        return _IsInit;
+    }
     cmdType get_cmd_type(char* S);
     void cmd_handle();
 
     Rslt_t Init();
     void Task();
+    void EndStop();
 };
 
 extern Driver_t Driver;

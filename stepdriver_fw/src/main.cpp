@@ -46,17 +46,19 @@ void Init() {
 //    Led.Init();
 //    EE.Init();
     Beeper.Init();
-//    EndStops.Init();
+    EndStops.Init();
 
     App.Init();
 
-    HttpServer.Init();
-    WiFi.Init();
-    WiFi.PowerOn();
+    Beeper.Sequence(BEEPER_START_SEQ);
 
-//    Usb.Init();
-//    Vcp.Init();
-//    Usb.Connect();
+//    HttpServer.Init();
+//    WiFi.Init();
+//    WiFi.PowerOn();
+
+    Usb.Init();
+    Vcp.Init();
+    Usb.Connect();
 
 
 

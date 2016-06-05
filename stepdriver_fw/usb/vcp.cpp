@@ -13,15 +13,18 @@
 #include "application.h"
 
 Vcp_t Vcp;
+
 // ==== Line Coding structure ====
-struct Linecoding_t {
+struct Linecoding_t
+{
   uint8_t dwDTERate[4];
   uint8_t bCharFormat;
   uint8_t bParityType;
   uint8_t bDataBits;
 } __attribute__((__packed__));
 
-static Linecoding_t LineCoding = {
+static Linecoding_t LineCoding =
+{
         {0x00, 0xC2, 0x01, 0x00},
         LC_STOP_1, LC_PARITY_NONE, 8
 };
@@ -30,7 +33,8 @@ static WORKING_AREA(waVcpThread, 128);
 __attribute__ ((__noreturn__))
 static void VcpThread(void *arg) {
     chRegSetThreadName("Vcp");
-    while(1) {
+    while(1)
+    {
         chSysLock();
         chSchGoSleepS(THD_STATE_SUSPENDED);
         chSysUnlock();
@@ -38,17 +42,23 @@ static void VcpThread(void *arg) {
     }
 }
 
-void Vcp_t::IOutTask() {
+void Vcp_t::IOutTask()
+{
     uint8_t Byte = 0;
-    do {
+    do
+    {
         GetByte(&Byte);
-        if(Byte == '\b') PCmdWrite->Backspace();
-        else if((Byte == '\r') or (Byte == '\n')) CompleteCmd();
-        else PCmdWrite->PutChar(Byte);
+        if(Byte == '\b')
+            PCmdWrite->Backspace();
+        else if((Byte == '\r') or (Byte == '\n'))
+            CompleteCmd();
+        else
+            PCmdWrite->PutChar(Byte);
     } while(--BytesToRead != 0);
 }
 
-void Vcp_t::CompleteCmd() {
+void Vcp_t::CompleteCmd()
+{
     if(PCmdWrite->IsEmpty()) return;
     chSysLock();
     PCmdWrite->Finalize();
@@ -59,28 +69,45 @@ void Vcp_t::CompleteCmd() {
     App.OnUartCmd(PCmdRead);
 }
 
-void Vcp_t::CmdRpl(uint8_t ErrCode, uint32_t Length, uint32_t *Ptr) {
-    if(Length != 0) {
-        // Need to
+void Vcp_t::CmdRpl(uint8_t ErrCode, uint32_t Length, uint32_t *Ptr)
+{
+    if(Length != 0)
+    {
         Printf("#Ack %X %A" END_OF_COMMAND, ErrCode, Ptr, Length, ' ');
-    } else {
-        if(ErrCode == 0) Printf("#Ack %X" END_OF_COMMAND, ErrCode);
-        else Printf("#Err %X" END_OF_COMMAND, ErrCode);
+    } else
+    {
+        if(ErrCode == 0)
+            Printf("#Ack %X" END_OF_COMMAND, ErrCode);
+        else
+            Printf("#Err %X" END_OF_COMMAND, ErrCode);
     }
 }
 
 
 #if 1 // ================== USB events =================
-static void OnUsbReady() {
-    Uart.Printf("Ready\r");
+static void OnUsbReady()
+{
+#if (APP_USB_DEBUG_REQUEST)
+    Uart.Printf("VCP: Ready\r");
+#endif
+
     Usb.PEpBulkOut->StartOutTransaction();
 }
 
-static void SetLineCoding() {
-//    Uart.Printf("SetLineCoding\r");
+static void SetLineCoding()
+{
+#if (APP_USB_DEBUG_REQUEST)
+    Uart.Printf("VCP: set line coding\r");
+#endif
 }
-static void SetCtrlLineState() {
-//    uint16_t w = Usb.SetupReq.wValue;
+
+static void SetCtrlLineState()
+{
+    uint16_t w = Usb.SetupReq.wValue;
+#if (APP_USB_DEBUG_REQUEST)
+    Uart.Printf("VCP: ctrl line state %X\r", w);
+#endif
+
 //    if(w & 0x0001) Uart.Printf("DTR 1\r");
 //    else Uart.Printf("DTR 0\r");
 //    if(w & 0x0002) Uart.Printf("RTS 1\r");
@@ -88,7 +115,8 @@ static void SetCtrlLineState() {
 }
 #endif
 
-EpState_t NonStandardControlRequestHandler(uint8_t **PPtr, uint32_t *PLen) {
+EpState_t NonStandardControlRequestHandler(uint8_t **PPtr, uint32_t *PLen)
+{
 //    Uart.Printf("NonStandard Request\r");
     switch(Usb.SetupReq.bRequest) {
         case SET_LINE_CODING:
@@ -120,7 +148,8 @@ EpState_t NonStandardControlRequestHandler(uint8_t **PPtr, uint32_t *PLen) {
     return esError;
 }
 
-void Vcp_t::Init() {
+void Vcp_t::Init()
+{
     Usb.Events.OnCtrlPkt = NonStandardControlRequestHandler;
     Usb.Events.OnReady = OnUsbReady;
 
@@ -133,7 +162,8 @@ void Vcp_t::Init() {
     PThread = chThdCreateStatic(waVcpThread, sizeof(waVcpThread), NORMALPRIO, (tfunc_t)VcpThread, NULL);
 }
 
-void Vcp_t::Printf(const char *format, ...) {
+void Vcp_t::Printf(const char *format, ...)
+{
     va_list args;
     va_start(args, format);
     PrintToQueue(&UsbInQueue, format, args);
