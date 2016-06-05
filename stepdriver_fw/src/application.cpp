@@ -58,8 +58,9 @@ void AppTask()
 #endif
 
 #if 1 // =========================== MOTOR DRIVER =============================
-    if(EvtMsk & EVTMSK_WIFI_STARTED)
+    if(EvtMsk & EVTMSK_MOTOR_ENDSTOP)
     {
+        Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
         Driver.EndStop();
     }
 #endif
@@ -73,10 +74,12 @@ void App_t::OnWiFiCmd(char* Request)
     if(strcasecmp(cmd, WIFI_CMD_START) == 0)
     {
         Uart.Printf("WIFI Start\r");
+//        Driver.Motor[0].Run(0, 5000);
     }
     else if(strcasecmp(cmd, WIFI_CMD_STOP) == 0)
     {
         Uart.Printf("WIFI Stop\r");
+//        Driver.Motor[0].Stop();
     }
     else if(strcasecmp(cmd, WIFI_CMD_CALIBRATE) == 0)
     {

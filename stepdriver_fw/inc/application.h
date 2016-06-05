@@ -57,7 +57,14 @@ public:
     // Events
     void OnWiFiCmd(char* Request);
     void OnUartCmd(Cmd_t *PCmd);
-    void SendEvent(eventmask_t mask)  { chEvtSignal(PThd, mask); }
+    void SendEvent(eventmask_t mask)  {
+        chEvtSignal(PThd, mask);
+    }
+    void SendEventI(eventmask_t mask) {
+        chSysLock();
+        chEvtSignalI(PThd, mask);
+        chSysUnlock();
+    }
 };
 
 extern App_t App;

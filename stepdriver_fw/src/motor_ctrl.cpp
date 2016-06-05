@@ -16,7 +16,7 @@
 
 Driver_t Driver;
 
-static WORKING_AREA(waDriverThread, 1024);
+static WORKING_AREA(waDriverThread, 256);
 __attribute__ ((__noreturn__))
 static void DriverThread(void *arg)
 {

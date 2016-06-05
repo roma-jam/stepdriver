@@ -33,8 +33,7 @@ void endstop_t::Hit(endstop_ch esChannel)
     Uart.Printf("EndStopHit ch=%u\r", esChannel);
 #endif
 
-    Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
-    App.SendEvent(EVTMSK_MOTOR_ENDSTOP);
+    App.SendEventI(EVTMSK_MOTOR_ENDSTOP);
 }
 
 void endstop_t::Release(endstop_ch esChannel)
@@ -42,9 +41,6 @@ void endstop_t::Release(endstop_ch esChannel)
 #if (APP_ENDSTOPS_DEBUG)
     Uart.Printf("EndStopRelease ch=%u\r", esChannel);
 #endif
-
-    Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
-//    App.SendEvent(EVTMSK_MOTOR_ENDSTOP);
 }
 
 void endstop_t::IrqHandler(endstop_ch esChannel)
