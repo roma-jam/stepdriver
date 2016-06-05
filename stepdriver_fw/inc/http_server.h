@@ -8,9 +8,10 @@
 #ifndef HTTP_SERVER_H_
 #define HTTP_SERVER_H_
 
-#include "kl_lib_f100.h"
 #include <cstring>
+#include "kl_lib_f100.h"
 #include "wind_cmd.h"
+#include "config.h"
 
 #define HTTP_SERVER_THD_SZ          1024
 #define HTTP_SERVER_MAX_LINE_SZ     401
@@ -31,6 +32,7 @@ private:
         *P = strtoll(S, &S, 10);
     }
 public:
+    bool Started;
     char Line[HTTP_SERVER_MAX_LINE_SZ];
     char *CurrData;
     void Init();
@@ -40,23 +42,25 @@ public:
     void HostCommand();
     void CommandSuccess();
 
-    void Action();
+    void ActionReply();
     void GetRequest();
     void OpenSocket();
     void CloseSocket();
     void SendHttpHeader(uint32_t ContentLength);
 
-    void Sleep() {
+    void Sleep()
+    {
         chSysLock();
         chSchGoSleepS(THD_STATE_SUSPENDED);
         chSysUnlock();
     }
-    void Wakeup() {
-        if(PThd != nullptr) {
-            if(PThd->p_state == THD_STATE_SUSPENDED) {
-                PThd->p_u.rdymsg = RDY_OK;
-                chSchReadyI(PThd);
-            }
+
+    void Wakeup()
+    {
+        if(PThd != nullptr && PThd->p_state == THD_STATE_SUSPENDED)
+        {
+            PThd->p_u.rdymsg = RDY_OK;
+            chSchReadyI(PThd);
         }
     }
 };

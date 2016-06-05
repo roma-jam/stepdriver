@@ -30,14 +30,15 @@ static void HttpThread(void *arg)
 void server_t::Task()
 {
     if(WiFi.RplBuf.GetNextLine(Line, &LineLength) == OK)
-    {
         LineHandle();
-    }
 }
 
 void server_t::LineHandle()
 {
-//    Uart.Printf("(%u)%s", LineLength, Line);
+#if (APP_WIFI_LINE_DEBUG)
+//    Uart.Printf("[%u] ", LineLength);
+    Uart.Printf("%s", Line);
+#endif
     pInnerLine = Line;
     CurrData = strtok(pInnerLine, AT_COMMAND_DELIMETR);
     if(CurrData != nullptr)
@@ -51,10 +52,15 @@ void server_t::LineHandle()
 void server_t::WindCommand() {
     uint8_t ID=0;
     GetWindID(&ID);
-//    Uart.Printf("%u ", ID);
-//    char *S = strtok(NULL, AT_COMMAND_DELIMETR);
-//    Uart.Printf("{%s}\r", S);
-    switch (ID) {
+
+#if(APP_WIFI_DEBUG)
+    Uart.Printf("%u ", ID);
+    char *S = strtok(NULL, AT_COMMAND_DELIMETR);
+    Uart.Printf("{%s}\r", S);
+#endif
+
+    switch (ID)
+    {
         case WIFI_UP:
             App.SendEvent(EVTMSK_WIFI_READY);
             break;
@@ -65,9 +71,14 @@ void server_t::WindCommand() {
     }
 }
 
-void server_t::HostCommand() {
-//    Uart.Printf("(%u)%s\r", LineLength, Line);
-//    Uart.Printf("Request:%s\r", CurrData);
+void server_t::HostCommand()
+{
+#if (APP_WIFI_DEBUG)
+//    Uart.Printf("[%u] ", LineLength);
+    Uart.Printf("%s", Line);
+    Uart.Printf("Request:%s\r", CurrData);
+#endif
+
     CurrData = strtok(Line, " ");
     if(strcasecmp(CurrData, AT_GET) == 0) {
         CurrData = strtok(NULL, " ?");
@@ -81,38 +92,51 @@ void server_t::HostCommand() {
                 App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
         }
     }
-//    Uart.Printf("Request:%s\r", CurrData);
-//    if(strcasecmp(S, AT_GET) == 0) App.SendEvent(EVTMSK_WIFI_HTTP_GET_REQUEST);
 }
 
-void server_t::CommandSuccess() {
+void server_t::CommandSuccess()
+{
+    Started = true;
     Uart.Printf("Command Ok\r");
+    App.SendEvent(EVTMSK_WIFI_STARTED);
 }
 
 void server_t::Init() {
+    Started = false;
     PThd = chThdCreateStatic(waHttpThread, sizeof(waHttpThread), NORMALPRIO, (tfunc_t)HttpThread, NULL);
 }
 
 void server_t::GetRequest() {
+#if (APP_HTTP_SERVER_DEBUG)
+    Uart.Printf("Http request: %s\r", HttpServer.CurrData);
+#endif
+
     index_html[936] = 'R';
     index_html[937] = 'D';
     index_html[938] = 'Y';
     index_html[939] = '0';
-   SendHttpHeader(973);
-   WiFi.CmdSend((uint8_t *)index_html, 973);
+    SendHttpHeader(973);
+    WiFi.CmdSend((uint8_t *)index_html, 973);
 }
 
-void server_t::Action() {
-   Uart.Printf("Action: %s \r", CurrData);
-   SendHttpHeader(973);
-   WiFi.CmdSend((uint8_t *)index_html, 973);
+void server_t::ActionReply() {
+    SendHttpHeader(973);
+    WiFi.CmdSend((uint8_t *)index_html, 973);
 }
 
 void server_t::OpenSocket() {
+#if (APP_HTTP_SERVER_DEBUG)
+    Uart.Printf("Open socket\r");
+#endif
+
     WiFi.CmdSend((uint8_t *)OpenSocketCmd, sizeof(OpenSocketCmd)-1);
 }
 
 void server_t::CloseSocket() {
+#if (APP_HTTP_SERVER_DEBUG)
+    Uart.Printf("Close socket\r");
+#endif
+
     WiFi.CmdSend((uint8_t*)CloseSocketCmd, sizeof(CloseSocketCmd)-1);
 }
 

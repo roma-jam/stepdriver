@@ -44,13 +44,11 @@ void Init() {
     Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
 
 //    Led.Init();
-    EE.Init();
+//    EE.Init();
     Beeper.Init();
-    EndStops.Init();
+//    EndStops.Init();
 
     App.Init();
-
-    Beeper.Sequence(BEEPER_START_SEQ);
 
     HttpServer.Init();
     WiFi.Init();

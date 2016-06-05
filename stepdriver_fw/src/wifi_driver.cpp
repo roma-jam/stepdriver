@@ -11,11 +11,13 @@
 wifi_driver_t WiFi;
 
 // Wrapper for IRQ
-extern "C" {
+extern "C"
+{
 void WiFiTxIrq(void *p, uint32_t flags) { WiFi.IRQ_TxHandler(); }
 }
 
-void wifi_driver_t::Init() {
+void wifi_driver_t::Init()
+{
     PinSetupOut(WIFI_PWR_GPIO, WIFI_PWR_PIN, omPushPull, ps50MHz);
     PowerOff();
 
@@ -44,12 +46,17 @@ void wifi_driver_t::Init() {
 }
 
 #if 1 // ======================= TX Part ======================================
-void wifi_driver_t::CmdSend(uint8_t *PBuf, uint32_t Length) {
+void wifi_driver_t::CmdSend(uint8_t *PBuf, uint32_t Length)
+{
+#if (APP_WIFI_DEBUG)
     Uart.Printf("s:%u\r", Length);
+#endif
 	uint32_t LenToSend = Length;
 	uint8_t *Ptr = PBuf;
-	if(LenToSend > HTTP_REQUEST_SIZE) {
-		do {
+	if(LenToSend > HTTP_REQUEST_SIZE)
+	{
+		do
+		{
 			dmaStreamSetMemory0(WIFI_TX_DMA, Ptr);
 			dmaStreamSetTransactionSize(WIFI_TX_DMA, HTTP_REQUEST_SIZE);
 			dmaStreamSetMode(WIFI_TX_DMA, WIFI_DMA_MODE);
@@ -79,9 +86,11 @@ void wifi_driver_t::CmdSend(uint8_t *PBuf, uint32_t Length) {
 //    }
 //}
 
-void wifi_driver_t::IRQ_TxHandler() {
+void wifi_driver_t::IRQ_TxHandler()
+{
     ITxEnd();
     dmaStreamDisable(WIFI_TX_DMA);    // Registers may be changed only when stream is disabled
+
 //    SlotsFilled -= ITransmitSize;
 //    pRead += ITransmitSize;
 //    if(pRead >= (HostBuf + UART_TXBUF_SIZE)) pRead = HostBuf; // Circulate pointer
@@ -93,19 +102,23 @@ void wifi_driver_t::IRQ_TxHandler() {
 
 
 #if 1 // =========================== RX Part ==================================
-void wifi_driver_t::IHandleByte() {
+void wifi_driver_t::IHandleByte()
+{
     uint8_t Byte = WIFI_RX_BYTE;
     RplBuf.Write(Byte);
     if(Byte == WIFI_STR_LF) HttpServer.Wakeup();
 }
 
-void wifi_driver_t::IRQ_RxHandler() {
+void wifi_driver_t::IRQ_RxHandler()
+{
     IHandleByte();
     WIFI_UART->SR &= ~USART_SR_RXNE;
 }
 
-extern "C" {
-CH_IRQ_HANDLER(WIFI_IRQ_Handler) {
+extern "C"
+{
+CH_IRQ_HANDLER(WIFI_IRQ_Handler)
+        {
     CH_IRQ_PROLOGUE();
     chSysLockFromIsr();
     WiFi.IRQ_RxHandler();

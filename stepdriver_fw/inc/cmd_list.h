@@ -8,7 +8,14 @@
 #ifndef CMD_LIST_H_
 #define CMD_LIST_H_
 
+// ============================= WiFi =========================================
+#define WIFI_CMD_DELIMETER      "button="
+#define WIFI_CMD_START          "Start"
+#define WIFI_CMD_STOP           "Stop"
+#define WIFI_CMD_CALIBRATE      "Calibrate"
 
+
+// ==================== VCP ================================================
 #define DEFAULT_ID              0
 
 #define VCP_PING                "#Ping"

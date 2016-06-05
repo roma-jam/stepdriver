@@ -17,7 +17,7 @@ App_t App;
 
 void AppTask();
 
-static WORKING_AREA(waAppThread, 128);
+static WORKING_AREA(waAppThread, 1028);
 __attribute__ ((__noreturn__))
 static void AppThread(void *arg)
 {
@@ -33,24 +33,47 @@ void AppTask()
 
     if(EvtMsk & EVTMSK_WIFI_READY)
     {
-        Uart.Printf("WiFiModuleRdy\r");
         HttpServer.OpenSocket();
-        Beeper.Sequence(BEEPER_WIFI_RDY_SEQ);
     } // WiFi Module Ready
 
-    else if(EvtMsk & EVTMSK_WIFI_HTTP_GET_REQUEST)
+    if(EvtMsk & EVTMSK_WIFI_STARTED)
     {
-        Uart.Printf("Http request: %s ", HttpServer.CurrData);
+        Beeper.Sequence(BEEPER_WIFI_RDY_SEQ);
+    }
+
+    if(EvtMsk & EVTMSK_WIFI_HTTP_GET_REQUEST)
+    {
         HttpServer.GetRequest();
     }
 
-    else if(EvtMsk & EVTMSK_WIFI_HTTP_ACTION)
+    if(EvtMsk & EVTMSK_WIFI_HTTP_ACTION)
     {
-       HttpServer.Action();
+#if(APP_HTTP_SERVER_DEBUG)
+        Uart.Printf("Action: %s\r", HttpServer.CurrData);
+#endif
+        App.OnWiFiCmd(HttpServer.CurrData);
+        HttpServer.ActionReply();
     }
 }
 
 #if 1 // ======================= Command processing ============================
+void App_t::OnWiFiCmd(char* Request)
+{
+    char *cmd = &Request[7];
+    if(strcasecmp(cmd, WIFI_CMD_START) == 0)
+    {
+        Uart.Printf("WIFI Start\r");
+    }
+    else if(strcasecmp(cmd, WIFI_CMD_STOP) == 0)
+    {
+        Uart.Printf("WIFI Stop\r");
+    }
+    else if(strcasecmp(cmd, WIFI_CMD_CALIBRATE) == 0)
+    {
+        Uart.Printf("WIFI Calibrate\r");
+    }
+}
+
 void App_t::OnUartCmd(Cmd_t *PCmd)
 {
 //    Uart.Printf("%S\r", PCmd->S);

@@ -55,9 +55,8 @@ public:
     void Init();
 
     // Events
-    void OnPillConnect();
+    void OnWiFiCmd(char* Request);
     void OnUartCmd(Cmd_t *PCmd);
-    void TimeLapseStart();
     void SendEvent(eventmask_t mask)  { chEvtSignal(PThd, mask); }
 };
 

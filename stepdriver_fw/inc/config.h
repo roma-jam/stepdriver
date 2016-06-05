@@ -24,4 +24,8 @@
 
 #define APP_EEPROM_DEBUG                    0
 #define APP_ENDSTOPS_DEBUG                  0
+#define APP_WIFI_DEBUG                      0
+#define APP_WIFI_LINE_DEBUG                 0
+#define APP_HTTP_SERVER_DEBUG               1
+
 #endif /* INC_CONFIG_H_ */
