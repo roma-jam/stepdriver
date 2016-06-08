@@ -51,6 +51,7 @@ cmdType Driver_t::get_cmd_type(char *S)
     if(strcasecmp(S, VCP_TIMELAPSE_START_STRING) == 0)        return cmdType::TLStart;
     if(strcasecmp(S, VCP_TIMELAPSE_STOP_STRING) == 0)         return cmdType::TLStop;
     if(strcasecmp(S, VCP_GLIDETRACK_SIZE_SET_STRING) == 0)    return cmdType::SetSize;
+    if(strcasecmp(S, VCP_CALIBRATE) == 0)    return cmdType::Calibrate;
     return cmdType::Err;
 }
 
@@ -136,10 +137,6 @@ void Driver_t::Task()
                 }
                 break;
 
-            case msIdle:
-                chThdSleepMilliseconds(999);
-                break;
-
             case msTimeLapse:
                 Motor[i].Move(1, App.StepSize);
                 chThdSleepMilliseconds(App.TimeDelay);
@@ -153,7 +150,10 @@ void Driver_t::Task()
                 }
                 break;
 
+            case msIdle:
             case msSleep:
+            case msCalibrate1:
+            case msCalibrate2:
                 chThdSleepMilliseconds(999);
                 break;
 
@@ -161,17 +161,17 @@ void Driver_t::Task()
 #if (APP_MOTOR_DRIVER_DEBUG)
                 Uart.Printf("MC: goHome\r");
 #endif
-                chThdSleepMilliseconds(99);
                 Motor[i].GoHome();
-                do
-                { // Wait
-                    chThdSleepMilliseconds(501);
-                } while(Motor[i].GetPosition() != 0);
-#if (APP_MOTOR_DRIVER_DEBUG)
-                Uart.Printf("MC: sleep\r");
-#endif
-                Motor[i].SetSleep();
+                Motor[i].SetIdle();
                 break;
+
+            case msCalibrate:
+#if (APP_MOTOR_DRIVER_DEBUG)
+                Uart.Printf("MC: Calibrate\r");
+#endif
+                // run
+                Motor[i].Run(0, 9000);
+                Motor[i].SetState(msCalibrate1);
         }
     }
 }
@@ -182,8 +182,25 @@ void Driver_t::EndStop()
 #if (APP_MOTOR_DRIVER_DEBUG)
     Uart.Printf("MC: End Stop\r");
 #endif
-    for(uint8_t i=0; i<NumberOfMotors; i++)
-        Motor[i].Stop();
+    Motor[DEFAULT_ID].Stop();
+    if(Motor[DEFAULT_ID].State == msCalibrate1)
+    {
+        Motor[DEFAULT_ID].ResetPos();
+        Motor[DEFAULT_ID].forward = 1;
+        Motor[DEFAULT_ID].backward = 0;
+        Motor[DEFAULT_ID].SetState(msCalibrate2);
+        Motor[DEFAULT_ID].Run(Motor[DEFAULT_ID].forward, 9000);
+        return;
+    }
+
+    if(Motor[DEFAULT_ID].State == msCalibrate2)
+    {
+        uint32_t MaxStep;
+        Motor[DEFAULT_ID].GetParams(ADDR_ABS_POS, &MaxStep);
+        Uart.Printf("MC: Max Size: %u steps\r", MaxStep);
+        Motor[DEFAULT_ID].GoHome();
+    }
+
 }
 
 
@@ -286,7 +303,7 @@ void Motor_t::SetParam(uint8_t Addr, uint32_t Value)
             break;
     } // switch
 #if (APP_MOTOR_DEBUG_IO)
-    Uart.Printf("MC: tx %A\r", PTxBuf, TxSize);
+    Uart.Printf("MC: tx %A\r", PTxBuf, TxSize, ' ');
 #endif
     Spi.DaisyTxRxData(id, PTxBuf, TxSize, PRxBuf);
 }
@@ -328,7 +345,7 @@ void Motor_t::GetParams(uint8_t Addr, uint32_t* PValue)
             break;
     } // switch
 #if (APP_MOTOR_DEBUG_IO)
-    Uart.Printf("MC: param %A\r", PRxBuf, 4);
+    Uart.Printf("MC: param %A\r", PRxBuf, 4, ' ');
 #endif
 }
 

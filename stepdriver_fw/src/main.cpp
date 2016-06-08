@@ -56,9 +56,9 @@ void Init() {
 //    WiFi.Init();
 //    WiFi.PowerOn();
 
-//    Usb.Init();
-//    Vcp.Init();
-//    Usb.Connect();
+    Usb.Init();
+    Vcp.Init();
+    Usb.Connect();
 
 
 

@@ -24,7 +24,7 @@
 #define ACK_BUF_ERR_SZ      3
 
 enum MotorState_t {
-	msIdle, msInit, msOff, msReset, msSleep, msTimeLapse, msGoHome
+	msIdle, msInit, msOff, msReset, msSleep, msTimeLapse, msGoHome, msCalibrate, msCalibrate1, msCalibrate2
 };
 
 struct Params_t {
@@ -56,6 +56,8 @@ private:
 public:
     MotorState_t State, NewState;
     Params_t Prm;
+    uint8_t forward;
+    uint8_t backward;
     void PoweredOn() { isPoweredOn = true; }
     bool isPowered() { return isPoweredOn; }
     void Init(uint8_t AssignId);

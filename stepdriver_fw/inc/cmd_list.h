@@ -48,6 +48,9 @@
 #define VCP_TIMELAPSE_START_STRING     "#TLStart"
 #define VCP_TIMELAPSE_STOP_STRING      "#TLStop"
 
+// App comand
+#define VCP_CALIBRATE                  "#Calibrate"
+
 enum cmdType {
     Err = 0,
     Ping,
@@ -75,7 +78,8 @@ enum cmdType {
     SetSize,
     TLParam,
     TLStart,
-    TLStop
+    TLStop,
+    Calibrate
 };
 
 
