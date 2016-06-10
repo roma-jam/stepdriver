@@ -111,7 +111,7 @@ void Driver_t::Task()
             if(Motor.param.max_speed != 0)
             {
 #if (APP_MOTOR_DRIVER_DEBUG)
-                Uart.Printf("MC: powered up %u\r");
+                Uart.Printf("MC: powered up\r");
 #endif
                 Motor.SetState(msIdle);
                 Motor.PoweredOn();
@@ -287,24 +287,20 @@ void Motor_t::SetParam(uint8_t Addr, uint32_t Value)
 
 uint32_t Motor_t::GetParam(uint8_t Addr)
 {
-    uint32_t Param = 0;
+    uint32_t param = 0;
 
     Spi.WriteReadByte(GET_PARAM | (0x1F & Addr));
-    Param = Spi.ReadByte();
-    Param = Spi.ReadByte();
-    Param = Spi.ReadByte();
-//    TxBuf[1] = TxBuf[2] = TxBuf[3] = 0;
-//    Spi.DaisyTxRxData(id, PTxBuf, 4, PRxBuf);
-//    *PValue = RxBuf[0];
     // TODO: Need to Fix answer by 1000 e.g.
     switch(Addr) {
         // 3 bytes Value
         case ADDR_ABS_POS:
         case ADDR_MARK:
         case ADDR_SPEED:
-//            if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; FirstSymbol = true; }
-//            if((RxBuf[2] != 0) || FirstSymbol) { *PValue <<= 8; *PValue |= RxBuf[2]; FirstSymbol = true; }
-//            if((RxBuf[3] != 0) || FirstSymbol) { *PValue <<= 8; *PValue |= RxBuf[3]; }
+            param = Spi.ReadByte();
+            param <<= 8;
+            param |= Spi.ReadByte();
+            param <<= 8;
+            param |= Spi.ReadByte();
             break;
         // 2 bytes Value
         case ADDR_EL_POS:
@@ -316,19 +312,20 @@ uint32_t Motor_t::GetParam(uint8_t Addr)
         case ADDR_INT_SPEED:
         case ADDR_CONFIG:
         case ADDR_STATUS:
-//            if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; FirstSymbol = true; }
-//            if((RxBuf[2] != 0) || FirstSymbol) { *PValue <<= 8; *PValue |= RxBuf[2]; }
+            param = Spi.ReadByte();
+            param <<= 8;
+            param |= Spi.ReadByte();
             break;
 
         // 1 bytes Value
         default:
-//            if(RxBuf[1] != 0) { *PValue <<= 8; *PValue |= RxBuf[1]; }
+            param = Spi.ReadByte();
             break;
     } // switch
 #if (APP_MOTOR_DEBUG_IO)
-//    Uart.Printf("MC: param %A\r", PRxBuf, 4, ' ');
+    Uart.Printf("MC: Addr %X, param %X\r", Addr, param);
 #endif
-    return 0;
+    return param;
 }
 
 void Motor_t::Run(uint8_t Dir, uint32_t Speed)
