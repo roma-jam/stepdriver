@@ -9,6 +9,7 @@
 #define SPI_RJ_H_
 
 #include "kl_lib_f100.h"
+#include "config.h"
 
 #define SPI   SPI1
 #define GPIO  GPIOA
@@ -71,15 +72,15 @@ private:
     void NssLo()  { PinClear(GPIO, NSS); }//Uart.Printf("lo\r"); }
     void NssHi()  { PinSet  (GPIO, NSS); }//Uart.Printf("hi\r"); }
 
-    uint8_t WriteReadByte(uint8_t AByte);
-    uint8_t ReadByte() { return WriteReadByte(0x00); }
-
+    uint8_t byte_exchange(uint8_t Abyte);
 public:
     void Init();
-    uint8_t DaisyTxRxByte(uint8_t id, uint8_t AByte);
-    void DaisyTxRxData(uint8_t id, uint8_t *Ptr, uint8_t Length, uint8_t *ToPtr);
-    void DaisyRxData(uint8_t id, uint8_t Length, uint8_t *ToPtr);
+//    uint8_t DaisyTxRxByte(uint8_t id, uint8_t AByte);
+//    void DaisyTxRxData(uint8_t id, uint8_t *Ptr, uint8_t Length, uint8_t *ToPtr);
+//    void DaisyRxData(uint8_t id, uint8_t Length, uint8_t *ToPtr);
 
+    uint8_t WriteReadByte(uint8_t AByte);
+    uint8_t ReadByte() { return WriteReadByte(0x00); }
 
     void IrqHandler();
 };

@@ -11,6 +11,7 @@
 #include "usb_f103.h"
 #include "led.h"
 #include "application.h"
+#include "beeper.h"
 
 Vcp_t Vcp;
 

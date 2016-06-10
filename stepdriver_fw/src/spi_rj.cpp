@@ -24,48 +24,63 @@ void Spi_t::Init() {
     ClearSR();                  // Clear Status Register
     SetBaud(brDiv4);            // Set baudrate: Fpclk/16 = 48 MHz/16 = 3 Mhz NOTE: max freq 5MHz
     Enable();
-    nvicEnableVector(SPI1_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
+//    nvicEnableVector(SPI1_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
 
     State = spiIdle;
 }
 
 
-void Spi_t::DaisyTxRxData(uint8_t id, uint8_t *Ptr, uint8_t Length, uint8_t *ToPtr) {
-    for(uint8_t i = 0; i < Length; i++) {
-        *ToPtr++ = DaisyTxRxByte(id, *Ptr++);
-    }
+//void Spi_t::DaisyTxRxData(uint8_t id, uint8_t *Ptr, uint8_t Length, uint8_t *ToPtr) {
+//    for(uint8_t i = 0; i < Length; i++) {
+//        *ToPtr++ = DaisyTxRxByte(id, *Ptr++);
+//    }
+//}
+//
+//void Spi_t::DaisyRxData(uint8_t id, uint8_t Length, uint8_t *ToPtr) {
+//    for(uint8_t i = 0; i < Length; i++) {
+//        *ToPtr++ = DaisyTxRxByte(id, 0x00);
+////        Uart.Printf("<-%X\r", *ToPtr);
+//    }
+//}
+//
+//uint8_t Spi_t::DaisyTxRxByte(uint8_t id, uint8_t AByte) {
+////    if (State == spiBusy) return BUSY;
+//    if (id > SPI_SLAVE_CNT)
+//        return CMD_ERROR;
+//
+//    uint8_t rpl;
+//	uint8_t need_to_write, need_to_read;
+//	need_to_write = id;
+//	need_to_read = (SPI_SLAVE_CNT-1) - id;
+//	NssLo();
+//	while(need_to_read-- > 0) ReadByte();
+//	rpl = WriteReadByte(AByte);
+//	while(need_to_write-- > 0) ReadByte();
+//	NssHi();
+//    return rpl;
+//}
+
+uint8_t Spi_t::WriteReadByte(uint8_t Abyte)
+{
+    uint8_t read_byte;
+    NssLo();
+    read_byte = byte_exchange(Abyte);
+    NssHi();
+    return read_byte;
 }
 
-void Spi_t::DaisyRxData(uint8_t id, uint8_t Length, uint8_t *ToPtr) {
-    for(uint8_t i = 0; i < Length; i++) {
-        *ToPtr++ = DaisyTxRxByte(id, 0x00);
-//        Uart.Printf("<-%X\r", *ToPtr);
-    }
-}
 
-uint8_t Spi_t::DaisyTxRxByte(uint8_t id, uint8_t AByte) {
-//    if (State == spiBusy) return BUSY;
-    if (id>SPI_SLAVE_CNT) return CMD_ERROR;
-    uint8_t rpl;
-	uint8_t need_to_write, need_to_read;
-	need_to_write = id;
-	need_to_read = (SPI_SLAVE_CNT-1) - id;
-	NssLo();
-	while(need_to_read-- > 0) ReadByte();
-	rpl = WriteReadByte(AByte);
-	while(need_to_write-- > 0) ReadByte();
-	NssHi();
-    return rpl;
-}
-
-
-uint8_t Spi_t::WriteReadByte(uint8_t AByte) {
+uint8_t Spi_t::byte_exchange(uint8_t AByte) {
     SPI->DR = AByte;
-//    Uart.Printf("->%X\r", AByte);
+#if (APP_SPI_DEBUG_IO)
+    Uart.Printf("->%X\r", AByte);
+#endif
     while (!(SPI->SR & SPI_SR_TXE));
     while (SPI->SR & SPI_SR_BSY);
     while (!(SPI->SR & SPI_SR_RXNE));
-//    Uart.Printf("<-%X\r", SPI->DR);
+#if (APP_SPI_DEBUG_IO)
+    Uart.Printf("<-%X\r", SPI->DR);
+#endif
     return SPI->DR;
 }
 

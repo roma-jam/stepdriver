@@ -24,60 +24,47 @@
 #define ACK_BUF_ERR_SZ      3
 
 enum MotorState_t {
-	msIdle, msInit, msOff, msReset, msSleep, msTimeLapse, msGoHome, msCalibrate, msCalibrate1, msCalibrate2
+	msIdle, msOff, msPowerUp
 };
 
-struct Params_t {
-    union {
-        uint8_t ParamsBuf[37];
-        struct {
-            uint8_t  dir;
-            uint32_t curr_pos;
-            uint32_t el_pos;
-            uint32_t mark_pos;
-            uint32_t speed;
-            uint32_t acc;
-            uint32_t dec;
-            uint32_t max_speed;
-            uint32_t min_speed;
-            uint32_t adc;
-            uint32_t status;
-        } __attribute__ ((__packed__));
-    };
+struct params_t {
+    uint8_t  dir;
+    uint32_t curr_pos;
+    uint32_t el_pos;
+    uint32_t mark_pos;
+    uint32_t speed;
+    uint32_t acc;
+    uint32_t dec;
+    uint32_t max_speed;
+    uint32_t min_speed;
+    uint32_t adc;
+    uint32_t status;
 } __attribute__ ((__packed__));
 
 
 class Motor_t {
 private:
-    uint8_t id;
-    uint8_t TxBuf[4], RxBuf[4];
-    uint8_t *PTxBuf, *PRxBuf;
     bool isPoweredOn;
 public:
     MotorState_t State, NewState;
-    Params_t Prm;
+    params_t param;
     uint8_t forward;
     uint8_t backward;
     void PoweredOn() { isPoweredOn = true; }
     bool isPowered() { return isPoweredOn; }
-    void Init(uint8_t AssignId);
+    void Init();
 
     void SetState(MotorState_t AState) { NewState = AState; }
-    void SetInit()   { SetState(msInit);  }
-    void SetSleep()  { SetState(msSleep); }
-    void SetIdle()   { SetState(msIdle);  }
-    void SetReset()  { SetState(msReset); }
-    void SetGoHome() { SetState(msGoHome);}
+
     void UpdatePrm();
-    uint32_t GetPosition() {
-        uint32_t Pos;
-        GetParams(ADDR_ABS_POS, &Pos);
-        return Pos;
-    }
+
+    uint32_t GetParam(uint8_t Addr);
+
+//    uint32_t GetPosition() { uint32_t Pos; GetParams(ADDR_ABS_POS, &Pos); return Pos; }
+
     uint8_t NOP();
     void SetParamBuf(uint8_t Addr, uint8_t *PBuf, uint8_t ALength);
     void SetParam(uint8_t Addr, uint32_t Value);
-    void GetParams(uint8_t Addr, uint32_t* PValue);
     void Run(uint8_t Dir, uint32_t Speed);
     void Stop()  { Run(0,0); }
     void StepClock(uint8_t Dir);
@@ -124,15 +111,13 @@ struct AckBuf_t {
 class Driver_t {
 private:
     uint8_t Cmd[CMD_BUF_SZ];
-    bool _IsInit;
-//    CmdBuf_t Cmd;
     AckBuf_t Ack;
+    Motor_t Motor;
     Thread *PThread;
 public:
     uint8_t *PCmdBuf, *PAckBuf;
     uint8_t CmdLength;
-    Motor_t Motor[SPI_SLAVE_CNT];
-    uint8_t NumberOfMotors;
+
     void PutToBuf(uint8_t AByte)
     {
         if(PCmdBuf >= (Cmd + CMD_BUF_SZ))
@@ -141,10 +126,8 @@ public:
         CmdLength++;
     }
 
-    bool isInit()
-    {
-        return _IsInit;
-    }
+    bool isInit() { return Motor.isPowered(); }
+
     cmdType get_cmd_type(char* S);
     void cmd_handle();
 

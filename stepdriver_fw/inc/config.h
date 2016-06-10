@@ -24,6 +24,8 @@
 #define APP_USB_DEBUG_IO                    0
 #define APP_USB_DEBUG_REQUEST               1
 
+// ================================ SPI LOW LEVEL ==============================
+#define APP_SPI_DEBUG_IO                    1
 
 // ================================ MOTOR DRIVER ===============================
 #define APP_MOTOR_DEBUG_IO                  1

@@ -92,7 +92,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 //    Uart.Printf("%S\r", PCmd->S);
     char *S;
     uint32_t Param = 0;
-    uint32_t Value = 0;
+//    uint32_t Value = 0;
     uint32_t Step = 0;
     uint8_t Rslt = VCP_RPL_OK;
     uint8_t Act, Dir;
@@ -102,17 +102,18 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
     uint32_t ShutterCount = 0;
 
     S = PCmd->GetNextToken();
-    if(S == NULL) return;
+
+    if(S == NULL)
+        return;
 
     if(strcasecmp(S, VCP_PING) == 0)
     {
         Vcp.CmdRpl(VCP_RPL_OK);
     }
 
-    else if(strcasecmp(S, VCP_DRIVER_INIT) == 0)
+    else if(strcasecmp(S, VCP_POWER_ON) == 0)
     {
-        uint8_t Rslt = Driver.Init();
-        Vcp.CmdRpl(Rslt);
+        Vcp.CmdRpl(Driver.Init());
     }
 
     else if(Driver.isInit())
@@ -129,8 +130,8 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 if((Param = strtoll(S, &S, 16)) != 0)
                 {
                     S = PCmd->GetNextToken();
-                    Value = strtoll(S, &S, 16);
-                    Driver.Motor[DEFAULT_ID].SetParam(Param, Value);
+//                    Value = strtoll(S, &S, 16);
+//                    Driver.Motor[DEFAULT_ID].SetParam(Param, Value);
                     Vcp.CmdRpl(VCP_RPL_OK);
                 } // if Param
                 else
@@ -145,7 +146,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 S = PCmd->GetNextToken();
                 if((Param = strtoll(S, &S, 16)) != 0)
                 {
-                    Driver.Motor[DEFAULT_ID].GetParams(Param, &Rpl);
+//                    Driver.Motor[DEFAULT_ID].GetParams(Param, &Rpl);
                     Uart.Printf("%X\n\r", Rpl);
                     Vcp.CmdRpl(VCP_RPL_OK, 1, &Rpl);
                 } // if Param
@@ -161,7 +162,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     S = PCmd->GetNextToken();
                     if((Step = strtoll(S, &S, 16)) != 0)
                     {
-                        Driver.Motor[DEFAULT_ID].Move(Dir, Step);
+//                        Driver.Motor[DEFAULT_ID].Move(Dir, Step);
                         Uart.Printf("%X %X\r", Dir, Step);
                         Vcp.CmdRpl(VCP_RPL_OK);
                     } // if Value
@@ -181,7 +182,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 S = PCmd->GetNextToken();
                 if((Pos = strtoll(S, &S, 16)) != 0)
                 {
-                    Driver.Motor[DEFAULT_ID].GoTo(Pos);
+//                    Driver.Motor[DEFAULT_ID].GoTo(Pos);
                     Uart.Printf("%X\n\r", Pos);
                     Vcp.CmdRpl(VCP_RPL_OK);
                 }
@@ -198,7 +199,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     S = PCmd->GetNextToken();
                     if((Position = strtoll(S, &S, 16)) != 0)
                     {
-                        Driver.Motor[DEFAULT_ID].GoTo_Dir(Dir, Position);
+//                        Driver.Motor[DEFAULT_ID].GoTo_Dir(Dir, Position);
                         Uart.Printf("%X %X\r", Dir, Position);
                         Vcp.CmdRpl(VCP_RPL_OK);
                     } // if Value
@@ -223,7 +224,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     S = PCmd->GetNextToken();
                     if((Position = strtoll(S, &S, 16)) != 0)
                     {
-                        Driver.Motor[DEFAULT_ID].GoUntil(Act, Dir, Position);
+//                        Driver.Motor[DEFAULT_ID].GoUntil(Act, Dir, Position);
                         Uart.Printf("%X %X\r", Act, Dir);
                         Vcp.CmdRpl(VCP_RPL_OK);
                     }
@@ -243,7 +244,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Dir = strtoll(S, &S, 16);
                 if(Act == 0 || Act == 1 || Dir == 0 || Act == 1)
                 {
-                    Driver.Motor[DEFAULT_ID].ReleaseSW(Act, Dir);
+//                    Driver.Motor[DEFAULT_ID].ReleaseSW(Act, Dir);
                     Uart.Printf("%X %X\r", Act, Dir);
                     Vcp.CmdRpl(VCP_RPL_OK);
                 }
@@ -253,37 +254,37 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
             case cmdType::GoHome:
                 Uart.Printf("VCP_GO_HOME\r");
-                Driver.Motor[DEFAULT_ID].GoHome();
+//                Driver.Motor[DEFAULT_ID].GoHome();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::GoMark:
                 Uart.Printf("VCP_GO_MARK\r");
-                Driver.Motor[DEFAULT_ID].GoMark();
+//                Driver.Motor[DEFAULT_ID].GoMark();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::ResetPos:
                 Uart.Printf("VCP_RESET_POS\r");
-                Driver.Motor[DEFAULT_ID].ResetPos();
+//                Driver.Motor[DEFAULT_ID].ResetPos();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::SoftHiZ:
                 Uart.Printf("VCP_SOFT_HiZ\r");
-                Driver.Motor[DEFAULT_ID].SoftHiZ();
+//                Driver.Motor[DEFAULT_ID].SoftHiZ();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::HardHiZ:
                 Uart.Printf("VCP_HARD_HiZ\r");
-                Driver.Motor[DEFAULT_ID].HardHiZ();
+//                Driver.Motor[DEFAULT_ID].HardHiZ();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::ResetDevice:
                 Uart.Printf("VCP_RESET_DEVICE\r");
-                Driver.Motor[DEFAULT_ID].ResetDevice();
+//                Driver.Motor[DEFAULT_ID].ResetDevice();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
@@ -295,7 +296,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     S = PCmd->GetNextToken();
                     if((Speed = strtoll(S, &S, 16)) != 0)
                     {
-                        Driver.Motor[DEFAULT_ID].Run(Dir, Speed);
+//                        Driver.Motor[DEFAULT_ID].Run(Dir, Speed);
                         Uart.Printf("%X %X\n\r", Dir, Speed);
                         Vcp.CmdRpl(VCP_RPL_OK);
                     } // if Value
@@ -311,7 +312,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
             case cmdType::Stop:
                 Uart.Printf("VCP_STOP\r");
-                Driver.Motor[DEFAULT_ID].Run(0,0);
+//                Driver.Motor[DEFAULT_ID].Run(0,0);
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
@@ -321,7 +322,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Dir = strtoll(S, &S, 16);
                 if(Dir == 0 || Dir == 1)
                 {
-                    Driver.Motor[DEFAULT_ID].StepClock(Dir);
+//                    Driver.Motor[DEFAULT_ID].StepClock(Dir);
                     Uart.Printf("%X\r", Dir);
                     Vcp.CmdRpl(VCP_RPL_OK);
                 }
@@ -331,27 +332,27 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
             case cmdType::SoftStop:
                 Uart.Printf("VCP_SOFT_STOP\r");
-                Driver.Motor[DEFAULT_ID].SoftStop();
+//                Driver.Motor[DEFAULT_ID].SoftStop();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::HardStop:
                 Uart.Printf("VCP_HARD_STOP\r");
-                Driver.Motor[DEFAULT_ID].HardStop();
+//                Driver.Motor[DEFAULT_ID].HardStop();
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::GetStaus:
                 Uart.Printf("VCP_GET_STATUS\r");
                 uint32_t Status;
-                Driver.Motor[DEFAULT_ID].GetStatus(&Status);
+//                Driver.Motor[DEFAULT_ID].GetStatus(&Status);
                 Uart.Printf("%X\r", Status);
                 Vcp.CmdRpl(VCP_RPL_OK, 1, &Status);
                 break;
 
             case cmdType::UpdateParam:
                 Uart.Printf("VCP_UPDATE_PARAM\r");
-                Driver.Motor[DEFAULT_ID].UpdatePrm();
+//                Driver.Motor[DEFAULT_ID].UpdatePrm();
                 break;
 
             case cmdType::TLParam:
@@ -375,19 +376,19 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
             case cmdType::TLStart:
                 Uart.Printf("VCP_TIMELAPSE_START\r");
-                Driver.Motor[DEFAULT_ID].SetState(msTimeLapse);
+//                Driver.Motor[DEFAULT_ID].SetState(msTimeLapse);
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::TLStop:
                 Uart.Printf("VCP_TIMELAPSE_STOP\r");
-                Driver.Motor[DEFAULT_ID].SetState(msSleep);
+//                Driver.Motor[DEFAULT_ID].SetState(msSleep);
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case cmdType::SetSize:
                 Uart.Printf("VCP_GLIDETRACK_SIZE_SET\r");
-                Driver.Motor[DEFAULT_ID].GetParams(ADDR_ABS_POS, &GlideTrackMaxStep);
+//                Driver.Motor[DEFAULT_ID].GetParams(ADDR_ABS_POS, &GlideTrackMaxStep);
                 Uart.Printf("Max size %X\r", GlideTrackMaxStep);
                 Vcp.CmdRpl(VCP_RPL_OK, 1, &GlideTrackMaxStep);
                 break;
@@ -395,7 +396,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
             case cmdType::Calibrate:
                 Uart.Printf("VCP_CALIBRATE\r");
-                Driver.Motor[DEFAULT_ID].SetState(msCalibrate);
+//                Driver.Motor[DEFAULT_ID].SetState(msCalibrate);
                 break;
 
             default:

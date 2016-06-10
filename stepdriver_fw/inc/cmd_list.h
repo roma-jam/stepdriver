@@ -9,19 +9,19 @@
 #define CMD_LIST_H_
 
 // ============================= WiFi =========================================
-#define WIFI_CMD_DELIMETER      "button="
-#define WIFI_CMD_START          "Start"
-#define WIFI_CMD_STOP           "Stop"
-#define WIFI_CMD_CALIBRATE      "Calibrate"
+#define WIFI_CMD_DELIMETER              "button="
+#define WIFI_CMD_START                  "Start"
+#define WIFI_CMD_STOP                   "Stop"
+#define WIFI_CMD_CALIBRATE              "Calibrate"
 
 
 // ==================== VCP ================================================
 #define DEFAULT_ID              0
 
-#define VCP_PING                "#Ping"
-#define VCP_DRIVER_INIT         "#DriverInit"
+#define VCP_PING                        "#Ping"
+#define VCP_POWER_ON                    "#PowerOn"
 
-#define VCP_SET_PARAM_STRING    "#SetParam"
+#define VCP_SET_PARAM_STRING           "#SetParam"
 #define VCP_GET_PARAM_STRING           "#GetParam"
 #define VCP_MOVE_STRING                "#Move"
 #define VCP_GOTO_STRING                "#GoTo"
