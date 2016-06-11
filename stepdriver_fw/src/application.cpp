@@ -407,13 +407,15 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Uart.Printf("VCP_UPDATE_PARAM\r");
 #endif
                 Driver.Motor.UpdatePrm();
+                Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case Calibrate:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_CALIBRATE\r");
 #endif
-//                Driver.Motor[DEFAULT_ID].SetState(msCalibrate);
+                Driver.StartCalibration();
+                Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             case SetConfig:

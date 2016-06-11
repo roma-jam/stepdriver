@@ -150,6 +150,7 @@ public:
 
     Rslt_t Init();
     void Task();
+    void StartCalibration();
     void BackwardEndStop();
     void ForwardEndStop();
 

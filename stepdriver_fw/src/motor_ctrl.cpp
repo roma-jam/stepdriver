@@ -115,13 +115,18 @@ Rslt_t Driver_t::Init()
     // Calibrate Driver
 #if (APP_MOTOR_CALIBRATE_AT_POWER_UP)
 #if (APP_MOTOR_DRIVER_DEBUG)
-        Uart.Printf("MC: Calibrate\r");
+    Uart.Printf("MC: Calibrate\r");
 #endif
-    Motor.SetState(msCalibrate);
-    Motor.Run(APP_MOTOR_BACKWARD_DIR, APP_MOTOR_CALIBRATE_SPEED);
+    StartCalibration();
 #endif
 
     return VCP_RPL_OK;
+}
+
+void Driver_t::StartCalibration()
+{
+    Motor.SetState(msCalibrate);
+    Motor.Run(APP_MOTOR_BACKWARD_DIR, APP_MOTOR_CALIBRATE_SPEED);
 }
 
 #if 1 // ========================= MOTOR DRIVER ================================
