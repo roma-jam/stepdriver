@@ -53,24 +53,47 @@ bool eeprom_t::Test()
 }
 #endif
 
-Rslt_t eeprom_t::WriteConf(uint16_t Addr, uint32_t *Conf)
+Rslt_t eeprom_t::write_data(uint16_t Addr, uint8_t* data, uint32_t data_size)
 {
-    uint32_t WriteConf = *Conf;
-    writeU32(Addr, WriteConf);
+#if (APP_EEPROM_DEBUG)
+    Uart.Printf("EE: write addr %X, size %u\r", Addr, data_size);
+#endif
+    WriteEnable();
+    CS_Lo();
+    WriteReadByte(EEPROM_CMD_WRITE); // Ins + Address MSB
+
+    for(uint32_t i = 0; i < data_size; i++)
+    {
+        WriteReadByte(Addr + i);
+        WriteReadByte(data[i]);
+    }
+    CS_Hi();
+    chThdSleepMilliseconds(21); // wait EEPROM
+#if (APP_EEPROM_DEBUG_IO)
+        Uart.Printf("EE: data %A\r", data, data_size, ' ');
+#endif
+
     return OK;
 }
 
-Rslt_t eeprom_t::ReadConf(uint16_t Addr, uint32_t *Conf)
+void eeprom_t::read_data(uint16_t Addr, uint8_t* data, uint32_t data_size)
 {
-    uint32_t ReadConf;
-    readU32(Addr, &ReadConf);
-
 #if (APP_EEPROM_DEBUG)
-    Uart.Printf("EE: Read Conf addr=%X : 0x%X\r", Addr, ReadConf);
+    Uart.Printf("EE: read addr %X, size %u\r", Addr, data_size);
 #endif
+    CS_Lo();
+    WriteReadByte(EEPROM_CMD_READ); // Ins + Address MSB
 
-    *Conf = ReadConf;
-    return OK;
+    for(uint32_t i = 0; i < data_size; i++)
+    {
+        WriteReadByte(Addr + i);
+        data[i] = ReadByte();
+    }
+    CS_Hi();
+
+#if (APP_EEPROM_DEBUG_IO)
+        Uart.Printf("EE: data %A\r", data, data_size, ' ');
+#endif
 }
 
 void eeprom_t::writeU32(uint16_t Addr, uint32_t AByte)

@@ -25,6 +25,7 @@ enum MotorState_t {
 	msIdle, msOff, msPowerUp, msBusy, msCalibrate
 };
 
+#pragma pack(push, 1)
 struct params_t {
     uint8_t  dir;
     uint32_t curr_pos;
@@ -37,7 +38,16 @@ struct params_t {
     uint32_t min_speed;
     uint32_t adc;
     uint32_t status;
-} __attribute__ ((__packed__));
+};
+struct driver_config_t {
+    uint32_t magic;
+    uint32_t acc;
+    uint32_t dec;
+    uint32_t max_speed;
+    uint32_t min_speed;
+    uint8_t step_mode;
+};
+#pragma pack(pop)
 
 
 class Motor_t {
@@ -48,12 +58,16 @@ public:
     params_t param;
     uint8_t forward;
     uint8_t backward;
+
+    // Power Functions
     void PoweredOn() { isPoweredOn = true; }
     bool isPowered() { return isPoweredOn; }
     void Init();
 
+    // State Fuctions
     void SetState(MotorState_t AState) { NewState = AState; }
 
+    // Low Level config functions
     void UpdatePrm();
 
     uint32_t GetParam(uint8_t Addr);
@@ -108,10 +122,13 @@ class Driver_t {
 private:
     uint8_t Cmd[CMD_BUF_SZ];
     AckBuf_t Ack;
+
+    driver_config_t config;
     Thread *PThread;
 public:
     uint8_t *PCmdBuf, *PAckBuf;
     uint8_t CmdLength;
+
     void PutToBuf(uint8_t AByte)
     {
         if(PCmdBuf >= (Cmd + CMD_BUF_SZ))
@@ -129,6 +146,10 @@ public:
     Rslt_t Init();
     void Task();
     void EndStop();
+
+    // EEPROM config functions
+    Rslt_t write_config(driver_config_t *config);
+    Rslt_t read_config(driver_config_t* config);
 };
 
 extern Driver_t Driver;

@@ -73,8 +73,9 @@ private:
 public:
     bool isInit() { return _IsInit; }
     void Init();
-    Rslt_t WriteConf(uint16_t Addr, uint32_t *Conf);
-    Rslt_t ReadConf(uint16_t Addr, uint32_t *Conf);
+
+    Rslt_t write_data(uint16_t Addr, uint8_t* data, uint32_t data_size);
+    void read_data(uint16_t Addr, uint8_t* data, uint32_t data_size);
 
 };
 

@@ -18,6 +18,7 @@
 #include "eeprom.h"
 #include "beeper.h"
 #include "endstop.h"
+#include "motor_ctrl.h"
 
 static inline void Init();
 
@@ -44,7 +45,7 @@ void Init() {
     Uart.Printf("\rWiFi Glidertrack AHB=%u MHz\r", Clk.AHBFreqHz/1000000);
 
 //    Led.Init();
-//    EE.Init();
+    EE.Init();
     Beeper.Init();
     EndStops.Init();
 
@@ -60,6 +61,6 @@ void Init() {
     Vcp.Init();
     Usb.Connect();
 
-
+    Driver.Init();
 
 }

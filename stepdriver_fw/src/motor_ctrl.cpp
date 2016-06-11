@@ -10,6 +10,7 @@
 #include "motor_ctrl.h"
 #include "vcp.h"
 #include "application.h"
+#include "eeprom.h"
 
 // Macros
 #define PRINT_MSG(S)       { Uart.Printf(S); }
@@ -70,23 +71,51 @@ Rslt_t Driver_t::Init()
 
     // wait until we powered on correctly
     uint32_t Timeout = 0;
-    do
+    while (Timeout++ < APP_MOTOR_DRIVER_INIT_TIMEOUT_S)
     {
         chThdSleepMilliseconds(999);
         if (Motor.isPowered())
-        {
-#if (APP_MOTOR_DRIVER_DEBUG)
-            Uart.Printf("MC: powered up\r");
-#endif
-            return VCP_RPL_OK;
-        }
-    } while (Timeout++ < APP_MOTOR_DRIVER_INIT_TIMEOUT_S);
+            break;
+    }
 
+    if(!Motor.isPowered())
+    {
 #if (APP_MOTOR_DRIVER_DEBUG)
-    Uart.Printf("MC: powered failure\r");
+        Uart.Printf("MC: powered failure\r");
+#endif
+        return VCP_RPL_INIT_TIMEOUT;
+    }
+#if (APP_MOTOR_DRIVER_DEBUG)
+    Uart.Printf("MC: powered up\r");
 #endif
 
-    return VCP_RPL_INIT_TIMEOUT;
+    // Update Param Driver
+    // Read Configuration from EEPROM
+    if(OK != read_config(&config))
+    {
+#if (APP_MOTOR_DRIVER_DEBUG)
+        Uart.Printf("MC: config default\r");
+#endif
+    }
+    else
+    {
+#if (APP_MOTOR_DRIVER_DEBUG)
+        Uart.Printf("MC: config user\r");
+#endif
+        Motor.SetParam(L6470_ADDR_ACC, config.acc);
+        Motor.SetParam(L6470_ADDR_DEC, config.dec);
+        Motor.SetParam(L6470_ADDR_MAX_SPEED, config.max_speed);
+        Motor.SetParam(L6470_ADDR_MIN_SPEED, config.min_speed);
+        Motor.SetParam(L6470_ADDR_STEP_MODE, config.step_mode);
+    }
+
+    // Calibrate Driver
+#if (APP_MOTOR_CALIBRATE_AT_POWER_UP)
+    Motor.SetState(msCalibrate);
+    Motor.Run(APP_MOTOR_BACKWARD_DIR, 0x2000);
+#endif
+
+    return VCP_RPL_OK;
 }
 
 #if 1 // ========================= MOTOR DRIVER ================================
@@ -150,6 +179,28 @@ void Driver_t::EndStop()
 #endif
 }
 
+#if 1 // =========================== MOTOR EEPROM =============================
+Rslt_t Driver_t::write_config(driver_config_t *config)
+{
+    config->magic = APP_MOTOR_DRIVER_CONFIG_MAGIC;
+    return EE.write_data(APP_EEPROM_MOTOR_GONFIG_ADDR, (uint8_t*)config, sizeof(driver_config_t));
+}
+
+Rslt_t Driver_t::read_config(driver_config_t *config)
+{
+    EE.read_data(APP_EEPROM_MOTOR_GONFIG_ADDR, (uint8_t*)config, sizeof(driver_config_t));
+
+    if(config->magic != APP_MOTOR_DRIVER_CONFIG_MAGIC)
+    {
+#if (APP_MOTOR_DRIVER_DEBUG)
+    Uart.Printf("MC: Config Empty\r");
+#endif
+        return FAILURE;
+    }
+
+    return OK;
+}
+#endif
 
 #if 1 // =========================== MOTOR LOW LEVEL ==========================
 void Motor_t::Init()
