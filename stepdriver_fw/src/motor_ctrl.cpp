@@ -57,7 +57,6 @@ Rslt_t Driver_t::Init()
         return VCP_RPL_OK;
 
     Spi.Init();
-    Motor.SetState(msOff);
 
     if(PThread == nullptr)
         PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
