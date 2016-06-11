@@ -30,7 +30,7 @@ static Linecoding_t LineCoding =
         LC_STOP_1, LC_PARITY_NONE, 8
 };
 
-static WORKING_AREA(waVcpThread, 128);
+static WORKING_AREA(waVcpThread, 256);
 __attribute__ ((__noreturn__))
 static void VcpThread(void *arg) {
     chRegSetThreadName("Vcp");
@@ -84,7 +84,7 @@ void Vcp_t::CmdRplData(uint32_t Data)
 #if 1 // ================== USB events =================
 static void OnUsbReady()
 {
-#if (APP_USB_DEBUG_REQUEST)
+#if (APP_VCP_DEBUG)
     Uart.Printf("VCP: Ready\r");
 #endif
 
@@ -93,15 +93,15 @@ static void OnUsbReady()
 
 static void SetLineCoding()
 {
-#if (APP_USB_DEBUG_REQUEST)
+#if (APP_VCP_DEBUG_REQUEST)
     Uart.Printf("VCP: set line coding\r");
 #endif
 }
 
 static void SetCtrlLineState()
 {
+#if (APP_VCP_DEBUG_REQUEST)
     uint16_t w = Usb.SetupReq.wValue;
-#if (APP_USB_DEBUG_REQUEST)
     Uart.Printf("VCP: ctrl line state %X\r", w);
 #endif
 
@@ -114,10 +114,11 @@ static void SetCtrlLineState()
 
 EpState_t NonStandardControlRequestHandler(uint8_t **PPtr, uint32_t *PLen)
 {
-//    Uart.Printf("NonStandard Request\r");
     switch(Usb.SetupReq.bRequest) {
         case SET_LINE_CODING:
-//            Uart.Printf("SET_LINE_CODING\r");
+#if (APP_VCP_DEBUG_REQUEST)
+            Uart.Printf("SET_LINE_CODING\r");
+#endif
             *PPtr = (uint8_t*)&LineCoding;  // Do not use length in setup pkt
             *PLen = sizeof(LineCoding);
             Usb.Events.OnTransactionEnd[0] = SetLineCoding;
@@ -125,15 +126,18 @@ EpState_t NonStandardControlRequestHandler(uint8_t **PPtr, uint32_t *PLen)
             break;
 
         case GET_LINE_CODING:
-//            Uart.Printf("GET_LINE_CODING\r");
+#if (APP_VCP_DEBUG_REQUEST)
+            Uart.Printf("GET_LINE_CODING\r");
+#endif
             *PPtr = (uint8_t*)&LineCoding;
             *PLen = sizeof(LineCoding);
             return esInData;
             break;
 
         case SET_CONTROL_LINE_STATE:
-//            Uart.Printf("SET_CTRL_LINE_STATE\r");
-            Led.Blink();
+#if (APP_VCP_DEBUG_REQUEST)
+            Uart.Printf("SET_CTRL_LINE_STATE\r");
+#endif
             SetCtrlLineState();
             return esOutStatus;
             break;

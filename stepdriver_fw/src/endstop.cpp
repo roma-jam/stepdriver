@@ -33,7 +33,10 @@ void endstop_t::Hit(endstop_ch esChannel)
     Uart.Printf("EndStopHit ch=%u\r", esChannel);
 #endif
 
-    App.SendEventI(EVTMSK_MOTOR_ENDSTOP);
+    if(esChannel == ENDSTOP1)
+        App.SendEventI(EVTMSK_MOTOR_ENDSTOP1);
+    else
+        App.SendEventI(EVTMSK_MOTOR_ENDSTOP2);
 }
 
 void endstop_t::Release(endstop_ch esChannel)

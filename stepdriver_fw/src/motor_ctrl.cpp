@@ -17,7 +17,7 @@
 
 Driver_t Driver;
 
-static WORKING_AREA(waDriverThread, 256);
+static WORKING_AREA(waDriverThread, 512);
 __attribute__ ((__noreturn__))
 static void DriverThread(void *arg)
 {
@@ -49,6 +49,9 @@ cmdType Driver_t::get_cmd_type(char *S)
     if(strcasecmp(S, VCP_GET_STATUS_STRING) == 0)           return GetStaus;
     if(strcasecmp(S, VCP_UPDATE_PARAM_STRING) == 0)         return UpdateParam;
     if(strcasecmp(S, VCP_CALIBRATE) == 0)                   return Calibrate;
+    if(strcasecmp(S, VCP_SET_CONFIG) == 0)                  return SetConfig;
+    if(strcasecmp(S, VCP_GET_CONFIG) == 0)                  return GetConfig;
+
     return cmdType::Err;
 }
 
@@ -66,6 +69,7 @@ Rslt_t Driver_t::Init()
     PCmdBuf = Cmd;
     PAckBuf = Ack.Buf;
     CmdLength = 0;
+    MaxPos = 0;
 
     Motor.SetState(msPowerUp);
 
@@ -89,7 +93,6 @@ Rslt_t Driver_t::Init()
     Uart.Printf("MC: powered up\r");
 #endif
 
-    // Update Param Driver
     // Read Configuration from EEPROM
     if(OK != read_config(&config))
     {
@@ -111,8 +114,11 @@ Rslt_t Driver_t::Init()
 
     // Calibrate Driver
 #if (APP_MOTOR_CALIBRATE_AT_POWER_UP)
+#if (APP_MOTOR_DRIVER_DEBUG)
+        Uart.Printf("MC: Calibrate\r");
+#endif
     Motor.SetState(msCalibrate);
-    Motor.Run(APP_MOTOR_BACKWARD_DIR, 0x2000);
+    Motor.Run(APP_MOTOR_BACKWARD_DIR, APP_MOTOR_CALIBRATE_SPEED);
 #endif
 
     return VCP_RPL_OK;
@@ -121,13 +127,8 @@ Rslt_t Driver_t::Init()
 #if 1 // ========================= MOTOR DRIVER ================================
 void Driver_t::Task()
 {
-    if(Motor.State == Motor.NewState)
-    {
-        chThdSleepMilliseconds(99);
-        return;
-    }
-
-    Motor.State = Motor.NewState;
+    if(Motor.State != Motor.NewState)
+        Motor.State = Motor.NewState;
 
     switch (Motor.State)
     {
@@ -161,22 +162,54 @@ void Driver_t::Task()
         {
             if((Motor.GetStatus() & STATUS_FLAG_IDLE) == STATUS_FLAG_IDLE)
             {
+#if (APP_MOTOR_DRIVER_DEBUG)
                 Uart.Printf("MC: Idle Flag\r");
+#endif
                 Motor.SetState(msIdle);
+                break;
             }
-            Uart.Printf("MC: Busy\r");
-            chThdSleepMilliseconds(APP_MOTOR_BUSY_STATE_CHECK_MS);
+            else
+                chThdSleepMilliseconds(APP_MOTOR_BUSY_STATE_CHECK_MS);
         }
             break;
     }
 }
 #endif
 
-void Driver_t::EndStop()
+void Driver_t::BackwardEndStop()
 {
 #if (APP_MOTOR_DRIVER_DEBUG)
-    Uart.Printf("MC: End Stop\r");
+    Uart.Printf("MC: Backward End Stop\r");
 #endif
+    Motor.Stop();
+
+    if(Motor.State == msCalibrate)
+    {
+        Motor.ResetPos();
+
+#if (APP_MOTOR_DRIVER_DEBUG)
+        Uart.Printf("MC: set home %X\r", Motor.GetPosition());
+#endif
+       Motor.Run(APP_MOTOR_FORWARD_DIR, APP_MOTOR_CALIBRATE_SPEED);
+    }
+}
+
+void Driver_t::ForwardEndStop()
+{
+#if (APP_MOTOR_DRIVER_DEBUG)
+    Uart.Printf("MC: Forward End Stop\r");
+#endif
+    Motor.Stop();
+    if(Motor.State == msCalibrate)
+    {
+        MaxPos = Motor.GetPosition();
+#if (APP_MOTOR_DRIVER_DEBUG)
+        Uart.Printf("MC: calibrate mark %X\r", MaxPos);
+#endif
+        Motor.SetParam(L6470_ADDR_MARK, MaxPos);
+        Motor.SetState(msBusy);
+        Motor.GoHome();
+    }
 }
 
 #if 1 // =========================== MOTOR EEPROM =============================
@@ -191,12 +224,7 @@ Rslt_t Driver_t::read_config(driver_config_t *config)
     EE.read_data(APP_EEPROM_MOTOR_GONFIG_ADDR, (uint8_t*)config, sizeof(driver_config_t));
 
     if(config->magic != APP_MOTOR_DRIVER_CONFIG_MAGIC)
-    {
-#if (APP_MOTOR_DRIVER_DEBUG)
-    Uart.Printf("MC: Config Empty\r");
-#endif
         return FAILURE;
-    }
 
     return OK;
 }
@@ -418,7 +446,7 @@ uint32_t Motor_t::GetStatus()
     Spi.WriteReadByte(L6470_CMD_GET_STATUS);
     Status = Spi.ReadByte();
     Status <<= 8;
-    Status = Spi.ReadByte();
+    Status |= Spi.ReadByte();
 
 #if (APP_MOTOR_DEBUG_IO)
     Uart.Printf("MC: Status %X\r", Status);

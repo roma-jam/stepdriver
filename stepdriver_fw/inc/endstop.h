@@ -12,11 +12,11 @@
 #include "config.h"
 
 #define ENDSTOPS_GPIO   GPIOA
-#define ENDSTOP1        0
-#define ENDSTOP2        1
+#define ENDSTOP1        APP_ENDSTOP_FORWARD
+#define ENDSTOP2        APP_ENDSTOP_BACKWARD
 
 enum endstop_ch {
-    endstop_ch_1 = (uint8_t)(ENDSTOP1 + 1), // for channel 1 is 1
+    endstop_ch_1 = ENDSTOP1, // for channel 1 is 1
     endstop_ch_2,
     endstop_max
 };

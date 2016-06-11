@@ -58,10 +58,16 @@ void AppTask()
 #endif
 
 #if 1 // =========================== MOTOR DRIVER =============================
-    if(EvtMsk & EVTMSK_MOTOR_ENDSTOP)
+    if(EvtMsk & EVTMSK_MOTOR_ENDSTOP1)
     {
         Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
-        Driver.EndStop();
+        Driver.BackwardEndStop();
+    }
+
+    if(EvtMsk & EVTMSK_MOTOR_ENDSTOP2)
+    {
+        Beeper.Sequence(BEEPER_ENDPOINT_SEQ);
+        Driver.ForwardEndStop();
     }
 #endif
 
@@ -142,7 +148,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     Vcp.CmdRpl(VCP_RPL_CMD_ERROR);
                 break;
 
-            case cmdType::GetParam:
+            case GetParam:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GET_PARAM\r");
 #endif
@@ -156,7 +162,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     Vcp.CmdRpl(VCP_RPL_CMD_ERROR);
                 break;
 
-            case cmdType::Move:
+            case Move:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_MOVE\r");
 #endif
@@ -181,7 +187,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
                 break;
 
-            case cmdType::cmdGoTo:
+            case cmdGoTo:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GOTO\r");
 #endif
@@ -198,7 +204,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     Vcp.CmdRpl(VCP_RPL_CMD_ERROR);
                 break;
 
-            case cmdType::cmdGoToDir:
+            case cmdGoToDir:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GOTODIR\r");
 #endif
@@ -223,7 +229,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
                 break;
 
-            case cmdType::GoUntil:
+            case GoUntil:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GOUNTIL\r");
 #endif
@@ -248,7 +254,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
                 break;
 
-            case cmdType::ReleaseSW:
+            case ReleaseSW:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_RELEASE\r");
 #endif
@@ -268,7 +274,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     Vcp.CmdRpl(VCP_RPL_CMD_ERROR);
                 break;
 
-            case cmdType::GoHome:
+            case GoHome:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GO_HOME\r");
 #endif
@@ -276,7 +282,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::GoMark:
+            case GoMark:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GO_MARK\r");
 #endif
@@ -284,7 +290,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::ResetPos:
+            case ResetPos:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_RESET_POS\r");
 #endif
@@ -292,7 +298,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::SoftHiZ:
+            case SoftHiZ:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_SOFT_HiZ\r");
 #endif
@@ -300,7 +306,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::HardHiZ:
+            case HardHiZ:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_HARD_HiZ\r");
 #endif
@@ -308,7 +314,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::ResetDevice:
+            case ResetDevice:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_RESET_DEVICE\r");
 #endif
@@ -316,7 +322,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::Run:
+            case Run:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_RUN\r");
 #endif
@@ -342,7 +348,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                     Vcp.CmdRpl(Rslt);
                 break;
 
-            case cmdType::Stop:
+            case Stop:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_STOP\r");
 #endif
@@ -350,7 +356,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::StepClock:
+            case StepClock:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_STEP_CLOCK\r");
 #endif
@@ -369,7 +375,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
 
                 break;
 
-            case cmdType::SoftStop:
+            case SoftStop:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_SOFT_STOP\r");
 #endif
@@ -377,7 +383,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::HardStop:
+            case HardStop:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_HARD_STOP\r");
 #endif
@@ -385,7 +391,7 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
-            case cmdType::GetStaus:
+            case GetStaus:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_GET_STATUS\r");
 #endif
@@ -396,18 +402,64 @@ void App_t::OnUartCmd(Cmd_t *PCmd)
                 Vcp.CmdRplData(Value);
                 break;
 
-            case cmdType::UpdateParam:
+            case UpdateParam:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_UPDATE_PARAM\r");
 #endif
-//                Driver.Motor[DEFAULT_ID].UpdatePrm();
+                Driver.Motor.UpdatePrm();
                 break;
 
-            case cmdType::Calibrate:
+            case Calibrate:
 #if (APP_MOTOR_DEBUG_IO)
                 Uart.Printf("VCP_CALIBRATE\r");
 #endif
 //                Driver.Motor[DEFAULT_ID].SetState(msCalibrate);
+                break;
+
+            case SetConfig:
+            {
+#if (APP_MOTOR_DEBUG_IO)
+                Uart.Printf("VCP_SET_CONFIG\r");
+#endif
+                pData = PCmd->GetNextToken();
+                Driver.config.acc = PCmd->GetValue(pData);
+                pData = PCmd->GetNextToken();
+                Driver.config.dec = PCmd->GetValue(pData);
+                pData = PCmd->GetNextToken();
+                Driver.config.max_speed = PCmd->GetValue(pData);
+                pData = PCmd->GetNextToken();
+                Driver.config.min_speed = PCmd->GetValue(pData);
+                pData = PCmd->GetNextToken();
+                Driver.config.step_mode = PCmd->GetValue(pData);
+
+#if (APP_MOTOR_DEBUG_IO)
+                Uart.Printf("Acc %X, Dec %X, MaxSpeed %X, MinSpeed %X, StepMode %X\r",
+                        Driver.config.acc,
+                        Driver.config.dec,
+                        Driver.config.max_speed,
+                        Driver.config.min_speed,
+                        Driver.config.step_mode
+                );
+#endif
+                if(OK != Driver.write_config(&Driver.config))
+                {
+                    Vcp.CmdRpl(VCP_RPL_FAILURE);
+                    break;
+                }
+
+                Driver.Motor.SetParam(L6470_ADDR_ACC, Driver.config.acc);
+                Driver.Motor.SetParam(L6470_ADDR_DEC, Driver.config.dec);
+                Driver.Motor.SetParam(L6470_ADDR_MAX_SPEED, Driver.config.max_speed);
+                Driver.Motor.SetParam(L6470_ADDR_MIN_SPEED, Driver.config.min_speed);
+                Driver.Motor.SetParam(L6470_ADDR_STEP_MODE, Driver.config.step_mode);
+
+                Vcp.CmdRpl(VCP_RPL_OK);
+            }
+                break;
+
+            case GetConfig:
+                Driver.read_config(&Driver.config);
+                Vcp.CmdRpl(VCP_RPL_OK);
                 break;
 
             default:

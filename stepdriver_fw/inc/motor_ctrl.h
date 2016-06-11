@@ -22,7 +22,11 @@
 #define ACK_BUF_ERR_SZ      3
 
 enum MotorState_t {
-	msIdle, msOff, msPowerUp, msBusy, msCalibrate
+	msIdle = 0,
+	msOff,
+	msPowerUp,
+	msBusy,
+	msCalibrate
 };
 
 #pragma pack(push, 1)
@@ -77,7 +81,7 @@ public:
     uint8_t NOP();
     void SetParam(uint8_t Addr, uint32_t Value);
     void Run(uint8_t Dir, uint32_t Speed);
-    void Stop()  { Run(0,0); }
+    void Stop()  { HardStop(); }
     void StepClock(uint8_t Dir);
     void Move(uint8_t Dir, uint32_t Step);
     void GoTo(uint32_t Position);
@@ -123,11 +127,11 @@ private:
     uint8_t Cmd[CMD_BUF_SZ];
     AckBuf_t Ack;
 
-    driver_config_t config;
     Thread *PThread;
 public:
     uint8_t *PCmdBuf, *PAckBuf;
     uint8_t CmdLength;
+    uint32_t MaxPos;
 
     void PutToBuf(uint8_t AByte)
     {
@@ -137,6 +141,7 @@ public:
         CmdLength++;
     }
 
+    driver_config_t config;
     Motor_t Motor;
     bool isInit() { return Motor.isPowered(); }
 
@@ -145,7 +150,8 @@ public:
 
     Rslt_t Init();
     void Task();
-    void EndStop();
+    void BackwardEndStop();
+    void ForwardEndStop();
 
     // EEPROM config functions
     Rslt_t write_config(driver_config_t *config);

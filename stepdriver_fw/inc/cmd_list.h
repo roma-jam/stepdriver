@@ -45,6 +45,12 @@
 // App comand
 #define VCP_CALIBRATE                  "#Calibrate"
 
+/*
+ * #SetConfg Acc, Dec, MaxSpeed, MinSpeed, StepMode
+ */
+#define VCP_SET_CONFIG                 "#SetConfig"
+#define VCP_GET_CONFIG                 "#GetConfig"
+
 enum cmdType {
     Err = 0,
     Ping,
@@ -73,7 +79,9 @@ enum cmdType {
 //    TLParam,
 //    TLStart,
 //    TLStop,
-    Calibrate
+    Calibrate,
+    SetConfig,
+    GetConfig
 };
 
 

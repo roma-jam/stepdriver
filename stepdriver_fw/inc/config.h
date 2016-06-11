@@ -21,20 +21,27 @@
 #define APP_EEPROM_MOTOR_GONFIG_ADDR        128
 
 // ================================= USB =======================================
-#define APP_USB_DEBUG_IO                    0
-#define APP_USB_DEBUG_REQUEST               1
+#define APP_VCP_DEBUG                       1
+#define APP_VCP_DEBUG_IO                    0
+#define APP_VCP_DEBUG_REQUEST               0
 
 // ================================ SPI LOW LEVEL ==============================
 #define APP_SPI_DEBUG_IO                    0
+
+
+// ================================= ENDSTOPS ==================================
+#define APP_ENDSTOP_FORWARD                 0x00
+#define APP_ENDSTOP_BACKWARD                0x01
 
 // ================================ MOTOR DRIVER ===============================
 #define APP_MOTOR_DRIVER_CONFIG_MAGIC       0x4D6F746F
 #define APP_MOTOR_DRIVER_INIT_TIMEOUT_S     2
 
-#define APP_MOTOR_BUSY_STATE_CHECK_MS       49
+#define APP_MOTOR_BUSY_STATE_CHECK_MS       149 // 49
 #define APP_MOTOR_CMD_CONVERSATION_SYSTEM   16
 #define APP_MOTOR_BACKWARD_DIR              0x00
 #define APP_MOTOR_FORWARD_DIR               0x01
+#define APP_MOTOR_CALIBRATE_SPEED           0x4000
 
 
 #define APP_MOTOR_CALIBRATE_AT_POWER_UP     1
