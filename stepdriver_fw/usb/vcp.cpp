@@ -70,18 +70,14 @@ void Vcp_t::CompleteCmd()
     App.OnUartCmd(PCmdRead);
 }
 
-void Vcp_t::CmdRpl(uint8_t ErrCode, uint32_t Length, uint32_t *Ptr)
+void Vcp_t::CmdRpl(uint8_t ErrCode)
 {
-    if(Length != 0)
-    {
-        Printf("#Ack %X %A" END_OF_COMMAND, ErrCode, Ptr, Length, ' ');
-    } else
-    {
-        if(ErrCode == 0)
-            Printf("#Ack %X" END_OF_COMMAND, ErrCode);
-        else
-            Printf("#Err %X" END_OF_COMMAND, ErrCode);
-    }
+    Printf("#Ack %X" END_OF_COMMAND, ErrCode);
+}
+
+void Vcp_t::CmdRplData(uint32_t Data)
+{
+    Printf("#Ack %X %X" END_OF_COMMAND, VCP_RPL_OK, Data);
 }
 
 

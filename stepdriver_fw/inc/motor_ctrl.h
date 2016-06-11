@@ -16,15 +16,13 @@
 #include "config.h"
 
 #define Rslt_t              uint8_t
-#define DRIVER_INIT_TIMEOUT 20
-
 
 #define CMD_BUF_SZ          99
 #define ACK_BUF_SZ          7
 #define ACK_BUF_ERR_SZ      3
 
 enum MotorState_t {
-	msIdle, msOff, msPowerUp
+	msIdle, msOff, msPowerUp, msBusy, msCalibrate
 };
 
 struct params_t {
@@ -59,11 +57,10 @@ public:
     void UpdatePrm();
 
     uint32_t GetParam(uint8_t Addr);
-
-//    uint32_t GetPosition() { uint32_t Pos; GetParams(ADDR_ABS_POS, &Pos); return Pos; }
+    uint32_t GetStatus();
+    uint32_t GetPosition() { return GetParam(L6470_ADDR_ABS_POS); }
 
     uint8_t NOP();
-    void SetParamBuf(uint8_t Addr, uint8_t *PBuf, uint8_t ALength);
     void SetParam(uint8_t Addr, uint32_t Value);
     void Run(uint8_t Dir, uint32_t Speed);
     void Stop()  { Run(0,0); }
@@ -81,7 +78,6 @@ public:
     void HardStop();
     void SoftHiZ();
     void HardHiZ();
-    void GetStatus(uint32_t *PValue);
 };
 
 struct CmdBuf_t {
@@ -112,12 +108,10 @@ class Driver_t {
 private:
     uint8_t Cmd[CMD_BUF_SZ];
     AckBuf_t Ack;
-    Motor_t Motor;
     Thread *PThread;
 public:
     uint8_t *PCmdBuf, *PAckBuf;
     uint8_t CmdLength;
-
     void PutToBuf(uint8_t AByte)
     {
         if(PCmdBuf >= (Cmd + CMD_BUF_SZ))
@@ -126,6 +120,7 @@ public:
         CmdLength++;
     }
 
+    Motor_t Motor;
     bool isInit() { return Motor.isPowered(); }
 
     cmdType get_cmd_type(char* S);

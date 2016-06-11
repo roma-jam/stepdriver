@@ -59,6 +59,12 @@ public:
         InnerS = NULL;
         return RS;
     }
+
+    uint32_t GetValue(char* pData)
+    {
+        return strtoll(pData, &pData, APP_MOTOR_CMD_CONVERSATION_SYSTEM);
+    }
+
     friend class Vcp_t;
 };
 
@@ -103,7 +109,9 @@ public:
 
     Cmd_t ICmd[2], *PCmdWrite = &ICmd[0], *PCmdRead = &ICmd[1];
     void CompleteCmd();
-    void CmdRpl(uint8_t ErrCode, uint32_t Length = 0, uint32_t *Ptr = nullptr);
+
+    void CmdRpl(uint8_t ErrCode);
+    void CmdRplData(uint32_t Data);
 };
 
 extern Vcp_t Vcp;

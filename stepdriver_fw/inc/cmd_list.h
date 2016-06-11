@@ -42,12 +42,6 @@
 #define VCP_GET_STATUS_STRING          "#GetStatus"
 #define VCP_UPDATE_PARAM_STRING        "#UpdateParam"
 
-// Logic command
-#define VCP_GLIDETRACK_SIZE_SET_STRING "#SetSize"
-#define VCP_TIMELAPSE_PARAM_STRING     "#TLParam"
-#define VCP_TIMELAPSE_START_STRING     "#TLStart"
-#define VCP_TIMELAPSE_STOP_STRING      "#TLStop"
-
 // App comand
 #define VCP_CALIBRATE                  "#Calibrate"
 
@@ -75,10 +69,10 @@ enum cmdType {
     HardStop,
     GetStaus,
     UpdateParam,
-    SetSize,
-    TLParam,
-    TLStart,
-    TLStop,
+//    SetSize,
+//    TLParam,
+//    TLStart,
+//    TLStop,
     Calibrate
 };
 

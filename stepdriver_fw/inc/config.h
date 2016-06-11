@@ -28,6 +28,10 @@
 #define APP_SPI_DEBUG_IO                    1
 
 // ================================ MOTOR DRIVER ===============================
+#define APP_MOTOR_DRIVER_INIT_TIMEOUT_MS    20
+#define APP_MOTOR_BUSY_STATE_CHECK_MS       49
+
+#define APP_MOTOR_CMD_CONVERSATION_SYSTEM   16
 #define APP_MOTOR_DEBUG_IO                  1
 #define APP_MOTOR_DEBUG_INFO                1
 
