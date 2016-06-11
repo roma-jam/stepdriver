@@ -68,8 +68,6 @@
 #define L6470_ADDR_CONFIG                   0x18
 #define L6470_ADDR_STATUS                   0x19
 
-
-
 #define L6470_CMD_SET_PARAM                 0x00
 #define L6470_CMD_GET_PARAM                 0x20
 #define L6470_CMD_MOVE			            0x40

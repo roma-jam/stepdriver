@@ -57,6 +57,7 @@ Rslt_t Driver_t::Init()
         return VCP_RPL_OK;
 
     Spi.Init();
+    Motor.SetState(msOff);
 
     if(PThread == nullptr)
         PThread = chThdCreateStatic(waDriverThread, sizeof(waDriverThread), NORMALPRIO, (tfunc_t)DriverThread, NULL);
@@ -71,7 +72,7 @@ Rslt_t Driver_t::Init()
     uint32_t Timeout = 0;
     do
     {
-        chThdSleepMilliseconds(100);
+        chThdSleepMilliseconds(999);
         if (Motor.isPowered())
         {
 #if (APP_MOTOR_DRIVER_DEBUG)
@@ -79,7 +80,7 @@ Rslt_t Driver_t::Init()
 #endif
             return VCP_RPL_OK;
         }
-    } while (Timeout++ < APP_MOTOR_DRIVER_INIT_TIMEOUT_MS);
+    } while (Timeout++ < APP_MOTOR_DRIVER_INIT_TIMEOUT_S);
 
 #if (APP_MOTOR_DRIVER_DEBUG)
     Uart.Printf("MC: powered failure\r");

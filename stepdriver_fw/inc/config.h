@@ -25,15 +25,15 @@
 #define APP_USB_DEBUG_REQUEST               1
 
 // ================================ SPI LOW LEVEL ==============================
-#define APP_SPI_DEBUG_IO                    1
+#define APP_SPI_DEBUG_IO                    0
 
 // ================================ MOTOR DRIVER ===============================
-#define APP_MOTOR_DRIVER_INIT_TIMEOUT_MS    20
+#define APP_MOTOR_DRIVER_INIT_TIMEOUT_S     2
 #define APP_MOTOR_BUSY_STATE_CHECK_MS       49
 
 #define APP_MOTOR_CMD_CONVERSATION_SYSTEM   16
 #define APP_MOTOR_DEBUG_IO                  1
-#define APP_MOTOR_DEBUG_INFO                1
+#define APP_MOTOR_DEBUG_INFO                0
 
 // ================================ DEBUG  =====================================
 
