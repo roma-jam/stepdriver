@@ -232,7 +232,7 @@ uint32_t Motor_t::GetParam(uint8_t Addr)
 {
     uint32_t param = 0;
 
-    Spi.WriteReadByte(L6470_CMD_SET_PARAM | (0x1F & Addr));
+    Spi.WriteReadByte(L6470_CMD_GET_PARAM | (0x1F & Addr));
     // TODO: Need to Fix answer by 1000 e.g.
     switch(Addr) {
         // 3 bytes Value
