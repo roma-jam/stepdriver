@@ -1,0 +1,182 @@
+
++WIND:1:Poweron (140805-3f58d6b-SPWF01S)
+
++WIND:13:ST SPWF01SA1 IWM: Copyright (c) 2012-2014 STMicroelectronics, Inc.  All rights Reserved.
+
++WIND:3:Watchdog Running
+
++WIND:0:Console active
+
++WIND:32:WiFi Hardware Started
+
++WIND:26:WiFi Started AP with network 'Glidertrack'
+
++WIND:24:WiFi Up:172.31.115.1
+
++WIND:28:Station A4:F1:E8:EB:BC:89 Associated
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+# Dumping All Configuration Keys:
+#  nv_manuf = ST
+#  nv_model = SPWF01SA1
+#  nv_serial = 2914D16540
+#  nv_wifi_macaddr = 00:80:E1:FF:EC:73
+#  blink_led = 1
+#  wind_off_low = 0x00000000
+#  wind_off_medium = 0x00000000
+#  wind_off_high = 0x00000000
+#  user_desc = anonymous
+#  escape_seq = at+s.
+#  localecho1 = 0
+#  console1_speed = 115200
+#  console1_hwfc = 0
+#  console1_enabled = 1
+#  sleep_enabled = 0
+#  standby_enabled = 0
+#  standby_time = 10
+#  wifi_tx_msdu_lifetime = 0
+#  wifi_rx_msdu_lifetime = 0
+#  wifi_operational_mode = 0x00000011
+#  wifi_beacon_wakeup = 1
+#  wifi_beacon_interval = 100
+#  wifi_listen_interval = 0
+#  wifi_rts_threshold = 3000
+#  wifi_ssid = 47:6C:69:64:65:72:74:72:61:63:6B:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+#  wifi_ssid_len = 11
+#  wifi_channelnum = 6
+#  wifi_opr_rate_mask = 0x00003FCF
+#  wifi_bas_rate_mask = 0x0000000F
+#  wifi_mode = 3
+#  wifi_auth_type = 0
+#  wifi_atim_window = 0
+#  wifi_powersave = 0
+#  wifi_tx_power = 18
+#  wifi_rssi_thresh = 0
+#  wifi_rssi_hyst = 0
+#  wifi_ap_idle_timeout = 120
+#  wifi_beacon_loss_thresh = 10
+#  wifi_priv_mode = 1
+#  wifi_wep_keys[0] = 67:6C:69:64:65:00:00:00:00:00:00:00:00:00:00:00
+#  wifi_wep_keys[1] = 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+#  wifi_wep_keys[2] = 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+#  wifi_wep_keys[3] = 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+#  wifi_wep_key_lens = 05:00:00:00
+#  wifi_wep_default_key = 0
+#  wifi_wpa_psk_raw = 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+#  wifi_wpa_psk_text = 
+#  ip_use_dhcp = 1
+#  ip_use_httpd = 1
+#  ip_mtu = 1500
+#  ip_hostname = iwm-FF-EC-73
+#  ip_apdomainname = captiveportal.net
+#  ip_ipaddr = 192.168.0.50
+#  ip_netmask = 255.255.255.0
+#  ip_gw = 192.168.0.1
+#  ip_dns = 192.168.0.1
+#  ip_http_get_recv_timeout = 3000
+#  ip_dhcp_timeout = 231
+
+OK
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
+OK
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:72:Station A4:F1:E8:EB:BC:89 Disassociated:8
+ D 0 /glidertrack.html
+ I 174 /status.shtml
+ I 614 /index.html
+ I 180 /message.shtml
+ I 193 /config.shtml
+ I 157 /peers.shtml
+ I 384 /output_demo.html
+ I 461 /input_demo.shtml
+ I 3447 /firstset.html
+ I 2898 /remote.html
+ I 212 /404.html
+
+OK
+
+OK
+ D 946 /glidertrack.html
+ I 174 /status.shtml
+ I 614 /index.html
+ I 180 /message.shtml
+ I 193 /config.shtml
+ I 157 /peers.shtml
+ I 384 /output_demo.html
+ I 461 /input_demo.shtml
+ I 3447 /firstset.html
+ I 2898 /remote.html
+ I 212 /404.html
+
+OK
+
++WIND:28:Station A4:F1:E8:EB:BC:89 Associated
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:29:DHCP reply for 172.31.115.2/A4:F1:E8:EB:BC:89
+
++WIND:72:Station A4:F1:E8:EB:BC:89 Disassociated:8
+
+OK
+
++WIND:2:Reset
+
++WIND:1:Poweron (140805-3f58d6b-SPWF01S)
+
++WIND:13:ST SPWF01SA1 IWM: Copyright (c) 2012-2014 STMicroelectronics, Inc.  All rights Reserved.
+
++WIND:3:Watchdog Running
+
++WIND:0:Console active
+
++WIND:32:WiFi Hardware Started
+
++WIND:26:WiFi Started AP with network 'Glidertrack'
+
++WIND:24:WiFi Up:172.31.115.1
+ I 174 /status.shtml
+ I 614 /index.html
+ I 180 /message.shtml
+ I 193 /config.shtml
+ I 157 /peers.shtml
+ I 384 /output_demo.html
+ I 461 /input_demo.shtml
+ I 3447 /firstset.html
+ I 2898 /remote.html
+ I 212 /404.html
+
+OK
+<html><head><title>Output Demo</title></head><body bgcolor="white" text="black"><fieldset><legend><h4>SPWF01 Output to Host</h4></legend>	<p><form name="CGI Example" method="GET" action="output.cgi">        	<input type="text" name="text" size="40" maxlength="40">&nbsp;	        <input type="submit" name="submit" value="Submit" >	   </form>	</p></fieldset></body></html>
+OK
+
+ERROR: Missing argument(s)
+
+OK
+
+ERROR: Command not found
+
+ERROR: Command not found
+
+ERROR: Missing argument(s)
+
+ERROR: Missing argument(s)
+
+ERROR: Missing argument(s)
+
+OK
+

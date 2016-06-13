@@ -13,13 +13,14 @@ wifi_driver_t WiFi;
 // Wrapper for IRQ
 extern "C"
 {
-void WiFiTxIrq(void *p, uint32_t flags) { WiFi.IRQ_TxHandler(); }
+    void WiFiTxIrq(void *p, uint32_t flags) { WiFi.IRQ_TxHandler(); }
 }
 
 void wifi_driver_t::Init()
 {
     PinSetupOut(WIFI_PWR_GPIO, WIFI_PWR_PIN, omPushPull, ps50MHz);
     PowerOff();
+    return; // TODO: remove me
 
     WiFiDmaIsIdle = true;
     SlotsFilled = 0;
