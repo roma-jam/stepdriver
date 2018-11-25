@@ -213,7 +213,7 @@ void Ep_t::ReceiveZeroPkt() {
 
 void Usb_t::SetupPktHandler() {
     //Uart.Printf("Setup\r");
-//    Uart.Printf("%A\r", Ep0OutBuf, 8, ' ');
+    Uart.Printf("%A\r", Ep0OutBuf, 8, ' ');
     // Try to handle request
     uint8_t *FPtr;
     uint32_t FLength;
@@ -414,6 +414,9 @@ uint16_t Ep_t::GetRxDataLength() {
 void Ep_t::ReadToBuf(uint8_t *PDstBuf, uint16_t Len) {
     BTableReg_t *PReg = GET_BTB_REG(Indx);
     uint32_t *PSrc = BTB_ADDR2PTR(PReg->RxAddr);
+//    Uart.Printf("%X\r", PSrc);
+    Uart.Printf("%A\r", (uint8_t*)PSrc, 32, ' ');
+
     Len = (Len + 1) / 2;
     for(uint8_t i=0; i < Len; i++) {
         *(uint16_t*)PDstBuf = (uint16_t)*PSrc++;

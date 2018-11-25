@@ -25,7 +25,7 @@ static inline void Init();
 int main(void) {
     // ==== Init clock system ====
     uint8_t ClkEnable = 1;
-    ClkEnable = Clk.ClockConfigure(ciHSE, pllMul3, ahbDiv1, apbDiv1, apbDiv1, psPLLOn);
+    ClkEnable = Clk.ClockConfigure(ciHSE, pllMul6, ahbDiv1, apbDiv1, apbDiv1, psPLLOn);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -46,20 +46,20 @@ void Init() {
 
 //    Led.Init();
 //    EE.Init();
-    Beeper.Init();
+//    Beeper.Init();
 //    EndStops.Init();
 
     App.Init();
 
-    Beeper.Sequence(BEEPER_START_SEQ);
+//    Beeper.Sequence(BEEPER_START_SEQ);
 
-    HttpServer.Init();
-    WiFi.Init();
-    WiFi.PowerOn();// Power On chip
+//    HttpServer.Init();
+//    WiFi.Init();
+//    WiFi.PowerOn();// Power On chip
 
-//    Usb.Init();
-//    Vcp.Init();
-//    Usb.Connect();
+    Usb.Init();
+    Vcp.Init();
+    Usb.Connect();
 
 //    Driver.Init();
 
